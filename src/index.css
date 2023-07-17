@@ -22,6 +22,10 @@ body {
   min-height: 100vh;
 }
 
+button {
+  font-family: IBM Plex Sans, sans-serif;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {

@@ -1,10 +1,10 @@
-import { Button } from 'antd';
+import SideBar from './components/layout/sidebar';
 
 function App() {
 
   return (
     <>
-      <Button type="primary">Button</Button>
+      <SideBar />
     </>
   )
 }
