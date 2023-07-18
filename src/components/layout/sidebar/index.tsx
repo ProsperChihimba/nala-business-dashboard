@@ -83,6 +83,7 @@ const SideBar = () => {
                 bottom: 0,
                 paddingLeft: 15,
                 paddingTop: 15,
+                paddingRight: 15,
             }}
         >
 

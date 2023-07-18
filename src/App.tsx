@@ -1,10 +1,10 @@
-import SideBar from './components/layout/sidebar';
+import Accounts from './components/accounts';
 
 function App() {
 
   return (
     <>
-      <SideBar />
+      <Accounts />
     </>
   )
 }
