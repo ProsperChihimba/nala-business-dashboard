@@ -76,7 +76,7 @@ const SideBar = () => {
             style={{
                 overflow: 'auto',
                 height: '100vh',
-                position: 'fixed',
+                // position: 'fixed',
                 backgroundColor: '#fff',
                 left: 0,
                 top: 0,
