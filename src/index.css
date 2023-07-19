@@ -1,14 +1,16 @@
 :root {
   font-family: IBM Plex Sans, sans-serif;
+  line-height: 1.5;
+  font-weight: 400, 500, 600;
 
   color: black;
   background-color: #fff;
-/* 
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%; */
+  -webkit-text-size-adjust: 100%;
 }
 
 body {

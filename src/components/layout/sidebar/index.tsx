@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import { Image, Layout } from 'antd';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Image, Layout, Typography } from 'antd';
+import { Box, Flex } from '@chakra-ui/react';
 
 // side bar icons
 import { BiWallet } from "react-icons/bi";
@@ -18,6 +18,7 @@ import logo from '../../../assets/Logo.svg';
 
 
 const { Sider } = Layout;
+const { Text } = Typography;
 
 // type for menus
 interface NavigationItem {
@@ -157,9 +158,12 @@ const SelectedNavigationItem = ({ label, icon, isSelected } : NavigationItem) =>
             <Flex gap='15px' alignItems='center'>
                 {icon}
                 <Text 
-                    fontSize='15px' 
-                    fontWeight='500' 
-                    color='#000000'
+                    style={{
+                        fontFamily: 'IBM Plex Sans, sans-serif',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        color: '#000000'
+                    }}
                 >
                         {label}
                 </Text>
@@ -179,9 +183,12 @@ const SelectedNavigationSection = ({ label, icon } : NavigationItem) => {
             <Flex gap='15px' alignItems='center'>
                 {icon}
                 <Text 
-                    fontSize='15px' 
-                    fontWeight='500' 
-                    color='#BBBBBB'
+                    style={{
+                        fontFamily: 'IBM Plex Sans, sans-serif',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        color: '#BBBBBB'
+                    }}
                 >
                         {label}
                 </Text>

@@ -1,16 +1,22 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import AppButton from '../../../layout/button'
 import { FiChevronDown } from 'react-icons/fi'
+import { Typography } from 'antd';
 
 const AccountsHeader = () => {
+
+  const { Text } = Typography;
   return (
-    <Flex justifyContent='space-between' alignItems='center'>
+    <Flex justifyContent='space-between' alignItems='center' marginBottom='50px' fontFamily='IBM Plex Sans, sans-serif'>
 
         {/* title */}
         <Text
-            fontSize='24px'
-            color='#000'
-            fontWeight='600'
+            style={{
+                fontFamily: 'IBM Plex Sans, sans-serif',
+                fontSize: '24px',
+                fontWeight: 600,
+                color: '#000000',
+            }}
         >
             Accounts
         </Text>

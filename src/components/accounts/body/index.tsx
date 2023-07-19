@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react"
 import AccountsHeader from "./sections/header"
+import AccountCardsSection from "./sections/cards"
 
 const AccountsBody = () => {
   return (
@@ -13,6 +14,9 @@ const AccountsBody = () => {
 
         {/* headers */}
         <AccountsHeader />
+
+        {/* cards sections */}
+        <AccountCardsSection />
     </Box>
   )
 }
