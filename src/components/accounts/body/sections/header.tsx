@@ -7,7 +7,7 @@ const AccountsHeader = () => {
 
   const { Text } = Typography;
   return (
-    <Flex justifyContent='space-between' alignItems='center' marginBottom='50px' fontFamily='IBM Plex Sans, sans-serif'>
+    <Flex justifyContent='space-between' alignItems='center' marginBottom='30px' fontFamily='IBM Plex Sans, sans-serif'>
 
         {/* title */}
         <Text

@@ -1,11 +1,12 @@
 import { Box, Flex } from '@chakra-ui/react'
 import { Typography } from 'antd';
+import LearnArticle from './article';
 
 const AccountsLearn = () => {
 
     const { Text } = Typography;
   return (
-    <Box fontFamily='IBM Plex Sans, sans-serif' marginTop='30px'>
+    <Box fontFamily='IBM Plex Sans, sans-serif' marginTop='23px'>
         
        <Flex direction='column'>
             {/* header */}
@@ -32,6 +33,9 @@ const AccountsLearn = () => {
                 Learn about NALA business account
             </Text>
        </Flex>
+
+       {/* learn articles */}
+       <LearnArticle />
     </Box>
   )
 }

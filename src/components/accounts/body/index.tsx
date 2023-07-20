@@ -10,6 +10,7 @@ const AccountsBody = () => {
         height='90vh' 
         marginTop='7vh'
         padding='20px'
+        // overflow='auto'
         borderRadius='30px 0px 0px 30px'
     >
 
