@@ -13,7 +13,7 @@ const ArticleTag = () => {
             style={{
                 fontFamily: 'IBM Plex Sans, sans-serif',
                 fontSize: '11px',
-                fontWeight: 400,
+                fontWeight: 500,
                 color: '#6D6D6D',
             }}
         >

@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import { Image, Typography } from 'antd'
 import learn1 from '../../../../../assets/learn1.svg'
 import ArticleTag from './tag';
@@ -12,6 +12,7 @@ const LearnArticle = () => {
         {/* image */}
         <Image
             src={learn1}
+            preview={false}
         />
 
         {/* author*/}

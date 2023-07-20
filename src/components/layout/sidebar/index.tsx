@@ -95,6 +95,7 @@ const SideBar = () => {
                     paddingLeft: 10,
                     marginBottom: 30,
                 }}
+                preview={false}
             />
 
             {/* personal items */}
