@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react"
 import SingleAccountHeader from "./sections/header"
+import SingleAccountTabs from "./sections/tabs"
 
 const SingleAccountBody = () => {
   return (
@@ -14,6 +15,9 @@ const SingleAccountBody = () => {
 
         {/*  */}
         <SingleAccountHeader />
+
+        {/*  */}
+        <SingleAccountTabs />
     </Box>
   )
 }
