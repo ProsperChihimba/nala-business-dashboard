@@ -1,10 +1,11 @@
-import Accounts from './components/accounts';
+// import Accounts from './components/accounts';
+import AccountView from './components/accounts/account_view';
 
 function App() {
 
   return (
     <>
-      <Accounts />
+      <AccountView />
     </>
   )
 }
