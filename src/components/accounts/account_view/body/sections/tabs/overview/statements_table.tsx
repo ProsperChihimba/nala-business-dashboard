@@ -2,7 +2,7 @@ import { Box, Flex, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Badge } fro
 import { Divider, Typography } from 'antd';
 import { FiChevronRight } from 'react-icons/fi';
 
-const TransactionsTable = () => {
+const StatementsTable = () => {
 
     const { Text } = Typography;
   return (
@@ -11,7 +11,7 @@ const TransactionsTable = () => {
         fontFamily='IBM Plex Sans, sans-serif'
         border='1px solid #D9D9D9'
         borderRadius='10px'
-        marginTop='30px'
+        marginTop='20px'
     >
         {/* table title */}
         <Flex padding='10px 20px' justifyContent='space-between' alignItems='center'>
@@ -23,7 +23,7 @@ const TransactionsTable = () => {
                     color: '#454545',
                 }}
             >
-                Latest transactions
+                Latest statements
             </Text>
 
             <Flex>
@@ -92,4 +92,4 @@ const TransactionsTable = () => {
   )
 }
 
-export default TransactionsTable
+export default StatementsTable

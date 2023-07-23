@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import AccountInfromation from './account_infromation'
 import TransactionsTable from './transactions_table'
+// import StatementsTable from './statements_table'
 
 const AccountOverview = () => {
   return (
@@ -14,6 +15,9 @@ const AccountOverview = () => {
 
         {/* transactions table */}
         <TransactionsTable />
+
+        {/* statements tabke */}
+        {/* <StatementsTable /> */}
     </Box>
   )
 }

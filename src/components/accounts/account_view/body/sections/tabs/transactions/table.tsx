@@ -1,6 +1,5 @@
-import { Box, Flex, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Badge } from '@chakra-ui/react'
-import { Divider, Typography } from 'antd';
-import { FiChevronRight } from 'react-icons/fi';
+import { Box, Flex, TableContainer, Tbody, Td, Th, Thead, Tr, Badge, Table, } from '@chakra-ui/react'
+import {  Divider, Typography } from 'antd'
 
 const TransactionsTable = () => {
 
@@ -23,22 +22,9 @@ const TransactionsTable = () => {
                     color: '#454545',
                 }}
             >
-                Latest transactions
+                Recent
             </Text>
 
-            <Flex>
-                <Text
-                    style={{
-                        fontFamily: 'IBM Plex Sans, sans-serif',
-                        fontSize: '10px',
-                        fontWeight: 400,
-                        color: '#073DFC',
-                    }}
-                >
-                    View All
-                </Text>
-                <FiChevronRight size='15px' style={{ marginLeft: 8 }} color='#073DFC' />
-            </Flex>
         </Flex>
 
         <Divider style={{ marginTop: '0px', marginBottom: '10px' }} />
@@ -54,10 +40,9 @@ const TransactionsTable = () => {
                     <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Amount</Th>
                     <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Initiated by</Th>
                     <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}></Th>
-                    <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}></Th>
                 </Tr>
                 </Thead>
-                <Tbody 
+                <Tbody
                     overflow='auto'
                     sx={{
                         "&::-webkit-scrollbar": {
@@ -80,9 +65,6 @@ const TransactionsTable = () => {
                             >
                                 Success
                             </Badge>
-                        </Td>
-                        <Td fontSize='10px'>
-                            <FiChevronRight size='15px' style={{ marginLeft: 8 }} color='#000' />
                         </Td>
                     </Tr>
                 </Tbody>
