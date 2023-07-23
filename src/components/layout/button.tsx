@@ -5,7 +5,7 @@ import { ReactElement } from 'react';
 interface ButtonProps {
   label: string;
   background: string;
-  icon: ReactElement;
+  icon?: ReactElement;
   color: string,
   width: string,
   borderColor: string,

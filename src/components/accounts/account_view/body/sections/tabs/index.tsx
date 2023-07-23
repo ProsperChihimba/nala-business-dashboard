@@ -1,36 +1,50 @@
-import { Tabs, TabsProps } from 'antd';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
+import AccountOverview from "./overview"
+
 
 const SingleAccountTabs = () => {
 
-    // tabs items
-    const items: TabsProps['items'] = [
-        {
-          key: '1',
-          label: `Overview`,
-          children: `Content of Tab Pane 1`,
-        },
-        {
-          key: '2',
-          label: `Transactions`,
-          children: `Content of Tab Pane 2`,
-        },
-        {
-          key: '3',
-          label: `Statements`,
-          children: `Content of Tab Pane 3`,
-        },
-      ];
   return (
-    <Tabs 
-        defaultActiveKey="1" 
-        items={items}
-        tabBarStyle={{
-            fontFamily: 'IBM Plex Sans, sans-serif',
-            color: '#000000',
-            fontWeight: 400,
-            fontSize: '10px',
-        }}
-    />
+    <Tabs
+      fontFamily='IBM Plex Sans, sans-serif'
+      color='#6D6D6D'
+    >
+      {/* tabs header */}
+      <TabList>
+        <Tab 
+          fontWeight='500'
+          fontSize='13px'
+        >
+          Overview
+        </Tab>
+        <Tab 
+          fontWeight='500'
+          fontSize='13px'
+        >
+          Transactions
+        </Tab>
+        <Tab 
+          fontWeight='500'
+          fontSize='13px'
+        >
+          Statements
+        </Tab>
+      </TabList>
+
+      {/* tabs body */}
+
+      <TabPanels>
+        <TabPanel padding='0px'>
+          <AccountOverview />
+        </TabPanel>
+        <TabPanel>
+          <p>two!</p>
+        </TabPanel>
+        <TabPanel>
+          <p>three!</p>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   )
 }
 
