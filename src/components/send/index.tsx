@@ -1,5 +1,6 @@
 import { Box, Center } from '@chakra-ui/react'
-import RecipientDetails from './sections/recipient'
+// import RecipientDetails from './sections/recipient'
+import PaymentDetals from './sections/payment_details'
 
 const SendTransaction = () => {
   return (
@@ -11,7 +12,7 @@ const SendTransaction = () => {
 
         {/*sections  */}
         <Center>
-            <RecipientDetails />
+            <PaymentDetals />
         </Center>
     </Box>
   )
