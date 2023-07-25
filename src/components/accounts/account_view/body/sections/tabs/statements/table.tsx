@@ -1,7 +1,8 @@
 import { Box, Flex, TableContainer, Tbody, Td, Th, Thead, Tr, Badge, Table, } from '@chakra-ui/react'
 import {  Divider, Typography } from 'antd'
+import { TbFileDownload } from 'react-icons/tb';
 
-const TransactionsTable = () => {
+const StatementsTble = () => {
 
     const { Text } = Typography;
   return (
@@ -23,7 +24,7 @@ const TransactionsTable = () => {
                     color: '#454545',
                 }}
             >
-                Recent
+                Latest statements
             </Text>
 
         </Flex>
@@ -36,10 +37,7 @@ const TransactionsTable = () => {
             <Table size='sm' bg='white' rounded='md' variant='unstyled' mb='20px' border='1px' >
                 <Thead bg='white' rounded='3xl' style={{color: '#000000', }}>
                 <Tr style={{  borderRadius: '7px', borderWidth: '1px', borderColor: 'transparent'}}>
-                    <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Date</Th>
-                    <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>To</Th>
-                    <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Amount</Th>
-                    <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Initiated by</Th>
+                    <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Statement period</Th>
                     <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}></Th>
                 </Tr>
                 </Thead>
@@ -52,20 +50,12 @@ const TransactionsTable = () => {
                     }} 
                 >
                     <Tr mb='5px' style={{borderRadius: '40px', borderColor: 'transparent', fontSize: '10px', borderWidth: '1px', backgroundColor:'transparent'}}>
-                        <Td fontSize='10px'>Jun 20</Td>
-                        <Td fontSize='10px'>FACEBOOK</Td>
-                        <Td fontSize='10px'>$230</Td>
-                        <Td fontSize='10px'>Prosper Absalom</Td>
-                        <Td fontSize='10px'>
-                            <Badge
-                                colorScheme='green' 
-                                color='#00BA07' 
-                                fontWeight='400' 
-                                fontSize='7px' 
-                                borderRadius='2px'
-                            >
-                                Success
-                            </Badge>
+                        <Td fontSize='10px'>Jun 1 - Jun 30, 2023</Td>
+                        <Td></Td>
+                        <Td></Td>
+                        <Td></Td>
+                        <Td>
+                            <TbFileDownload size='20px' />
                         </Td>
                     </Tr>
                 </Tbody>
@@ -75,4 +65,4 @@ const TransactionsTable = () => {
   )
 }
 
-export default TransactionsTable
+export default StatementsTble

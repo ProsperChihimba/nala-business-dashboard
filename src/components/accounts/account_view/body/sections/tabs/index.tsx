@@ -1,6 +1,7 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
 import AccountOverview from "./overview"
 import AccountTransactions from "./transactions"
+import AccountStatements from "./statements"
 
 
 const SingleAccountTabs = () => {
@@ -35,15 +36,22 @@ const SingleAccountTabs = () => {
       {/* tabs body */}
 
       <TabPanels>
+
+        {/* overview tab */}
         <TabPanel padding='0px'>
           <AccountOverview />
         </TabPanel>
+
+        {/* transactions tab */}
         <TabPanel padding='0px'>
           <AccountTransactions />
         </TabPanel>
-        <TabPanel>
-          <p>three!</p>
+
+        {/* statements tab */}
+        <TabPanel padding='0px'>
+          <AccountStatements />
         </TabPanel>
+
       </TabPanels>
     </Tabs>
   )
