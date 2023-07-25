@@ -1,11 +1,12 @@
 // import Accounts from './components/accounts';
-import AccountView from './components/accounts/account_view';
+// import AccountView from './components/accounts/account_view';
+import DepositPage from "./components/deposit"
 
 function App() {
 
   return (
     <>
-      <AccountView />
+      <DepositPage />
     </>
   )
 }
