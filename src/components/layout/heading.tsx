@@ -12,7 +12,7 @@ const DepositHeading = ({title}: HeadingProps) => {
     <Text
         style={{
             fontFamily: 'IBM Plex Sans, sans-serif',
-            fontSize: '30px',
+            fontSize: '25px',
             fontWeight: 600,
             color: '#000',
         }}

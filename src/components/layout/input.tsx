@@ -27,7 +27,7 @@ const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, perc
         <Text
             style={{
                 fontFamily: 'IBM Plex Sans, sans-serif',
-                fontSize: '18px',
+                fontSize: '15px',
                 fontWeight: 500,
                 color: '#000',
                 marginBottom: '5px',

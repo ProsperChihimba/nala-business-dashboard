@@ -1,9 +1,9 @@
 import { Flex } from '@chakra-ui/react'
-import DepositHeading from './utils/heading'
+import DepositHeading from '../../layout/heading'
 import { Typography } from 'antd';
-import DepositInput from './utils/input';
 import { FiChevronDown } from 'react-icons/fi';
 import AppButton from '../../layout/button';
+import DepositInput from '../../layout/input';
 
 const AddFunds = () => {
 
@@ -38,7 +38,7 @@ const AddFunds = () => {
             rightElement={<FiChevronDown size='15px' style={{ marginLeft: 8 }} color='#000000' />}
         />
 
-        <DepositInput 
+        <DepositInput
             title='To'
             value='Nala business account'
             placeholder='Account'
