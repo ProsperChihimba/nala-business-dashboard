@@ -19,6 +19,7 @@ interface Props {
         total: number;
         registered__year: number;
     }[];
+    height: string;
 }
 
 interface Data {
@@ -28,7 +29,7 @@ interface Data {
     registered__year: number;
 }
 
-const MerchantsChart = ({id, id_url, color, type, graph} : Props) => {
+const MerchantsChart = ({id, id_url, color, type, graph, height} : Props) => {
 
 
         const monthNames = [
@@ -70,7 +71,7 @@ const MerchantsChart = ({id, id_url, color, type, graph} : Props) => {
     });
         
     return (
-        <Box h='144px' marginLeft="-30px">
+        <Box h={height} marginLeft="-30px">
             {/* chart */}
             <ResponsiveContainer width="100%" height='100%'>
                 <AreaChart data={newData}>

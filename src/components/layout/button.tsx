@@ -6,17 +6,19 @@ interface ButtonProps {
   label: string;
   background: string;
   icon?: ReactElement;
-  color: string,
-  width: string,
-  borderColor: string,
+  color: string;
+  width: string;
+  borderColor: string;
+  weigth?: string;
+  leftIcon?: ReactElement;
 }
 
-const AppButton = ({label, background, icon, color, width, borderColor} : ButtonProps) => {
+const AppButton = ({label, background, icon, color, width, borderColor, weigth, leftIcon} : ButtonProps) => {
 
   return (
     <Button
       fontFamily='IBM Plex Sans, sans-serif'
-      fontWeight='500'
+      fontWeight={weigth ? weigth : '500'}
       fontSize='13px'
       height='30px'
       background={background}
@@ -29,6 +31,7 @@ const AppButton = ({label, background, icon, color, width, borderColor} : Button
       borderColor={borderColor}
       rightIcon={icon}
       width={width}
+      leftIcon={leftIcon}
     >
       {label}
     </Button>

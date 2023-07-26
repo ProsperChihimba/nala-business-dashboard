@@ -1,23 +1,30 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import { Typography } from 'antd';
+import { ReactElement } from 'react';
 
-const ArticleTag = () => {
+interface ArticleProps {
+    rightElement: ReactElement;
+    text: string;
+
+}
+
+const ArticleTag = ({rightElement, text}: ArticleProps) => {
 
     const { Text } = Typography;
   return (
-    <Flex alignItems='center' gap='10px' border='1px' rounded='3xl' paddingBottom='0px' paddingTop='0px' paddingLeft='8px' paddingRight='8px'>
-        <Box boxSize='6px' bg='#F7CB73' rounded='3xl'></Box>
+    <Flex alignItems='center' gap='8px' border='1px' rounded='3xl' paddingBottom='0px' paddingTop='0px' paddingLeft='5px' paddingRight='5px'>
+        {rightElement}
 
         {/* tag name */}
         <Text
             style={{
                 fontFamily: 'IBM Plex Sans, sans-serif',
-                fontSize: '11px',
+                fontSize: '10px',
                 fontWeight: 500,
                 color: '#6D6D6D',
             }}
         >
-            Business
+            {text}
         </Text>
     </Flex>
   )

@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { Image, Typography } from 'antd'
 import learn1 from '../../../../../assets/learn1.svg'
 import ArticleTag from './tag';
@@ -55,7 +55,10 @@ const LearnArticle = () => {
 
         {/* tags */}
         <Flex gap='10px' marginTop='10px'>
-            <ArticleTag />
+            <ArticleTag 
+                rightElement={<Box boxSize='6px' bg='#F7CB73' rounded='3xl'></Box>}
+                text='Business'
+            />
         </Flex>
     </Flex>
   )

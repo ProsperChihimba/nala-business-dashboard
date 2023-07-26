@@ -129,6 +129,7 @@ const BusinessCardBox = () => {
               color='#60A9FF'
               graph={data}
               type='Completed Goals'
+              height="144px"
             />
 
 
