@@ -11,13 +11,13 @@ const FilterSection = () => {
       
       {/* search input */}
       <Box  width='35%'>
-      <Input
-        placeholder='Search for transaction'
-        style={{
-          fontFamily: 'IBM Plex Sans, sans-serif',
-          fontSize: '13px'
-        }}
-      />
+        <Input
+          placeholder='Search for transaction'
+          style={{
+            fontFamily: 'IBM Plex Sans, sans-serif',
+            fontSize: '13px'
+          }}
+        />
       </Box>
 
       {/*  */}
