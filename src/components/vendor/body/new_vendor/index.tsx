@@ -1,5 +1,6 @@
 import { Box, Center } from '@chakra-ui/react'
-import VendorDetails from './vendor_details'
+// import VendorDetails from './vendor_details'
+import AccountDetails from './account_details'
 
 const NewVendor = () => {
   return (
@@ -11,7 +12,7 @@ const NewVendor = () => {
 
          {/*sections  */}
          <Center>
-            <VendorDetails />
+            <AccountDetails />
          </Center>
     </Box>
   )
