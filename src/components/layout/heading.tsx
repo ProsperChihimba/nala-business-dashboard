@@ -14,7 +14,7 @@ const DepositHeading = ({title}: HeadingProps) => {
             fontFamily: 'IBM Plex Sans, sans-serif',
             fontSize: '25px',
             fontWeight: 600,
-            color: '#000',
+            color: '#454545',
         }}
     >
         {title}
