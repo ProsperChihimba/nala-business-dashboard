@@ -3,13 +3,14 @@
 // import DepositPage from "./components/deposit"
 // import SendTransaction from "./components/send"
 // import Vendors from "./components/vendor"
-import NewVendor from "./components/vendor/body/new_vendor"
+import TeamPage from "./components/team"
+// import NewVendor from "./components/vendor/body/new_vendor"
 
 function App() {
 
   return (
     <>
-      <NewVendor />
+      <TeamPage />
     </>
   )
 }

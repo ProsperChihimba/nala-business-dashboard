@@ -46,9 +46,9 @@ const AddAccount = ({title, marginBottom, marginTop}: AccountProps) => {
            border='1px solid #D9D9D9'
            backgroundColor='white'
            borderRadius='10px'
-           padding='18px'
+           padding='19px'
            marginTop={marginTop}
-              marginBottom={marginBottom}
+           marginBottom={marginBottom}
         >
 
             <Flex alignItems='center' justifyContent='space-between'>
@@ -69,7 +69,7 @@ const AddAccount = ({title, marginBottom, marginTop}: AccountProps) => {
                     label='Add account'
                     background='#fff'
                     color='#000'
-                    width='160px'
+                    width='140px'
                     borderColor='#D9D9D9'
                 />
             </Flex>
