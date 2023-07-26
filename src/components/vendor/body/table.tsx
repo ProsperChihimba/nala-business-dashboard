@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
+import { Box, Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
 import { Divider, Input, Typography } from "antd"
 import { FiChevronRight } from "react-icons/fi";
 import { TbFileDownload } from "react-icons/tb";
