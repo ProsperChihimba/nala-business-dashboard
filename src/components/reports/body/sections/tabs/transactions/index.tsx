@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import TransactionsTable from './table'
 import FilterSection from './filter_section'
+import ReportBox from '../../../../../layout/report_box'
 
 const TransactionsReport = () => {
   return (
@@ -8,6 +9,9 @@ const TransactionsReport = () => {
         color='black'
         marginTop='30px'
     >
+        {/*  */}
+        <ReportBox />
+        
         {/* filter section */}
         <FilterSection />
         
