@@ -11,9 +11,10 @@ interface InputProps  {
     percentage? : string;
     marginTop: string,
     marginBottom: string,
+    width?: string,
 }
 
-const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, percentage, marginBottom, marginTop} : InputProps) => {
+const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, percentage, marginBottom, marginTop, width} : InputProps) => {
 
     const { Text } = Typography;
   return (
@@ -35,7 +36,7 @@ const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, perc
         >
             {title}
         </Text>
-        <InputGroup width='600px'>
+        <InputGroup width={width ? width : '600px'}>
             <Input
                 pl='25px'
                 placeholder={placeholder}

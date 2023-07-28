@@ -12,7 +12,7 @@ const ReportBox = () => {
         height='120px'
         backgroundColor='#C6F8FF'
         padding='10px'
-        marginBottom='20px'
+        marginBottom='25px'
         width='20%'
         direction='column'
     >
