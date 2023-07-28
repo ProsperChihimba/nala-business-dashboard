@@ -1,4 +1,4 @@
-import { Box, Flex, Input, InputGroup, InputRightElement, Spacer } from '@chakra-ui/react'
+import { Box, Flex, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { Typography } from 'antd';
 import { FiChevronDown } from 'react-icons/fi';
 import DepositHeading from '../../../layout/heading';
