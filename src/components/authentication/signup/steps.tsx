@@ -1,4 +1,4 @@
-import { Box, Flex, Step, StepDescription, StepIndicator, StepSeparator, StepStatus, StepTitle, Stepper, useSteps } from '@chakra-ui/react'
+import { Box, Center, Flex, Step, StepDescription, StepIndicator, StepSeparator, StepStatus, StepTitle, Stepper, useSteps } from '@chakra-ui/react'
 import { Image } from 'antd'
 
 // assets
@@ -43,26 +43,28 @@ const SignupSteps = () => {
       </Flex>
 
       {/* steps */}
-      <Stepper index={activeStep} orientation='vertical' height='400px' gap='0' w='80%'>
-      {steps.map((step, index) => (
-        <Step key={index}>
-          <StepIndicator border='0px solid #DCDCDC' bg='white' borderRadius='10px'>
-            <StepStatus
-              complete={<MdBusiness />}
-              incomplete={<MdBusiness />}
-              active={<MdBusiness />}
-            />
-          </StepIndicator>
+     <Center>
+      <Stepper index={activeStep} orientation='vertical' height='400px' gap='0' w='80%' marginTop='90px'>
+          {steps.map((step, index) => (
+            <Step key={index}>
+              <StepIndicator border='0px solid #DCDCDC' bg='white' borderRadius='10px'>
+                <StepStatus
+                  complete={<MdBusiness />}
+                  incomplete={<MdBusiness />}
+                  active={<MdBusiness />}
+                />
+              </StepIndicator>
 
-          <Box flexShrink='0' w='100%'>
-            <StepTitle style={{fontWeight: 400, fontSize: '16px'}}>{step.title}</StepTitle>
-            <StepDescription style={{fontWeight: 400, fontSize: '12px', color: '#9A9A9A'}}>{step.description}</StepDescription>
-          </Box>
+              <Box flexShrink='0' w='100%'>
+                <StepTitle style={{fontWeight: 400, fontSize: '16px'}}>{step.title}</StepTitle>
+                <StepDescription style={{fontWeight: 400, fontSize: '12px', color: '#9A9A9A'}}>{step.description}</StepDescription>
+              </Box>
 
-          <StepSeparator />
-        </Step>
-      ))}
-    </Stepper>
+              <StepSeparator />
+            </Step>
+          ))}
+      </Stepper>
+     </Center>
     </Box>
   )
 }
