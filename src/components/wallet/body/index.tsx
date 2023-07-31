@@ -1,5 +1,7 @@
 import { Box } from "@chakra-ui/react"
 import WalletHeader from "./header"
+import WalletCard from "./cards"
+import TransactionsTable from "../../reports/body/sections/tabs/overview/transactions_table"
 
 const WalletBody = () => {
   return (
@@ -14,6 +16,12 @@ const WalletBody = () => {
 
         {/* header */}
         <WalletHeader />
+
+        {/* body */}
+        <WalletCard />
+
+        {/* table */}
+        <TransactionsTable />
 
     </Box>
   )
