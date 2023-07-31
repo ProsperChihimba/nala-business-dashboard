@@ -1,30 +1,72 @@
 import './index.css'; // Make sure to import the CSS file with the styles
-import logo from '../../../../assets/logo.png'
-import chip from '../../../../assets/chip.png'
+import logo from '../../../../assets/ms.svg'
+import lines from '../../../../assets/lines.svg'
+import { Flex, Spacer } from '@chakra-ui/react';
+import { Image, Typography } from 'antd';
 
 const CreditCard = () => {
+
+  const { Text } = Typography;
   return (
-        <div className="container">
-          <header>
-            <span className="logo">
-              <img src={logo} alt="" />
-              <h5>Master Card</h5>
-            </span>
-            <img src={chip} alt="" className="chip" />
-          </header>
-    
-          <div className="card-details">
-            <div className="name-number">
-              <h6>Card Number</h6>
-              <h5 className="number">8050 5040 2030 3020</h5>
-              <h5 className="name">Prem Kumar Shahi</h5>
-            </div>
-            <div className="valid-date">
-              <h6>Valid Thru</h6>
-              <h5>05/28</h5>
-            </div>
-          </div>
-        </div>
+        <Flex className="container" direction='column' paddingTop='10px' paddingBottom='10px' paddingRight='20px'paddingLeft='20px' >
+          <Text
+              style={{
+                  fontFamily: 'IBM Plex Sans, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#FFFFFF',
+                  marginBottom: '43px',
+              }}
+          >
+              Sponsored Ads
+          </Text>
+
+          {/*  */}
+          <Flex justifyContent='space-between' alignItems='center'>
+            <Text
+                style={{
+                    fontFamily: 'IBM Plex Sans, sans-serif',
+                    fontSize: '18px',
+                    fontWeight: 500,
+                    color: '#B5B5B5',
+                }}
+            >
+                4374 **** **** ***
+            </Text>
+            <Image src={lines} alt="logo" preview={false} />
+          </Flex>
+
+          {/*  */}
+          <Spacer />
+
+          {/*  */}
+          <Flex justifyContent='space-between' alignItems='center'>
+            <Flex direction='column'>
+              <Text
+                  style={{
+                      fontFamily: 'IBM Plex Sans, sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      color: '#FFFFFF',
+                  }}
+              >
+                  Prosper Absalom
+              </Text>
+                <Text
+                    style={{
+                        fontFamily: 'IBM Plex Sans, sans-serif',
+                        fontSize: '8px',
+                        fontWeight: 400,
+                        color: '#B5B5B5',
+                    }}
+                >
+                    Exp **/** CVV ***
+                </Text>
+            </Flex>
+            <Image src={logo} alt="logo" preview={false} />
+          </Flex>
+          {/*  */}
+        </Flex>
   );
 };
 
