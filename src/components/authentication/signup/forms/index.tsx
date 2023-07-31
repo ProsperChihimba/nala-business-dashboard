@@ -7,7 +7,9 @@ import {
     Stepper, 
     useSteps 
 } from '@chakra-ui/react'
-import PersonalDetails from './personal_details'
+// import PersonalDetails from './personal_details'
+// import CompanyWebsite from './company_website'
+import CompanySize from './company_size'
 
 const steps = [1,2, 3, 4, 5]
 
@@ -36,7 +38,7 @@ const SignupForms = () => {
 
        <Center>
            {/* personal details */}
-            <PersonalDetails />
+            <CompanySize />
         </Center>
     </Flex>
   )
