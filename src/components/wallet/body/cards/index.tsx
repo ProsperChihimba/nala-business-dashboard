@@ -1,4 +1,4 @@
-import { Box, Flex, Slider, SliderFilledTrack, SliderTrack, Spacer } from '@chakra-ui/react'
+import { Flex, Slider, SliderFilledTrack, SliderTrack, Spacer } from '@chakra-ui/react'
 import CreditCard from './card'
 import AppButton from '../../../layout/button'
 import { Divider, Typography } from 'antd'

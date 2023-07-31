@@ -1,219 +1,51 @@
-:root {
+/* Import Google Font - Poppins */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&display=swap");
 
-    --glitter: url("https://assets.codepen.io/13471/silver-glitter-background.png");
-    /* --duration: 6.66s; */
-  
-  }
-  
-  .card-front:before {
-  
-    content: "";
-    inset: 0;
-    position: absolute;
-    transform: translate3d(0, 0, 0.01px);
-  
-    background-image: var(--glitter), var(--glitter),
-      linear-gradient(120deg, black 25%, white, black 75%);
-    background-size: 100% 100%, 80% 80%, 200% 200%;
-    background-blend-mode: multiply, multiply, overlay;
-    background-position: 50% 50%, 50% 50%, 50% 50%;
-  
-    mix-blend-mode: color-dodge;
-    filter: brightness(2) contrast(0.8);
-  
-    animation: bg var(--duration) ease infinite;
-  
-  }
-  
-  .card-front {
-  
-    display: grid;
-    position: relative;
-    transform: translate3d(0, 0, 0.01px);
-    width: 350px;
-    max-width: 350px;
-    height: 200px;
-    aspect-ratio: 3/2;
-  
-    border-radius: 20px;
-  
-    background-image: url(https://simey-credit-card.netlify.app/img/bgs/default.jpg);
-    background-size: cover;
-  
-    box-shadow: 0 10px 20px -15px rgba(15, 5, 20, 1), 0 10px 20px -15px rgba(15, 5, 20, 1);
-    overflow: hidden;
-    animation: tilt var(--duration) ease infinite;
-    image-rendering: optimizequality;
-  
-  }
-  
-  .card-front:after {
-    
-    content: "";
-    background: none, none, linear-gradient(125deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.4) 0.1%, rgba(255,255,255,0) 60%);
-    background-size: 200% 200%;
-    mix-blend-mode: hard-light;
-    animation: bg var(--duration) ease infinite;
-    
-  }
-  
-  
-  .card-front * {
-  
-    font-family: PT Mono, monospace;
-  
-  }
-  
-  .cardLogo,
-  .expiry,
-  .name,
-  .number,
-  .chip,
-  .icon {
-  
-    color: #ccc;
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    letter-spacing: 0.075em;
-    text-transform: uppercase;
-    font-size: 10px;
-    inset: 5%;
-    text-shadow: -1px -1px 0px rgba(255,255,255,0.5),1px -1px 0px rgba(255,255,255,0.5),1px 1px 0px rgba(0,0,0,0.5),1px -1px 0px rgba(0,0,0,0.5);
-    z-index: 5;
-  
-  }
-  
-  .name, .number, .expiry {
-    background-image: linear-gradient(to bottom, #ededed 20%, #bababa 70%), none,
-      linear-gradient(120deg, transparent 10%, white 40%, white 60%, transparent 90%);
-    background-size: cover, cover, 200%;
-    background-position: 50% 50%;
-    background-blend-mode: overlay;
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    animation: bg var(--duration) ease infinite;
-    
-  }
-  
-  .number {
-  
-    font-family: PT Mono, monospace;
-    text-align: center;
-    font-size: 10px;
-    letter-spacing: 0.025em;
-    top: 60%;
-    bottom: auto;
-  
-  }
-  .expiry,
-  .name {
-  
-    top: auto;
-  
-  }
-  
-  .name {
-  
-    right: auto;
-    max-width: 180px;
-    line-height: 1.2;
-    text-align: left;
-  
-  }
-  
-  .expiry {
-  
-    left: auto;
-  
-  }
-  
-  .cardLogo {
-  
-    bottom: auto;
-    left: auto;
-    width: 15%;
-    filter: invert(1) saturate(0) brightness(1) contrast(1.2);
-    mix-blend-mode: screen;
-  
-  }
-  
-  .chip {
-  
-    display: grid;
-    place-items: center;
-    width: 14%;
-    aspect-ratio: 5/4;
-    left: 10%;
-    top: 30%;
-    border-radius: 10% 10% 10% 10% / 15% 15% 15% 15%;
-  
-    background-image: none, none,
-      linear-gradient(120deg, #777 10%, #ddd 40%, #ddd 60%, #777 90%);
-    background-size: 200% 200%;
-    background-position: 50% 50%;
-  
-    overflow: hidden;
-    animation: bg var(--duration) ease infinite;
-  
-  }
-  
-  .chip svg {
-  
-    display: block;
-    width: 90%;
-    fill: none;
-    stroke: #444;
-    stroke-width: 2;
-  
-  }
-  
-  .contactless {
-  
-    position: absolute;
-    left: 23%;
-    top: 30%;
-    width: 12%;
-    rotate: 90deg;
-  
-    stroke-width: 1.25;
-    stroke: currentColor;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.5;
-  
-  }
-  
-  .icon {
-  
-    width: 25%;
-    bottom: auto;
-    right: auto;
-    top: 0;
-    left: 15px;
-    filter: invert(1) hue-rotate(180deg) saturate(5) contrast(2);
-  
-  }
-
-  @keyframes tilt {
-  
-    0%, 100% { transform: translate3d(0, 0, 0.01px) rotateY(-20deg) rotateX(5deg); }
-    50% { transform: translate3d(0, 0, 0.01px) rotateY(20deg) rotateX(5deg); }
-  
-  }
-  
-  @keyframes bg {
-  
-    0%, 100% { background-position: 50% 50%, calc(50% + 1px) calc(50% + 1px), 0% 50%; }
-    50% { background-position: 50% 50%, calc(50% - 1px) calc(50% - 1px), 100% 50%; }
-  
-  }
-  
-  #chip,
-  #contactless {
-  
-    display: none;
-  
-  }
-  
+.container {
+  position: relative;
+  background-image: url("../../../../assets/bg.png");
+  background-size: cover;
+  padding: 25px;
+  border-radius: 28px;
+  max-width: 350px;
+  width: 350px;
+  height: 190px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+header,
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo img {
+  width: 30px;
+  margin-right: 10px;
+}
+h5 {
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+}
+header .chip {
+  width: 30px;
+}
+h6 {
+  color: #fff;
+  font-size: 10px;
+  font-weight: 400;
+}
+h5.number {
+  margin-top: 4px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+h5.name {
+  margin-top: 20px;
+}
+.container .card-details {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
