@@ -3,14 +3,19 @@ import { Image } from 'antd'
 
 // assets
 import logo from '../../../assets/Logo.svg';
-import { MdBusiness } from 'react-icons/md';
+
+// icons
+import { TbLockCog } from "react-icons/tb";
+import { MdOutlineWorkOutline } from "react-icons/md";
+import { CiGlobe } from "react-icons/ci";
+import { PiUsersThreeThin, PiChartLineUpLight } from "react-icons/pi";
 
 const steps = [
-  { title: 'Business details', description: 'Answer few questions about your business to open your account' },
-  { title: 'Company website', description: 'In order to understand more about your business we need your website address' },
-  { title: 'Company size', description: 'As we’re setting up your business account it’s important for Nala to know your company size' },
-  { title: 'Company revenue', description: 'As our clients it’s import for Nala to know average business revenue' },
-  { title: 'Account password', description: 'Security is our first priority at NALA so it’s for your account to have a password' },
+  { title: 'Business details', description: 'Answer few questions about your business to open your account', icon: <MdOutlineWorkOutline size='18px' /> },
+  { title: 'Company website', description: 'In order to understand more about your business we need your website address', icon: <CiGlobe size='18px' /> },
+  { title: 'Company size', description: 'As we’re setting up your business account it’s important for Nala to know your company size', icon: <PiUsersThreeThin size='18px' /> },
+  { title: 'Company revenue', description: 'As our clients it’s import for Nala to know average business revenue', icon: <PiChartLineUpLight size='18px' /> },
+  { title: 'Account password', description: 'Security is our first priority at NALA so it’s for your account to have a password', icon: <TbLockCog size='18px' /> },
 ]
 
 const SignupSteps = () => {
@@ -49,9 +54,9 @@ const SignupSteps = () => {
             <Step key={index}>
               <StepIndicator border='0px solid #DCDCDC' bg='white' borderRadius='10px'>
                 <StepStatus
-                  complete={<MdBusiness />}
-                  incomplete={<MdBusiness />}
-                  active={<MdBusiness />}
+                  complete={step.icon}
+                  incomplete={step.icon}
+                  active={step.icon}
                 />
               </StepIndicator>
 
