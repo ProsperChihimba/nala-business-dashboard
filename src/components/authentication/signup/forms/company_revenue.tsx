@@ -5,33 +5,33 @@ import { Radio, Typography } from 'antd';
 
 const { Text } = Typography;
 
-const CompanySize = () => {
+const CompanyRevenue = () => {
     
   return (
     <Flex direction='column' marginTop='10vh'>
         {/* heading */}
-        <DepositHeading title='What’s the company size' />
+        <DepositHeading title='What’s the company average revenue' />
 
         <SingleInput
-            title='1 - 10'
+            title='Under $400K'
             marginBottom='15px'
             marginTop='40px'
         />
 
         <SingleInput
-            title='5 - 20'
+            title='$400K - $1M'
             marginBottom='15px'
             marginTop='20px'
         />
 
         <SingleInput
-            title='21 - 50'
+            title='$1M - $12M'
             marginBottom='15px'
             marginTop='20px'
         />
 
         <SingleInput
-            title='51 - 100'
+            title='$12M+'
             marginBottom='100px'
             marginTop='20px'
         />
@@ -50,7 +50,7 @@ const CompanySize = () => {
   )
 }
 
-export default CompanySize
+export default CompanyRevenue
 
 
 // 
