@@ -4,6 +4,11 @@ import AppButton from '../../../layout/button';
 
 const EmailSent = () => {
   const { Text } = Typography;
+
+    //   redirect to accounts page after 3 seconds
+  setTimeout(() => {
+        window.location.href = '/accounts'
+    }, 3000);
   return (
     <Center>
       <Flex direction='column' marginTop='25vh' alignItems='center' width='32%'>

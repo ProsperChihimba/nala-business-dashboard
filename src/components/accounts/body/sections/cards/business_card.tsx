@@ -6,6 +6,7 @@ import { VscChevronRight } from "react-icons/vsc";
 import AppButton from "../../../../layout/button";
 import { FiChevronDown } from "react-icons/fi";
 import MerchantsChart from "../../../../layout/chart";
+import { useNavigate } from "react-router-dom";
 
 const BusinessCardBox = () => {
 
@@ -19,6 +20,8 @@ const BusinessCardBox = () => {
   ]
 
   const { Text } = Typography;
+
+  const navigate = useNavigate();
   return (
     <Box
         width='48%'
@@ -50,18 +53,23 @@ const BusinessCardBox = () => {
             <Spacer />
 
             {/* view section */}
-            <Text
-                style={{
-                    fontFamily: 'IBM Plex Sans, sans-serif',
-                    fontSize: '13px',
-                    fontWeight: 400,
-                    color: '#073DFC',
-                    marginRight: '3px'
-                }}
-            >
-                View transactions
-            </Text>
-            <VscChevronRight size='20px' color='#073DFC' />
+           <Flex
+            cursor='pointer'
+            onClick={()=> navigate('/account-view')}
+           >
+                <Text
+                    style={{
+                        fontFamily: 'IBM Plex Sans, sans-serif',
+                        fontSize: '13px',
+                        fontWeight: 400,
+                        color: '#073DFC',
+                        marginRight: '3px'
+                    }}
+                >
+                    View transactions
+                </Text>
+                <VscChevronRight size='20px' color='#073DFC' />
+           </Flex>
         </Flex>
 
 

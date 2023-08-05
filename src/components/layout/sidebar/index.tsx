@@ -14,6 +14,7 @@ import { FaRegUser } from "react-icons/fa";
 
 // assets
 import logo from '../../../assets/Logo.svg';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -26,6 +27,7 @@ interface NavigationItem {
     path?: string;
     icon: ReactNode;
     isSelected?: boolean;
+    subPath?: string[];
 }
 
 const SideBar = () => {
@@ -34,12 +36,12 @@ const SideBar = () => {
     const personalMenu: NavigationItem[] = [
         {
             label: "Wallet", 
-            path: 'wallet', 
+            path: '/wallet', 
             icon: <BiWallet width='20px' height='20px' color='#000000' />, 
         },
         {
             label: "Inbox", 
-            path: 'inbox', 
+            path: '/inbox', 
             icon: <FiInbox width='20px' height='20px' color='#000000' />, 
         },
     ];
@@ -50,10 +52,11 @@ const SideBar = () => {
             label: "Accounts", 
             path: '/accounts', 
             icon: <BsBank2 width='20px' height='20px' color='#000000' />, 
+            subPath: ['/account-view']
         },
         {
             label: "Expenses", 
-            path: '/', 
+            path: '/epenses', 
             icon: <CiReceipt width='20px' height='20px' color='#000000' />, 
         },
         {
@@ -110,6 +113,7 @@ const SideBar = () => {
                         label={item.label}
                         isSelected={pathname === item.path } 
                         key={index} 
+                        path={item.path}
                     />
                 ))
             }
@@ -132,8 +136,9 @@ const SideBar = () => {
                     <SelectedNavigationItem 
                         icon={item.icon} 
                         label={item.label}
-                        isSelected={pathname === item.path } 
+                        isSelected={pathname === item.path || item.subPath?.includes(pathname) } 
                         key={index} 
+                        path={item.path}
                     />
                 ))
             }
@@ -145,7 +150,9 @@ export default SideBar;
 
 
 // single menu item
-const SelectedNavigationItem = ({ label, icon, isSelected } : NavigationItem) => {
+const SelectedNavigationItem = ({ label, icon, isSelected, path } : NavigationItem) => {
+
+    const navigate = useNavigate();
     return (
         <Box
             w='100%'
@@ -155,6 +162,7 @@ const SelectedNavigationItem = ({ label, icon, isSelected } : NavigationItem) =>
             background={isSelected ? 'rgba(242, 242, 242, 0.80)' : 'none'}
             marginBottom='20px'
             cursor='pointer'
+            onClick={()=> {isSelected ? null : navigate(path)}}
         >
             <Flex gap='15px' alignItems='center'>
                 {icon}

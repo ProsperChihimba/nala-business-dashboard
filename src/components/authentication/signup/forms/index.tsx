@@ -13,6 +13,7 @@ import CompanySize from './company_size'
 import CompanyRevenue from './company_revenue'
 import SetPassword from './password'
 import AppButton from '../../../layout/button'
+import { useNavigate } from 'react-router-dom'
 
 const steps = [
     {
@@ -45,7 +46,9 @@ const SignupForms = () => {
     const { activeStep, setActiveStep } = useSteps({
         index: 1,
         count: steps.length,
-      })
+    })
+
+    const navigate = useNavigate();
 
   return (
     <Flex marginTop='40px' direction='column' paddingTop='40px'>
@@ -79,7 +82,7 @@ const SignupForms = () => {
                             width='160px'
                             borderColor='#073DFC'
                             onClick={() => {
-                                setActiveStep(activeStep + 1)
+                                step.index === 5 ? navigate('/email-sent') : setActiveStep(activeStep + 1)
                             }}
                         />
                     </Flex>
