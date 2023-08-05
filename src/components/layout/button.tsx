@@ -3,6 +3,7 @@ import { Button } from '@chakra-ui/react'
 import { ReactElement } from 'react';
 import type { MenuProps } from 'antd';
 import { Dropdown } from 'antd';
+import './style.css';
 
 interface ButtonProps {
   label: string;
@@ -23,7 +24,9 @@ const AppButton = ({label, background, icon, color, width, borderColor, weigth, 
   return (
     <>
       {hasDropdown ? (
-        <Dropdown menu={{ items }}>
+        <Dropdown
+          menu={{ items }}
+        >
           <Button
             fontFamily='IBM Plex Sans, sans-serif'
             fontWeight={weigth ? weigth : '500'}

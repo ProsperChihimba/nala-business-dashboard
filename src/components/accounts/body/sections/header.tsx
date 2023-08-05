@@ -7,6 +7,7 @@ import DropdownItem from '../../../layout/dropdown_item';
 import { FaRegPaperPlane } from "react-icons/fa";
 import { RiBankLine } from "react-icons/ri";
 import { BsCreditCard2Front } from "react-icons/bs";
+import { BiWallet } from "react-icons/bi";
 
 
 const AccountsHeader = () => {
@@ -14,38 +15,89 @@ const AccountsHeader = () => {
   const { Text } = Typography;
 
 //   move money dropdown
-const items: MenuProps['items'] = [
+    const moveMoneyItems: MenuProps['items'] = [
+        {
+        key: '1',
+        label: (
+            <DropdownItem
+                label='Make payment'
+                descritpion='Through ACH, wire or check'
+                icon={<FaRegPaperPlane size='20px' style={{ marginRight: 8 }} color='#000000' />}
+            />
+        ),
+        style: {
+            marginTop: '8px',
+            marginLeft: '8px',
+            marginRight: '8px',
+            marginBottom: '10px',
+        }
+        },
+        {
+        key: '2',
+        label: (
+            <DropdownItem
+                label='Deposit money'
+                descritpion='Fund your Nala wallet or business account'
+                icon={<RiBankLine size='20px' style={{ marginRight: 8 }} color='#000000' />}
+            />
+        ),
+        style: {
+            marginLeft: '8px',
+            marginRight: '8px',
+            marginBottom: '10px',
+        }
+        },
+        {
+        key: '3',
+        label: (
+            <DropdownItem
+                label='Make credit payment'
+                descritpion='Through your Nala credit card'
+                icon={<BsCreditCard2Front size='20px' style={{ marginRight: 8 }} color='#000000' />}
+            />
+        ),
+        style: {
+            marginBottom: '8px',
+            marginLeft: '8px',
+            marginRight: '8px',
+        }
+        },
+  ];
+
+
+  const manageAccountItems: MenuProps['items'] = [
     {
-      key: '1',
-      label: (
+    key: '1',
+    label: (
         <DropdownItem
-            label='Make payment'
-            descritpion='Through ACH, wire or check'
-            icon={<FaRegPaperPlane size='20px' style={{ marginRight: 8 }} color='#000000' />}
+            label='Create new business wallet'
+            descritpion='Manage additional wallet for your business'
+            icon={<BiWallet size='20px' style={{ marginRight: 8 }} color='#000000' />}
         />
-      ),
+    ),
+    style: {
+        marginTop: '8px',
+        marginLeft: '8px',
+        marginRight: '8px',
+        marginBottom: '10px',
+    }
     },
     {
-      key: '2',
-      label: (
+    key: '2',
+    label: (
         <DropdownItem
-            label='Deposit money'
-            descritpion='Fund your Nala wallet or business account'
-            icon={<RiBankLine size='20px' style={{ marginRight: 8 }} color='#000000' />}
-        />
-      ),
-    },
-    {
-      key: '3',
-      label: (
-        <DropdownItem
-            label='Make credit payment'
-            descritpion='Through your Nala credit card'
+            label='Create credit card'
+            descritpion='Create new credit card for online purchases'
             icon={<BsCreditCard2Front size='20px' style={{ marginRight: 8 }} color='#000000' />}
         />
-      ),
+    ),
+    style: {
+        marginBottom: '8px',
+        marginLeft: '8px',
+        marginRight: '8px',
+    }
     },
-  ];
+];
   return (
     <Flex justifyContent='space-between' alignItems='center' marginBottom='30px' fontFamily='IBM Plex Sans, sans-serif'>
 
@@ -71,6 +123,8 @@ const items: MenuProps['items'] = [
                 icon={<FiChevronDown size='15px' style={{ marginLeft: 8 }} color='#000000' />}
                 width='160px'
                 borderColor='#DCDCDC'
+                hasDropdown={true}
+                items={manageAccountItems}
             />
 
             <AppButton 
@@ -81,7 +135,7 @@ const items: MenuProps['items'] = [
                 width='160px'
                 borderColor='#073DFC'
                 hasDropdown={true}
-                items={items}
+                items={moveMoneyItems}
             />
         </Flex>
 
