@@ -11,9 +11,10 @@ interface ButtonProps {
   borderColor: string;
   weigth?: string;
   leftIcon?: ReactElement;
+  onClick?: () => void;
 }
 
-const AppButton = ({label, background, icon, color, width, borderColor, weigth, leftIcon} : ButtonProps) => {
+const AppButton = ({label, background, icon, color, width, borderColor, weigth, leftIcon, onClick} : ButtonProps) => {
 
   return (
     <Button
@@ -32,6 +33,7 @@ const AppButton = ({label, background, icon, color, width, borderColor, weigth, 
       rightIcon={icon}
       width={width}
       leftIcon={leftIcon}
+      onClick={onClick}
     >
       {label}
     </Button>

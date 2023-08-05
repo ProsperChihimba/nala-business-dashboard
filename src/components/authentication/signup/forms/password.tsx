@@ -2,7 +2,6 @@ import { Flex } from '@chakra-ui/react'
 import { Typography } from 'antd';
 import DepositHeading from '../../../layout/heading';
 import DepositInput from '../../../layout/input';
-import AppButton from '../../../layout/button';
 
 const SetPassword = () => {
 
@@ -34,17 +33,6 @@ const SetPassword = () => {
             marginBottom='80px'
             marginTop='20px'
         />
-
-        {/* button */}
-        <Flex justifyContent='flex-end'>
-            <AppButton
-                label='Submit'
-                background='#073DFC'
-                color='#fff'
-                width='160px'
-                borderColor='#073DFC'
-            />
-        </Flex>
     </Flex>
   )
 }

@@ -3,7 +3,9 @@
 // import DepositPage from "./components/deposit"
 // import SendTransaction from "./components/send"
 // import Vendors from "./components/vendor"
-import SignupPage from "./components/authentication/signup"
+import { BrowserRouter } from "react-router-dom"
+// import SignupPage from "./components/authentication/signup"
+import AppRouter from "./routes"
 // import WalletPage from "./components/wallet"
 // import ReportsPage from "./components/reports"
 // import TeamPage from "./components/team"
@@ -12,9 +14,9 @@ import SignupPage from "./components/authentication/signup"
 function App() {
 
   return (
-    <>
-      <SignupPage />
-    </>
+    <BrowserRouter>
+      <AppRouter />
+    </BrowserRouter>
   )
 }
 

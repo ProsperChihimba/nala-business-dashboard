@@ -3,7 +3,6 @@ import { Typography } from 'antd';
 import { FiChevronDown } from 'react-icons/fi';
 import DepositHeading from '../../../layout/heading';
 import DepositInput from '../../../layout/input';
-import AppButton from '../../../layout/button';
 
 const PersonalDetails = () => {
 
@@ -132,17 +131,6 @@ const PersonalDetails = () => {
                 />
             </Flex>
             
-        </Flex>
-
-        {/* button */}
-        <Flex justifyContent='flex-end'>
-            <AppButton
-                label='Next'
-                background='#073DFC'
-                color='#fff'
-                width='160px'
-                borderColor='#073DFC'
-            />
         </Flex>
     </Flex>
   )

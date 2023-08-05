@@ -7,17 +7,42 @@ import {
     Stepper, 
     useSteps 
 } from '@chakra-ui/react'
-// import PersonalDetails from './personal_details'
-// import CompanyWebsite from './company_website'
-// import CompanySize from './company_size'
-// import CompanyRevenue from './company_revenue'
+import PersonalDetails from './personal_details'
+import CompanyWebsite from './company_website'
+import CompanySize from './company_size'
+import CompanyRevenue from './company_revenue'
 import SetPassword from './password'
+import AppButton from '../../../layout/button'
 
-const steps = [1,2, 3, 4, 5]
+const steps = [
+    {
+        index: 1,
+        component: <PersonalDetails />
+    },
+    {
+        index: 2,
+        component: <CompanyWebsite />
+    },
+    {
+        index: 3,
+        component: <CompanySize />
+    },
+    {
+        index: 4,
+        component: <CompanyRevenue />
+    },
+    {
+        index: 5,
+        component: <SetPassword />
+    },
+    {
+        index: 6,
+    }
+]
 
 const SignupForms = () => {
 
-    const { activeStep } = useSteps({
+    const { activeStep, setActiveStep } = useSteps({
         index: 1,
         count: steps.length,
       })
@@ -28,8 +53,8 @@ const SignupForms = () => {
         {/* steps */}
         <Center>
             <Stepper index={activeStep} >
-                {steps.map((step, index) => (
-                    <Step key={index}>
+                {steps.map((step) => (
+                    <Step key={step.index}>
                         <Box w='50px'>
                             <StepSeparator />
                         </Box>
@@ -39,8 +64,27 @@ const SignupForms = () => {
         </Center>
 
        <Center>
-           {/* personal details */}
-            <SetPassword />
+            {/* personal details */}
+            {steps.map((step) => (
+                <Flex direction='column' key={step.index} display={activeStep === step.index ? 'inherit' : 'none'}>
+                    <Box>
+                        {step.component}
+                    </Box>
+                    {/* button */}
+                    <Flex justifyContent='flex-end'>
+                        <AppButton
+                            label='Submit'
+                            background='#073DFC'
+                            color='#fff'
+                            width='160px'
+                            borderColor='#073DFC'
+                            onClick={() => {
+                                setActiveStep(activeStep + 1)
+                            }}
+                        />
+                    </Flex>
+                </Flex>
+            ))}
         </Center>
     </Flex>
   )

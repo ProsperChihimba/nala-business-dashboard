@@ -1,6 +1,5 @@
 import { Flex } from '@chakra-ui/react'
 import DepositHeading from '../../../layout/heading';
-import AppButton from '../../../layout/button';
 import { Radio, Typography } from 'antd';
 
 const { Text } = Typography;
@@ -35,17 +34,6 @@ const CompanyRevenue = () => {
             marginBottom='100px'
             marginTop='20px'
         />
-
-        {/* button */}
-        <Flex justifyContent='flex-end'>
-            <AppButton
-                label='Next'
-                background='#073DFC'
-                color='#fff'
-                width='160px'
-                borderColor='#073DFC'
-            />
-        </Flex>
     </Flex>
   )
 }
