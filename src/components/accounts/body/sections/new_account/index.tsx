@@ -5,27 +5,27 @@ import {
     Step, 
     StepSeparator,  
     Stepper, 
-    useSteps 
+    useSteps,
+    ModalCloseButton
 } from '@chakra-ui/react'
 import Introduction from './introduction'
 import AppButton from '../../../../layout/button'
 import { Divider } from 'antd'
+import AccountDetails from './account_details'
 
 const steps = [
     {
         index: 1,
-        component: <Introduction />
+        component: <Introduction />,
+        button: 'Next'
     },
     {
         index: 2,
-        component: <Introduction />
+        component: <AccountDetails />,
+        button: 'Create account'
     },
     {
         index: 3,
-        component: <Introduction />
-    },
-    {
-        index: 4,
     },
 ]
 
@@ -37,9 +37,10 @@ const NewAccount = () => {
     })
 
   return (
-    <Flex direction='column' >
+    <Flex direction='column' marginBottom='10px'>
 
         {/* steps */}
+        <ModalCloseButton />
         <Center marginBottom='25px' marginTop='15px'>
             <Stepper index={activeStep} >
                 {steps.map((step) => (
@@ -65,7 +66,7 @@ const NewAccount = () => {
                     {/* button */}
                     <Flex justifyContent='flex-end'>
                         <AppButton
-                            label='Next'
+                            label={step.button as string}
                             background='#073DFC'
                             color='#fff'
                             width='150px'

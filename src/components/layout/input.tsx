@@ -12,9 +12,10 @@ interface InputProps  {
     marginTop: string,
     marginBottom: string,
     width?: string,
+    height?: string,
 }
 
-const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, percentage, marginBottom, marginTop, width} : InputProps) => {
+const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, percentage, marginBottom, marginTop, width, height} : InputProps) => {
 
     const { Text } = Typography;
   return (
@@ -40,7 +41,7 @@ const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, perc
             <Input
                 pl='25px'
                 placeholder={placeholder}
-                height='50px'
+                height={height ? height : '50px'}
                 borderColor='#D9D9D9'
                 background='white'
                 focusBorderColor='#073DFC'

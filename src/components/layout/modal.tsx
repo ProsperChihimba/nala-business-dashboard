@@ -1,4 +1,4 @@
-import { ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Modal } from '@chakra-ui/react'
+import { ModalBody, ModalContent, ModalOverlay, Modal } from '@chakra-ui/react'
 import React from 'react';
 
 interface ModalProps {
