@@ -10,8 +10,10 @@ import {
 } from '@chakra-ui/react'
 import Introduction from './introduction'
 import AppButton from '../../../../layout/button'
-import { Divider } from 'antd'
+import { Divider, Spin } from 'antd'
 import AccountDetails from './account_details'
+import Lottie from 'lottie-react'
+import load from '../../../../../assets/load.json'
 
 const steps = [
     {
@@ -26,6 +28,8 @@ const steps = [
     },
     {
         index: 3,
+        component: <AccountDetails />,
+        button: 'Create account'
     },
 ]
 
@@ -37,6 +41,17 @@ const NewAccount = () => {
     })
 
   return (
+    <Spin 
+        spinning={activeStep === 3 ? true : false}
+        indicator={
+            <Lottie
+                loop
+                animationData={load}
+                style={{ width: '100%', height: '50px' }}
+            />
+        }
+        style={{ width: '55%', height: '100%'}}
+    >
     <Flex direction='column' marginBottom='10px'>
 
         {/* steps */}
@@ -66,7 +81,7 @@ const NewAccount = () => {
                     {/* button */}
                     <Flex justifyContent='flex-end'>
                         <AppButton
-                            label={step.button as string}
+                            label={step.button}
                             background='#073DFC'
                             color='#fff'
                             width='150px'
@@ -80,6 +95,7 @@ const NewAccount = () => {
             ))}
         </Center>
     </Flex>
+    </Spin>
   )
 }
 
