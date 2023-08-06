@@ -14,7 +14,7 @@ import { FaRegUser } from "react-icons/fa";
 
 // assets
 import logo from '../../../assets/Logo.svg';
-import { useNavigate } from 'react-router-dom';
+import { To, useNavigate } from 'react-router-dom';
 
 
 
@@ -162,7 +162,7 @@ const SelectedNavigationItem = ({ label, icon, isSelected, path } : NavigationIt
             background={isSelected ? 'rgba(242, 242, 242, 0.80)' : 'none'}
             marginBottom='20px'
             cursor='pointer'
-            onClick={()=> {isSelected ? null : navigate(path)}}
+            onClick={()=> {isSelected ? null : navigate(path as To)}}
         >
             <Flex gap='15px' alignItems='center'>
                 {icon}
