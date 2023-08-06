@@ -29,7 +29,7 @@ interface Data {
     registered__year: number;
 }
 
-const MerchantsChart = ({id, id_url, color, type, graph, height} : Props) => {
+const MerchantsChart = ({id, id_url, color, graph, height} : Props) => {
 
 
         const monthNames = [
