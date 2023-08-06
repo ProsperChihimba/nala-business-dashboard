@@ -24,7 +24,7 @@ const DropdownItem = ({label, icon, descritpion, onClick}: DropdownItemProps) =>
                     fontSize: '15px',
                     fontWeight: 500,
                     color: '#000',
-                    marginBottom: '5px',
+                    marginBottom: '4px',
                 }}
             >
                 {label}

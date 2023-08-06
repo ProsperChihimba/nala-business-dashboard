@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react'
+import { Flex, useDisclosure } from '@chakra-ui/react'
 import AppButton from '../../../layout/button'
 import { FiChevronDown } from 'react-icons/fi'
 import { Typography } from 'antd';
@@ -8,59 +8,69 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import { RiBankLine } from "react-icons/ri";
 import { BsCreditCard2Front } from "react-icons/bs";
 import { BiWallet } from "react-icons/bi";
+import { useNavigate } from 'react-router-dom';
+import AppModal from '../../../layout/modal';
+import NewAccount from './new_account';
 
 
 const AccountsHeader = () => {
 
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
+
   const { Text } = Typography;
+
+  const navigate = useNavigate();
 
 //   move money dropdown
     const moveMoneyItems: MenuProps['items'] = [
         {
-        key: '1',
-        label: (
-            <DropdownItem
-                label='Make payment'
-                descritpion='Through ACH, wire or check'
-                icon={<FaRegPaperPlane size='20px' style={{ marginRight: 8 }} color='#000000' />}
-            />
-        ),
-        style: {
-            marginTop: '8px',
-            marginLeft: '8px',
-            marginRight: '8px',
-            marginBottom: '10px',
-        }
+            key: '1',
+            label: (
+                <DropdownItem
+                    label='Make payment'
+                    descritpion='Through ACH, wire or check'
+                    icon={<FaRegPaperPlane size='20px' style={{ marginRight: 8 }} color='#000000' />}
+                    onClick={() => navigate('/send')}
+                />
+            ),
+            style: {
+                marginTop: '8px',
+                marginLeft: '8px',
+                marginRight: '8px',
+                marginBottom: '10px',
+            }
         },
         {
-        key: '2',
-        label: (
-            <DropdownItem
-                label='Deposit money'
-                descritpion='Fund your Nala wallet or business account'
-                icon={<RiBankLine size='20px' style={{ marginRight: 8 }} color='#000000' />}
-            />
-        ),
-        style: {
-            marginLeft: '8px',
-            marginRight: '8px',
-            marginBottom: '10px',
-        }
+            key: '2',
+            label: (
+                <DropdownItem
+                    label='Deposit money'
+                    descritpion='Fund your Nala wallet or business account'
+                    icon={<RiBankLine size='20px' style={{ marginRight: 8 }} color='#000000' />}
+                    onClick={() => navigate('/deposit')}
+                />
+            ),
+            style: {
+                marginLeft: '8px',
+                marginRight: '8px',
+                marginBottom: '10px',
+            }
         },
         {
-        key: '3',
-        label: (
-            <DropdownItem
-                label='Make credit payment'
-                descritpion='Through your Nala credit card'
-                icon={<BsCreditCard2Front size='20px' style={{ marginRight: 8 }} color='#000000' />}
-            />
-        ),
-        style: {
-            marginBottom: '8px',
-            marginLeft: '8px',
-            marginRight: '8px',
-        }
+            key: '3',
+            label: (
+                <DropdownItem
+                    label='Make credit payment'
+                    descritpion='Through your Nala credit card'
+                    icon={<BsCreditCard2Front size='20px' style={{ marginRight: 8 }} color='#000000' />}
+                />
+            ),
+            style: {
+                marginBottom: '8px',
+                marginLeft: '8px',
+                marginRight: '8px',
+            }
         },
   ];
 
@@ -73,6 +83,7 @@ const AccountsHeader = () => {
             label='Create new business wallet'
             descritpion='Manage additional wallet for your business'
             icon={<BiWallet size='20px' style={{ marginRight: 8 }} color='#000000' />}
+            onClick={onOpen}
         />
     ),
     style: {
@@ -138,7 +149,13 @@ const AccountsHeader = () => {
                 items={moveMoneyItems}
             />
         </Flex>
-
+        
+        <AppModal
+            isOpen={isOpen}
+            onClose={onClose}
+            modalSize='sm'
+            children={<NewAccount />}
+        />
 
     </Flex>
   )

@@ -9,7 +9,7 @@ const AddFunds = () => {
 
     const { Text } = Typography;
   return (
-    <Flex direction='column'>
+    <Flex direction='column' marginTop='20vh'>
         {/* heading */}
         <DepositHeading title='Add funds' />
 
