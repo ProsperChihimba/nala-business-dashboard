@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
 import SignupPage from '../components/authentication/signup'
-import EmailSent from '../components/authentication/signup/forms/emal_sent'
 import Accounts from '../components/accounts';
 import AccountView from '../components/accounts/account_view';
 import DepositPage from "../components/deposit"
