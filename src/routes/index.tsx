@@ -16,7 +16,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" Component={SignupPage} /> 
         <Route path="/accounts" Component={Accounts} />
-        <Route path="/email-sent" Component={EmailSent} />
+        <Route path="/email-sent" Component={Accounts} />
         <Route path="/account-view" Component={AccountView} />
         <Route path="/deposit" Component={DepositPage} />
         <Route path="/send" Component={SendTransaction} />
