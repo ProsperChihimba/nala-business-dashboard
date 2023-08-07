@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import SignupPage from '../components/authentication/signup'
+import EmailSent from '../components/authentication/signup/forms/emal_sent'
 import Accounts from '../components/accounts';
 import AccountView from '../components/accounts/account_view';
 import DepositPage from "../components/deposit"
@@ -14,8 +15,8 @@ const AppRouter = () => {
     return (
       <Routes>
         <Route path="/" Component={SignupPage} /> 
-        <Route path="/accounts" Component={Accounts} />
-        <Route path="/email-sent" Component={Accounts} />
+        <Route path="/accounts-page" Component={Accounts} />
+        <Route path="/email-sent" Component={EmailSent} />
         <Route path="/account-view" Component={AccountView} />
         <Route path="/deposit" Component={DepositPage} />
         <Route path="/send" Component={SendTransaction} />

@@ -1,14 +1,17 @@
 import { Center, Flex } from '@chakra-ui/react'
 import { Typography } from 'antd';
 import AppButton from '../../../layout/button';
+import { useNavigate } from 'react-router-dom';
 
 const EmailSent = () => {
   const { Text } = Typography;
 
     //   redirect to accounts page after 3 seconds
-  setTimeout(() => {
-        window.location.href = '/accounts'
-    }, 3000);
+//   setTimeout(() => {
+//         window.location.href = '/accounts'
+//     }, 3000);
+
+const navigate = useNavigate();
   return (
     <Center>
       <Flex direction='column' marginTop='25vh' alignItems='center' width='32%'>
@@ -34,10 +37,22 @@ const EmailSent = () => {
                   fontSize: '15px',
                   fontWeight: 400,
                   color: '#9A9A9A',
-                  marginBottom: '30px'
+                  marginBottom: '10px'
               }}
           >
               Verification link sent to proc@user.com
+          </Text>
+
+          <Text
+              style={{
+                  fontFamily: 'IBM Plex Sans, sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 400,
+                  color: '#9A9A9A',
+                  marginBottom: '30px'
+              }}
+          >
+              Click button below 😃
           </Text>
 
           <AppButton
@@ -46,6 +61,7 @@ const EmailSent = () => {
                 color='#000'
                 width='160px'
                 borderColor='#DCDCDC'
+                onClick={() => navigate('/accounts-page')}
             />
         </Flex>
       </Center>

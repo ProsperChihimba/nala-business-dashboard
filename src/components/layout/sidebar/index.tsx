@@ -50,7 +50,7 @@ const SideBar = () => {
     const companylMenu: NavigationItem[] = [
         {
             label: "Accounts", 
-            path: '/accounts', 
+            path: '/accounts-page', 
             icon: <BsBank2 width='20px' height='20px' color='#000000' />, 
             subPath: ['/account-view']
         },
