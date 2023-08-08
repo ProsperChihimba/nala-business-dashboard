@@ -1,11 +1,15 @@
-import { Flex } from '@chakra-ui/react'
+import { Flex, useDisclosure } from '@chakra-ui/react'
 import DepositHeading from '../../layout/heading'
 import { Typography } from 'antd';
 import { FiChevronDown } from 'react-icons/fi';
 import AppButton from '../../layout/button';
 import DepositInput from '../../layout/input';
+import AppModal from '../../layout/modal';
+import DepositProcess from './deposit_process';
 
 const AddFunds = () => {
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const { Text } = Typography;
   return (
@@ -67,6 +71,15 @@ const AddFunds = () => {
             color='#fff'
             width='160px'
             borderColor='#073DFC'
+            onClick={onOpen}
+        />
+
+        {/* deposit process modal */}
+        <AppModal
+            isOpen={isOpen}
+            onClose={onClose}
+            modalSize='md'
+            children={<DepositProcess onClose={onClose} />}
         />
     </Flex>
   )

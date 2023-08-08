@@ -39,7 +39,7 @@ const AccountsHeader = () => {
                 marginLeft: '8px',
                 marginRight: '8px',
                 marginBottom: '10px',
-            }
+            },
         },
         {
             key: '2',
