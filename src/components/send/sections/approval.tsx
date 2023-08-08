@@ -1,13 +1,12 @@
 import { Avatar, Box, Flex } from '@chakra-ui/react'
 import DepositHeading from '../../layout/heading'
 import { Divider, Typography } from 'antd';
-import AppButton from '../../layout/button';
 
 const { Text } = Typography;
 
 const PaymentApproval = () => {
   return (
-    <Flex direction='column' w='45%'>
+    <Flex direction='column' w='100%' marginTop='10vh'>
         {/* heading */}
         <DepositHeading title='Submit for approval' />
 
@@ -101,15 +100,6 @@ const PaymentApproval = () => {
                 </Flex>
             </Box>
         </Box>
-
-        {/* button */}
-        <AppButton
-            label='Submit for approval'
-            background='#073DFC'
-            color='#fff'
-            width='160px'
-            borderColor='#073DFC'
-        />
     </Flex>
   )
 }

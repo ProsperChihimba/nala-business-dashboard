@@ -1,11 +1,10 @@
 import { Flex } from '@chakra-ui/react'
 import DepositHeading from '../../layout/heading'
-import AppButton from '../../layout/button';
 import DepositInput from '../../layout/input';
 
 const RecipientDetails = () => {
   return (
-    <Flex direction='column'>
+    <Flex direction='column' marginTop='23vh'>
         {/* heading */}
         <DepositHeading title='Who are you sending money to?' />
 
@@ -28,15 +27,6 @@ const RecipientDetails = () => {
             percentage='20%'
             marginBottom='40px'
             marginTop='20px'
-        />
-
-        {/* button */}
-        <AppButton
-            label='Next'
-            background='#073DFC'
-            color='#fff'
-            width='160px'
-            borderColor='#073DFC'
         />
     </Flex>
   )
