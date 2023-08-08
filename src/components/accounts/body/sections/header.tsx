@@ -11,11 +11,13 @@ import { BiWallet } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
 import AppModal from '../../../layout/modal';
 import NewAccount from './new_account';
+import NewCard from '../../../wallet/body/new_card';
 
 
 const AccountsHeader = () => {
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isOpenModalOne, onOpen: onOpenModalOne, onClose: onCloseModalOne } = useDisclosure();// 
+    const { isOpen: isOpenModalTwo, onOpen: onOpenModalTwo, onClose: onCloseModalTwo } = useDisclosure();//
 
 
   const { Text } = Typography;
@@ -83,7 +85,7 @@ const AccountsHeader = () => {
             label='Create new business wallet'
             descritpion='Manage additional wallet for your business'
             icon={<BiWallet size='20px' style={{ marginRight: 8 }} color='#000000' />}
-            onClick={onOpen}
+            onClick={onOpenModalOne}
         />
     ),
     style: {
@@ -100,6 +102,7 @@ const AccountsHeader = () => {
             label='Create credit card'
             descritpion='Create new credit card for online purchases'
             icon={<BsCreditCard2Front size='20px' style={{ marginRight: 8 }} color='#000000' />}
+            onClick={onOpenModalTwo}
         />
     ),
     style: {
@@ -151,10 +154,18 @@ const AccountsHeader = () => {
         </Flex>
         
         <AppModal
-            isOpen={isOpen}
-            onClose={onClose}
+            isOpen={isOpenModalOne}
+            onClose={onCloseModalOne}
             modalSize='sm'
             children={<NewAccount />}
+        />
+
+        {/* new card modal */}
+        <AppModal
+            isOpen={isOpenModalTwo}
+            onClose={onCloseModalTwo}
+            modalSize='sm'
+            children={<NewCard />}
         />
 
     </Flex>
