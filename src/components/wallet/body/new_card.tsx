@@ -46,7 +46,7 @@ const NewCard = () => {
     >
         <Flex width='100%'>
 
-        <Center width='100%'>
+            <Center width='100%'>
                 {/* personal details */}
                 {steps.map((step) => (
                     <Flex direction='column' key={step.index} display={activeStep === step.index ? 'inherit' : 'none'} width='100%'>

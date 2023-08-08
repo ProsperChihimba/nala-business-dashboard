@@ -1,15 +1,71 @@
-import { Flex, Slider, SliderFilledTrack, SliderTrack, Spacer } from '@chakra-ui/react'
+import { Box, Flex, Slider, SliderFilledTrack, SliderTrack, Spacer, useDisclosure } from '@chakra-ui/react'
 import CreditCard from './card'
 import AppButton from '../../../layout/button'
-import { Divider, Typography } from 'antd'
+import { Divider, Dropdown, MenuProps, Typography } from 'antd'
 import { GoInfo } from 'react-icons/go'
 import { CiMenuKebab } from 'react-icons/ci'
 import { TbNotes } from 'react-icons/tb'
 import { MdShowChart } from 'react-icons/md'
+import { BiLockAlt } from 'react-icons/bi'
+import { RxLoop } from "react-icons/rx";
+import { PiTerminalDuotone } from 'react-icons/pi'
+import AppModal from '../../../layout/modal'
+import TerminateCard from './terminate_card'
+
+const { Text } = Typography;
 
 const WalletCard = () => {
 
-    const { Text } = Typography;
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
+    const items: MenuProps['items'] = [
+        {
+            key: '1',
+            label: (
+                <CardActionMenu
+                    label='Lock'
+                    icon={<BiLockAlt size='15px' style={{ marginRight: 8 }} color='#000000' />}
+                    onOpen={onOpen}
+                />
+            ),
+            style: {
+                marginTop: '4px',
+                marginLeft: '4px',
+                marginRight: '4px',
+                marginBottom: '5px',
+            },
+        },
+        {
+            key: '2',
+            label: (
+                <CardActionMenu
+                    label='Replace'
+                    icon={<RxLoop size='15px' style={{ marginRight: 8 }} color='#000000' />}
+                />
+            ),
+            style: {
+                marginLeft: '4px',
+                marginRight: '4px',
+                marginBottom: '5px',
+            }
+        },
+        {
+            key: '3',
+            label: (
+                <CardActionMenu
+                    label='Terminate'
+                    icon={<PiTerminalDuotone size='15px' style={{ marginRight: 8 }} color='#000000' />}
+                />
+            ),
+            style: {
+                marginBottom: '4px',
+                marginLeft: '4px',
+                marginRight: '4px',
+            }
+        },
+  ];
+
+
   return (
     <Flex
         width='100%'
@@ -56,7 +112,15 @@ const WalletCard = () => {
                     </Text>
 
                     <Spacer />
-                    <CiMenuKebab size='10px' color='#6D6D6D' />
+                    <Dropdown
+                        menu={{ items }}
+                    >
+                        <Box
+                            cursor='pointer'
+                        >
+                            <CiMenuKebab size='15px' color='#000' />
+                        </Box>
+                    </Dropdown>
                 </Flex>
 
                 <Flex alignItems='center' marginBottom='5px'>
@@ -144,8 +208,36 @@ const WalletCard = () => {
                     />
                 </Flex>
             </Flex>
-    </Flex>
+
+            <AppModal
+                isOpen={isOpen}
+                onClose={onClose}
+                modalSize='sm'
+                children={<TerminateCard />}
+            />
+    </Flex> 
   )
 }
 
 export default WalletCard
+
+
+const CardActionMenu = ({label, icon, onOpen}: {label: string, icon: React.ReactNode, onOpen?: () => void}) => {
+    return (
+        <Flex onClick={onOpen}> 
+            {icon}
+
+            <Text
+                style={{
+                    fontFamily: 'IBM Plex Sans, sans-serif',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    color: '#000',
+                    marginBottom: '4px',
+                }}
+            >
+                {label}
+            </Text>
+        </Flex>
+    )
+}
