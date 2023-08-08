@@ -9,7 +9,7 @@ const SingleTab = () => {
 
         {/*  */}
         <Instruction 
-            title='Instruction' 
+            title='Account number' 
             descritpion='3102001838838838838' 
         />
         <Instruction 

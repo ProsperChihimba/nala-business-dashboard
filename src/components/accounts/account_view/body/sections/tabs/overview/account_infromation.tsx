@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react'
+import { Flex, useDisclosure } from '@chakra-ui/react'
 import { Divider, Typography } from 'antd';
 import { AiOutlineEye } from 'react-icons/ai';
 import { GoInfo } from 'react-icons/go';
@@ -6,8 +6,12 @@ import { TbNotes } from "react-icons/tb";
 import { MdCurrencyExchange } from "react-icons/md";
 import AppButton from '../../../../../../layout/button';
 import { BsArrowRight } from 'react-icons/bs';
+import AppModal from '../../../../../../layout/modal';
+import AccountDetails from './account_details';
 
 const AccountInfromation = () => {
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const { Text } = Typography;
   return (
@@ -172,6 +176,7 @@ const AccountInfromation = () => {
                         icon={<TbNotes size='15px' style={{ marginLeft: 8 }} color='#000000' />}
                         width='140px'
                         borderColor='#DCDCDC'
+                        onClick={onOpen}
                     />
                 </Flex>
 
@@ -250,6 +255,14 @@ const AccountInfromation = () => {
                     />
                 </Flex>
             </Flex>
+
+            {/* account details modal */}
+            <AppModal
+                isOpen={isOpen}
+                onClose={onClose}
+                modalSize='md'
+                children={<AccountDetails onClose={onClose} />}
+            />
 
         </Flex>
   )
