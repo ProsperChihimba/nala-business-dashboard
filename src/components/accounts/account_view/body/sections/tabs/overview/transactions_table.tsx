@@ -1,8 +1,11 @@
-import { Box, Flex, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Badge } from '@chakra-ui/react'
+import { Box, Flex, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Badge, useDisclosure } from '@chakra-ui/react'
 import { Divider, Typography } from 'antd';
 import { FiChevronRight } from 'react-icons/fi';
+import AppDrawer from '../../../../../../layout/drawer';
+import ViewTransaction from './view_transaction';
 
 const TransactionsTable = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const { Text } = Typography;
   return (
@@ -44,7 +47,6 @@ const TransactionsTable = () => {
         <Divider style={{ marginTop: '0px', marginBottom: '10px' }} />
 
         {/* rows */}
-
         <TableContainer w='100%' h='100%'>
             <Table size='sm' bg='transparent' rounded='md' variant='unstyled' mb='20px' border='1px' >
                 <Thead bg='transparent' rounded='3xl' style={{color: '#000000', }}>
@@ -81,13 +83,22 @@ const TransactionsTable = () => {
                                 Success
                             </Badge>
                         </Td>
-                        <Td fontSize='10px'>
+                        <Td fontSize='10px' onClick={onOpen} cursor='pointer' >
                             <FiChevronRight size='15px' style={{ marginLeft: 8 }} color='#000' />
                         </Td>
                     </Tr>
                 </Tbody>
             </Table>
         </TableContainer>
+
+
+        {/* drawer */}
+        <AppDrawer
+            isOpen={isOpen}
+            onClose={onClose}
+            modalSize='md'
+            children={<ViewTransaction />}
+        />
     </Box>
   )
 }

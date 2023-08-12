@@ -3,7 +3,7 @@ import { Typography } from 'antd';
 import { ReactElement } from 'react';
 
 interface InputProps  {
-    title: string;
+    title?: string;
     value: string;
     placeholder: string;
     isReadOnly: boolean;

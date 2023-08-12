@@ -1,25 +1,38 @@
-import { Avatar, Box, Flex } from '@chakra-ui/react'
-import DepositHeading from '../../layout/heading'
-import { Divider, Typography } from 'antd';
+import { Avatar, Box, Center, DrawerCloseButton, Flex } from "@chakra-ui/react"
+import { Divider, Typography } from "antd";
+import { FirstBoxText } from "../../../../../../send/sections/approval";
+import DepositInput from "../../../../../../layout/input";
+import AppButton from "../../../../../../layout/button";
 
-const { Text } = Typography;
 
-const PaymentApproval = () => {
+const ViewTransaction = () => {
+
+    const { Text } = Typography;
   return (
-    <Flex direction='column' w='100%' marginTop='10vh'>
-        {/* heading */}
-        <DepositHeading title='Submit for approval' />
+    <Flex direction='column'>
 
-        {/* first box */}
-        <Box>
+        {/* close */}
+        <DrawerCloseButton />
+
+        {/*  */}
+        <Box 
+            height='1px' 
+            width='100%' 
+            marginTop='5.7vh' 
+            backgroundColor='rgba(135, 133, 126, 0.50)' 
+            marginBottom='10px'
+        />
+
+        {/*  */}
+        <Box marginX='17px' marginTop='20px'>
             <Box
                 width='100%'
                 fontFamily='IBM Plex Sans, sans-serif'
                 border='1px solid #D9D9D9'
-                borderRadius='10px'
-                marginTop='30px'
+                borderRadius='20px'
                 bg='white'
                 p='10px'
+                backgroundColor='rgba(217, 217, 217, 0.15)'
             >
                 {/* table title */}
                 <Flex justifyContent='space-between' alignItems='center' mb='10px'>
@@ -61,8 +74,47 @@ const PaymentApproval = () => {
             </Box>
         </Box>
 
-        {/* second box */}
-        <Box marginBottom='40px'>
+
+
+        {/* memo */}
+        <Box marginX='17px' marginTop='25px'>
+            <Box
+                width='100%'
+                fontFamily='IBM Plex Sans, sans-serif'
+                border='1px solid #D9D9D9'
+                borderRadius='20px'
+                bg='white'
+                p='10px'
+            >
+
+                {/*  */}
+                <Text
+                    style={{
+                        fontFamily: 'IBM Plex Sans, sans-serif',
+                        fontSize: '15px',
+                        fontWeight: 500,
+                        color: '#454545',
+                    }}
+                >
+                    Memo
+                </Text>
+                <Divider style={{ marginTop: '10px', marginBottom: '10px' }} />
+
+                {/* input */}
+                <DepositInput
+                    value='Salary'
+                    placeholder='Enter memo'
+                    isReadOnly={false}
+                    marginBottom='10px'
+                    marginTop='0px'
+                    width="100%"
+                />
+            </Box>
+        </Box>
+
+
+        {/* details */}
+        <Box marginBottom='25px' marginX='17px'>
             <Box
                 width='100%'
                 fontFamily='IBM Plex Sans, sans-serif'
@@ -100,43 +152,19 @@ const PaymentApproval = () => {
                 </Flex>
             </Box>
         </Box>
+
+        {/* button */}
+        <Center mb='35px'>
+            <AppButton
+                label='Download'
+                background='#073DFC'
+                color='#fff'
+                width='70%'
+                borderColor='#073DFC'
+            />
+        </Center>
     </Flex>
   )
 }
 
-export default PaymentApproval
-
-// props
-interface FirstBoxProps {
-    title: string;
-    text: string;
-}
-
-// first box texts
-export const FirstBoxText = ({title, text}: FirstBoxProps) => {
-    
-    return (
-        <Flex direction='column'>
-           <Text
-                style={{
-                    fontFamily: 'IBM Plex Sans, sans-serif',
-                    fontSize: '13px',
-                    fontWeight: 400,
-                    color: '#000',
-                }}
-            >
-                {title}
-            </Text>
-            <Text
-                style={{
-                    fontFamily: 'IBM Plex Sans, sans-serif',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    color: '#000',
-                }}
-            >
-                {text}
-            </Text>
-        </Flex>
-    )
-}
+export default ViewTransaction
