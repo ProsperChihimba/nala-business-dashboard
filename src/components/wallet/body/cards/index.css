@@ -3,11 +3,11 @@
 
 .container {
   position: relative;
-  background-image: url("../../../../assets/bg.png");
   background-size: cover;
   border-radius: 20px;
   max-width: 350px;
   width: 350px;
   height: 190px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  background-color: black;
 }

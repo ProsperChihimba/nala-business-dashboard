@@ -11,12 +11,15 @@ import { RxLoop } from "react-icons/rx";
 import { PiTerminalDuotone } from 'react-icons/pi'
 import AppModal from '../../../layout/modal'
 import TerminateCard from './terminate_card'
+import AppDrawer from '../../../layout/drawer'
+import CardsLists from './cards_list'
 
 const { Text } = Typography;
 
 const WalletCard = () => {
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isOpenModalOne, onOpen: onOpenModalOne, onClose: onCloseModalOne } = useDisclosure()
+    const { isOpen: isOpenModalTwo, onOpen: onOpenModalTwo, onClose: onCloseModalTwo } = useDisclosure()
 
     const items: MenuProps['items'] = [
         {
@@ -25,7 +28,7 @@ const WalletCard = () => {
                 <CardActionMenu
                     label='Lock'
                     icon={<BiLockAlt size='15px' style={{ marginRight: 8 }} color='#000000' />}
-                    onOpen={onOpen}
+                    onOpen={onOpenModalOne}
                 />
             ),
             style: {
@@ -88,6 +91,7 @@ const WalletCard = () => {
                 color='#000'
                 width='250px'
                 borderColor='#DCDCDC'
+                onClick={onOpenModalTwo}
             />
         </Flex>
 
@@ -210,10 +214,19 @@ const WalletCard = () => {
             </Flex>
 
             <AppModal
-                isOpen={isOpen}
-                onClose={onClose}
+                isOpen={isOpenModalOne}
+                onClose={onCloseModalOne}
                 modalSize='sm'
                 children={<TerminateCard />}
+            />
+
+
+            {/* drawer */}
+            <AppDrawer
+                isOpen={isOpenModalTwo}
+                onClose={onCloseModalTwo}
+                modalSize='md'
+                children={<CardsLists />}
             />
     </Flex> 
   )
