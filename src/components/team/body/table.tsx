@@ -1,9 +1,13 @@
-import { Badge, Box, Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
+import { Badge, Box, Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useDisclosure } from "@chakra-ui/react"
 import { Divider, Input, Typography } from "antd"
 import { FiChevronRight } from "react-icons/fi";
 import { TbFileDownload } from "react-icons/tb";
+import AppDrawer from "../../layout/drawer";
+import ViewUser from "./view_user";
 
 const TeamTable = () => {
+
+    const { isOpen: isOpenModalOne, onOpen: onOpenModalOne, onClose: onCloseModalOne } = useDisclosure()
 
     const { Text } = Typography;
   return (
@@ -86,7 +90,7 @@ const TeamTable = () => {
                             <Td fontSize='10px'>
                                 <TbFileDownload size='20px' />
                             </Td>
-                            <Td fontSize='10px'>
+                            <Td fontSize='10px' onClick={onOpenModalOne} cursor='pointer'>
                                <FiChevronRight size='18px' />
                             </Td>
                         </Tr>
@@ -94,6 +98,15 @@ const TeamTable = () => {
                 </Table>
             </TableContainer>
         </Box>
+
+
+        {/* drawer */}
+        <AppDrawer
+            isOpen={isOpenModalOne}
+            onClose={onCloseModalOne}
+            modalSize='md'
+            children={<ViewUser />}
+        />
     </Flex>
   )
 }

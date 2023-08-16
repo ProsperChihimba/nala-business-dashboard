@@ -56,7 +56,7 @@ export default CardsLists
 
 
 // 
-const SingleCard = () => {
+export const SingleCard = () => {
     return (
         <Flex alignItems='center' marginX='5px' marginBottom='18px'>
 
