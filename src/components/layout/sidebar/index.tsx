@@ -8,7 +8,7 @@ import { FiInbox } from "react-icons/fi";
 import { BsBank2 } from "react-icons/bs";
 import { CiReceipt } from "react-icons/ci";
 import { AiOutlineLineChart } from "react-icons/ai";
-import { HiOutlineUsers } from "react-icons/hi";
+import { HiOutlineUserGroup, HiOutlineUsers } from "react-icons/hi";
 import { LuHotel } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa";
 
@@ -58,6 +58,11 @@ const SideBar = () => {
             label: "Expenses", 
             path: '/epenses', 
             icon: <CiReceipt width='20px' height='20px' color='#000000' />, 
+        },
+        {
+            label: "Vendors", 
+            path: '/vendors', 
+            icon: <HiOutlineUserGroup width='20px' height='20px' color='#000000' />, 
         },
         {
             label: "Reports", 

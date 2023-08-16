@@ -21,7 +21,7 @@ const AppRouter = () => {
         <Route path="/deposit" Component={DepositPage} />
         <Route path="/send" Component={SendTransaction} />
         <Route path="/vendors" Component={Vendors} />
-        <Route path="/new-vendor" Component={NewVendor} />
+        <Route path="/vendors/new-vendor" Component={NewVendor} />
         <Route path="/wallet" Component={WalletPage} />
         <Route path="/reports" Component={ReportsPage} />
         <Route path="/team" Component={TeamPage} />

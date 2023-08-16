@@ -10,7 +10,8 @@ const ReportBox = () => {
     <Flex
         borderRadius='10px'
         height='120px'
-        backgroundColor='#C6F8FF'
+        backgroundColor='#fff'
+        border='1px solid #B6B3B3'
         padding='10px'
         marginBottom='25px'
         width='20%'
