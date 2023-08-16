@@ -1,13 +1,15 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Box, Flex, useDisclosure } from '@chakra-ui/react'
 import { Typography } from 'antd';
 import AppButton from '../../../layout/button';
 import DepositHeading from '../../../layout/heading';
+import AppModal from '../../../layout/modal';
+import AccountInfromation from './account_information';
 
 const { Text } = Typography;
 
 const AccountDetails = () => {
   return (
-    <Flex direction='column' w='40%'>
+    <Flex direction='column' w='100%' marginTop='23vh'>
         
         {/* header */}
         <DepositHeading title='Vendor’s payment accounts' />
@@ -16,15 +18,6 @@ const AccountDetails = () => {
         <AddAccount title='ACH' marginTop='30px'/>
         <AddAccount title='International Wire' marginTop='35px' />
         <AddAccount title='Check' marginBottom='40px' marginTop='35px' />
-
-        {/* button */}
-        <AppButton
-            label='Done'
-            background='#073DFC'
-            color='#fff'
-            width='160px'
-            borderColor='#073DFC'
-        />
     </Flex>
   )
 }
@@ -41,6 +34,8 @@ interface AccountProps {
 
 // single account details
 const AddAccount = ({title, marginBottom, marginTop}: AccountProps) => {
+
+    const {isOpen, onOpen, onClose} = useDisclosure()
     return (
         <Box
            border='1px solid #D9D9D9'
@@ -71,8 +66,16 @@ const AddAccount = ({title, marginBottom, marginTop}: AccountProps) => {
                     color='#000'
                     width='140px'
                     borderColor='#D9D9D9'
+                    onClick={onOpen}
                 />
             </Flex>
+
+            <AppModal
+                isOpen={isOpen}
+                onClose={onClose}
+                modalSize='sm'
+                children={<AccountInfromation />}
+            />
         </Box>
     )
 }

@@ -3,13 +3,12 @@ import { Typography } from 'antd';
 import { FiChevronDown } from 'react-icons/fi';
 import DepositHeading from '../../../layout/heading';
 import DepositInput from '../../../layout/input';
-import AppButton from '../../../layout/button';
 
 const VendorDetails = () => {
 
     const { Text } = Typography;
   return (
-    <Flex direction='column'>
+    <Flex direction='column' mt='23vh' width='100%'>
         {/* heading */}
         <DepositHeading title='Add Vendor' />
 
@@ -21,6 +20,7 @@ const VendorDetails = () => {
             isReadOnly={true}
             percentage='10%'
             marginBottom='0px'
+            width='100%'
             marginTop='35px'
         />
 
@@ -30,6 +30,7 @@ const VendorDetails = () => {
             placeholder=''
             isReadOnly={true}
             percentage='10%'
+            width='100%'
             marginBottom='0px'
             marginTop='20px'
         />
@@ -96,15 +97,6 @@ const VendorDetails = () => {
             </Flex>
             
         </Flex>
-
-        {/* button */}
-        <AppButton
-            label='Next'
-            background='#073DFC'
-            color='#fff'
-            width='160px'
-            borderColor='#073DFC'
-        />
     </Flex>
   )
 }
