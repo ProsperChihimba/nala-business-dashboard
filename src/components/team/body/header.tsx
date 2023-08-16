@@ -1,8 +1,12 @@
-import { Flex } from '@chakra-ui/react'
+import { Flex, useDisclosure } from '@chakra-ui/react'
 import { Typography } from 'antd';
 import AppButton from '../../layout/button';
+import NewUser from './new_user';
+import AppModal from '../../layout/modal';
 
 const TeamHeader = () => {
+
+    const {isOpen, onOpen, onClose} = useDisclosure()
 
   const { Text } = Typography;
   return (
@@ -28,9 +32,15 @@ const TeamHeader = () => {
             color='#fff'
             width='160px'
             borderColor='#073DFC'
+            onClick={onOpen}
         />
 
-
+        <AppModal
+            isOpen={isOpen}
+            onClose={onClose}
+            modalSize='md'
+            children={<NewUser />}
+        />
     </Flex>
   )
 }
