@@ -4,12 +4,15 @@ import { FiChevronRight } from "react-icons/fi";
 import { TbFileDownload } from "react-icons/tb";
 import AppModal from "../../layout/modal";
 import MultipleUpload from "./multiple_upload";
+import AppDrawer from "../../layout/drawer";
+import VendorDetailsDrawer from "./vendor_details";
 
 const VendorTable = () => {
 
     const { Text } = Typography;
 
-    const {isOpen, onOpen, onClose} = useDisclosure()
+    const {isOpen: isOpenModalOne, onOpen: onOpenModalOne, onClose: onCloseModalOne} = useDisclosure()
+    const {isOpen: isOpenModalTwo, onOpen: onOpenModalTwo, onClose: onCloseModalTwo} = useDisclosure()
   return (
     <Flex direction='column'>
         
@@ -53,7 +56,7 @@ const VendorTable = () => {
                         color: '#073DFC',
                         cursor: 'pointer',
                     }}
-                    onClick={onOpen}
+                    onClick={onOpenModalOne}
                 >
                     Add multiple vendors via Excel 
                 </Text>
@@ -91,7 +94,7 @@ const VendorTable = () => {
                             <Td fontSize='10px'>
                                 <TbFileDownload size='20px' />
                             </Td>
-                            <Td fontSize='10px'>
+                            <Td fontSize='10px' cursor='pointer' onClick={onOpenModalTwo}>
                                <FiChevronRight size='18px' />
                             </Td>
                         </Tr>
@@ -103,10 +106,18 @@ const VendorTable = () => {
 
         {/* modal */}
         <AppModal
-            isOpen={isOpen}
-            onClose={onClose}
+            isOpen={isOpenModalOne}
+            onClose={onCloseModalOne}
             modalSize='md'
             children={<MultipleUpload />}
+        />
+
+        {/* drawer */}
+        <AppDrawer
+            isOpen={isOpenModalTwo}
+            onClose={onCloseModalTwo}
+            modalSize='md'
+            children={<VendorDetailsDrawer />}
         />
     </Flex>
   )
