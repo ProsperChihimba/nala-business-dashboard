@@ -21,7 +21,8 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
     "react-router-dom": "^6.14.2",
-    "recharts": "^2.7.2"
+    "recharts": "^2.7.2",
+    "vite-plugin-rewrite-all": "^1.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",
