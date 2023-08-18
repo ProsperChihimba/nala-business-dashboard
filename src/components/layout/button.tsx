@@ -17,9 +17,10 @@ interface ButtonProps {
   onClick?: () => void;
   hasDropdown?: boolean;
   items?: MenuProps['items'];
+  height?: string;
 }
 
-const AppButton = ({label, background, icon, color, width, borderColor, weigth, leftIcon, onClick, hasDropdown, items} : ButtonProps) => {
+const AppButton = ({label, background, icon, color, width, borderColor, weigth, leftIcon, onClick, hasDropdown, items, height = '30px'} : ButtonProps) => {
 
   return (
     <>
@@ -31,7 +32,7 @@ const AppButton = ({label, background, icon, color, width, borderColor, weigth, 
             fontFamily='IBM Plex Sans, sans-serif'
             fontWeight={weigth ? weigth : '500'}
             fontSize='13px'
-            height='30px'
+            height={height}
             background={background}
             color={color}
             _hover={{
@@ -55,7 +56,7 @@ const AppButton = ({label, background, icon, color, width, borderColor, weigth, 
           fontFamily='IBM Plex Sans, sans-serif'
           fontWeight={weigth ? weigth : '500'}
           fontSize='13px'
-          height='30px'
+          height={height}
           background={background}
           color={color}
           _hover={{

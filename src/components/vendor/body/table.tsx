@@ -1,11 +1,15 @@
-import { Box, Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
+import { Box, Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useDisclosure } from "@chakra-ui/react"
 import { Divider, Input, Typography } from "antd"
 import { FiChevronRight } from "react-icons/fi";
 import { TbFileDownload } from "react-icons/tb";
+import AppModal from "../../layout/modal";
+import MultipleUpload from "./multiple_upload";
 
 const VendorTable = () => {
 
     const { Text } = Typography;
+
+    const {isOpen, onOpen, onClose} = useDisclosure()
   return (
     <Flex direction='column'>
         
@@ -47,7 +51,9 @@ const VendorTable = () => {
                         fontSize: '11px',
                         fontWeight: 400,
                         color: '#073DFC',
+                        cursor: 'pointer',
                     }}
+                    onClick={onOpen}
                 >
                     Add multiple vendors via Excel 
                 </Text>
@@ -93,6 +99,15 @@ const VendorTable = () => {
                 </Table>
             </TableContainer>
         </Box>
+
+
+        {/* modal */}
+        <AppModal
+            isOpen={isOpen}
+            onClose={onClose}
+            modalSize='md'
+            children={<MultipleUpload />}
+        />
     </Flex>
   )
 }
