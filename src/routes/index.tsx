@@ -10,6 +10,7 @@ import WalletPage from "../components/wallet"
 import ReportsPage from "../components/reports"
 import TeamPage from "../components/team"
 import NewVendor from "../components/vendor/body/new_vendor"
+import InboxPage from '../components/inbox';
 
 const AppRouter = () => {
     return (
@@ -25,6 +26,7 @@ const AppRouter = () => {
         <Route path="/wallet" Component={WalletPage} />
         <Route path="/reports" Component={ReportsPage} />
         <Route path="/team" Component={TeamPage} />
+        <Route path="/inbox" Component={InboxPage} />
       </Routes>
     )
 }
