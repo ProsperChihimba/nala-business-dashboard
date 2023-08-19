@@ -56,7 +56,7 @@ const SideBar = () => {
         },
         {
             label: "Expenses", 
-            path: '/epenses', 
+            path: '/expenses', 
             icon: <CiReceipt width='20px' height='20px' color='#000000' />, 
         },
         {

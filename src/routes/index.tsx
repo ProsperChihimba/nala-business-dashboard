@@ -11,6 +11,7 @@ import ReportsPage from "../components/reports"
 import TeamPage from "../components/team"
 import NewVendor from "../components/vendor/body/new_vendor"
 import InboxPage from '../components/inbox';
+import ExpensesPage from '../components/expenses';
 
 const AppRouter = () => {
     return (
@@ -27,6 +28,7 @@ const AppRouter = () => {
         <Route path="/reports" Component={ReportsPage} />
         <Route path="/team" Component={TeamPage} />
         <Route path="/inbox" Component={InboxPage} />
+        <Route path="/expenses" Component={ExpensesPage} />
       </Routes>
     )
 }
