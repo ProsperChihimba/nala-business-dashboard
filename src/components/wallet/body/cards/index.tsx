@@ -201,6 +201,7 @@ const WalletCard = () => {
                         leftIcon={<TbNotes size='15px' style={{ marginLeft: 8 }} color='#000000' />}
                         width='200px'
                         borderColor='#DCDCDC'
+                        onClick={onOpenModalTwo}
                     />
                     <AppButton
                         label='Request card limit'
@@ -209,6 +210,7 @@ const WalletCard = () => {
                         leftIcon={<MdShowChart size='15px' style={{ marginLeft: 8 }} color='#000000' />}
                         width='200px'
                         borderColor='#DCDCDC'
+                        onClick={onOpenModalTwo}
                     />
                 </Flex>
             </Flex>

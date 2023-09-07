@@ -75,8 +75,10 @@ const AccountInfromation = () => {
                                     fontWeight: 500,
                                     color: '#073DFC',
                                     marginLeft: '8px',
-                                    marginRight: '5px'
+                                    marginRight: '5px',
+                                    cursor: 'pointer'
                                 }}
+                                onClick={onOpen}
                             >
                                 Set up minimum balance 
                             </Text>
@@ -252,6 +254,7 @@ const AccountInfromation = () => {
                         color='#000'
                         width='140px'
                         borderColor='#DCDCDC'
+                        onClick={onOpen}
                     />
                 </Flex>
             </Flex>

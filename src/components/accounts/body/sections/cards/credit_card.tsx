@@ -3,10 +3,12 @@ import { Divider, Typography } from "antd";
 import { CiCreditCard1 } from "react-icons/ci"
 import { GoInfo } from "react-icons/go";
 import { VscChevronRight } from "react-icons/vsc";
+import { useNavigate } from "react-router-dom";
 
 const CreditCardBox = () => {
 
     const { Text } = Typography;
+    const navigate = useNavigate();
   return (
     <Box
         width='48%'
@@ -38,18 +40,24 @@ const CreditCardBox = () => {
             <Spacer />
 
             {/* view section */}
-            <Text
-                style={{
-                    fontFamily: 'IBM Plex Sans, sans-serif',
-                    fontSize: '13px',
-                    fontWeight: 400,
-                    color: '#073DFC',
-                    marginRight: '3px'
-                }}
+            <Flex
+                cursor='pointer'
+                onClick={()=> navigate('/wallet')}
             >
-                View All
-            </Text>
-            <VscChevronRight size='20px' color='#073DFC' />
+                <Text
+                    style={{
+                        fontFamily: 'IBM Plex Sans, sans-serif',
+                        fontSize: '13px',
+                        fontWeight: 400,
+                        color: '#073DFC',
+                        marginRight: '3px'
+                        
+                    }}
+                >
+                    View All
+                </Text>
+                <VscChevronRight size='20px' color='#073DFC' />
+            </Flex>
         </Flex>
 
 
@@ -180,14 +188,15 @@ const CreditCardBox = () => {
                     >
                         Latest transactions
                     </Text>
-
                     <Text
                         style={{
                             fontFamily: 'IBM Plex Sans, sans-serif',
                             fontSize: '10px',
                             fontWeight: 400,
                             color: '#073DFC',
+                            cursor: 'pointer'
                         }}
+                        onClick={()=> navigate('/wallet')}
                     >
                         View All
                     </Text>

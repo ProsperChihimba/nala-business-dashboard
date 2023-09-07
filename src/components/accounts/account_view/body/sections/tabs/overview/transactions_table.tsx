@@ -29,7 +29,7 @@ const TransactionsTable = () => {
                 Latest transactions
             </Text>
 
-            <Flex>
+            <Flex onClick={onOpen} cursor='pointer'>
                 <Text
                     style={{
                         fontFamily: 'IBM Plex Sans, sans-serif',
