@@ -8,7 +8,7 @@ const EmailSent = () => {
 
     //   redirect to accounts page after 3 seconds
   setTimeout(() => {
-        window.location.href = '/accounts'
+        window.location.href = '/accounts-page'
     }, 3000);
 
 const navigate = useNavigate();
