@@ -7,9 +7,9 @@ const EmailSent = () => {
   const { Text } = Typography;
 
     //   redirect to accounts page after 3 seconds
-//   setTimeout(() => {
-//         window.location.href = '/accounts'
-//     }, 3000);
+  setTimeout(() => {
+        window.location.href = '/accounts'
+    }, 3000);
 
 const navigate = useNavigate();
   return (
