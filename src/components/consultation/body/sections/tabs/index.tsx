@@ -1,7 +1,5 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
-import AccountOverview from "./overview"
 import AccountTransactions from "./transactions"
-import AccountStatements from "./statements"
 
 
 const SingleAccountTabs = () => {

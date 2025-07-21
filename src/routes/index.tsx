@@ -14,7 +14,6 @@ import InboxPage from '../components/inbox';
 import ExpensesPage from '../components/expenses';
 import Login from '../components/login';
 import Consultation from '../components/consultation';
-import ClientDetails from '../components/consultation/client_details';
 import PatientDetailsPage from '../components/consultation/client_details/[id]';
 
 const AppRouter = () => {
