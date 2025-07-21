@@ -60,10 +60,7 @@ const MySchedule: React.FC = () => {
     setSelectedTime(index);
   };
 
-  const handleUpdate = () => {
-    console.log("Update clicked");
-    // Add your update logic here
-  };
+
 
   return (
     <Box
