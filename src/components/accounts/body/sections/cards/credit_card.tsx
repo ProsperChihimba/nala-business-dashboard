@@ -32,7 +32,7 @@ const CreditCardBox = () => {
                     marginRight: '5px'
                 }}
             >
-                Credit Card
+               Service Payments
             </Text>
 
             <GoInfo size='11px' color='#000000' />
@@ -42,7 +42,7 @@ const CreditCardBox = () => {
             {/* view section */}
             <Flex
                 cursor='pointer'
-                onClick={()=> navigate('/wallet')}
+                // onClick={()=> navigate('/wallet')}
             >
                 <Text
                     style={{
@@ -54,7 +54,7 @@ const CreditCardBox = () => {
                         
                     }}
                 >
-                    View All
+                    View All Activitiess
                 </Text>
                 <VscChevronRight size='20px' color='#073DFC' />
             </Flex>
@@ -103,7 +103,7 @@ const CreditCardBox = () => {
                             color: '#454545',
                         }}
                     >
-                        Limit Usage
+                        Balance Usage
                     </Text>
 
                     <Spacer />
@@ -211,7 +211,7 @@ const CreditCardBox = () => {
                         <Thead bg='transparent' rounded='3xl' style={{color: '#000000', }}>
                         <Tr style={{  borderRadius: '7px', borderWidth: '1px', borderColor: 'transparent'}}>
                             <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Date</Th>
-                            <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>To</Th>
+                            <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>For</Th>
                             <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Amount</Th>
                             <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}>Initiated by</Th>
                             <Th style={{fontSize: '10px', color: '#6D6D6D', fontWeight: '500',  fontFamily:'IBM Plex Sans, sans-serif' }}></Th>
@@ -227,7 +227,7 @@ const CreditCardBox = () => {
                         >
                             <Tr mb='5px' style={{borderRadius: '40px', borderColor: 'transparent', fontSize: '10px', borderWidth: '1px', backgroundColor:'transparent'}}>
                                 <Td fontSize='10px'>Jun 20</Td>
-                                <Td fontSize='10px'>FACEBOOK</Td>
+                                <Td fontSize='10px'>Consultation</Td>
                                 <Td fontSize='10px'>$230</Td>
                                 <Td fontSize='10px'>Prosper Absalom</Td>
                                 <Td fontSize='10px'>

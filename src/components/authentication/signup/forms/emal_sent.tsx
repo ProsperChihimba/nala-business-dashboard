@@ -8,7 +8,7 @@ const EmailSent = () => {
 
     //   redirect to accounts page after 3 seconds
   setTimeout(() => {
-        window.location.href = '/accounts-page'
+        window.location.href = '/login'
     }, 3000);
 
 const navigate = useNavigate();
@@ -43,17 +43,7 @@ const navigate = useNavigate();
               Verification link sent to proc@user.com
           </Text>
 
-          <Text
-              style={{
-                  fontFamily: 'IBM Plex Sans, sans-serif',
-                  fontSize: '15px',
-                  fontWeight: 400,
-                  color: '#9A9A9A',
-                  marginBottom: '30px'
-              }}
-          >
-              Click button below 😃
-          </Text>
+       
 
           <AppButton
                 label='Resend email'
@@ -61,7 +51,7 @@ const navigate = useNavigate();
                 color='#000'
                 width='160px'
                 borderColor='#DCDCDC'
-                onClick={() => navigate('/accounts-page')}
+                onClick={() => navigate('/login')}
             />
         </Flex>
       </Center>

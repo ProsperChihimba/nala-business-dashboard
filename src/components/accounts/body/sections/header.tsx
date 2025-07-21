@@ -124,7 +124,7 @@ const AccountsHeader = () => {
                 color: '#000000',
             }}
         >
-            Accounts
+            Dashboard
         </Text>
 
 

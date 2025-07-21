@@ -49,31 +49,22 @@ const SideBar = () => {
     // company menu items
     const companylMenu: NavigationItem[] = [
         {
-            label: "Accounts", 
+            label: "Dashboard", 
             path: '/accounts-page', 
             icon: <BsBank2 width='20px' height='20px' color='#000000' />, 
             subPath: ['/account-view']
         },
         {
-            label: "Expenses", 
-            path: '/expenses', 
+            label: "Consultation", 
+            path: '/consultation', 
             icon: <CiReceipt width='20px' height='20px' color='#000000' />, 
         },
         {
-            label: "Vendors", 
+            label: "Learn", 
             path: '/vendors', 
-            icon: <HiOutlineUserGroup width='20px' height='20px' color='#000000' />, 
-        },
-        {
-            label: "Reports", 
-            path: '/reports', 
             icon: <AiOutlineLineChart width='20px' height='20px' color='#000000' />, 
         },
-        {
-            label: "Team", 
-            path: '/team', 
-            icon: <HiOutlineUsers width='20px' height='20px' color='#000000' />, 
-        },
+       
     ];
 
     // get current path
@@ -91,20 +82,22 @@ const SideBar = () => {
                 top: 0,
                 bottom: 0,
                 paddingLeft: 15,
-                paddingTop: 15,
+                paddingTop: 50,
                 paddingRight: 15,
+              
+
             }}
         >
 
             {/* logo */}
-            <Image
+            {/* <Image
                 src={logo}
                 style={{
                     paddingLeft: 10,
                     marginBottom: 30,
                 }}
                 preview={false}
-            />
+            /> */}
 
             {/* personal items */}
             <SelectedNavigationSection
@@ -134,7 +127,7 @@ const SideBar = () => {
             {/* company items */}
             <SelectedNavigationSection
                 icon={<LuHotel width='20px' height='20px' color='#BBBBBB' />}
-                label='Company'
+                label='Hospital'
             />
             {
                 companylMenu.map((item, index) => (

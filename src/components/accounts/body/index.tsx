@@ -7,7 +7,7 @@ const AccountsBody = () => {
   return (
     <Box 
         backgroundColor='#F9F9F9' 
-        height='90vh' 
+        height='fit' 
         marginTop='7vh'
         padding='20px'
         // overflow='auto'

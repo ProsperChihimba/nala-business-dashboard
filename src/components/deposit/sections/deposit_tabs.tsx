@@ -17,14 +17,14 @@ const DepositProcessTabs = () => {
           fontSize='13px'
           textAlign='center'
         >
-          Domestic ACH / Wire
+          Initial Details
         </Tab>
         <Tab 
           fontWeight='500'
           fontSize='13px'
             textAlign='center'
         >
-          International Wire
+          Health Information
         </Tab>
       </TabList>
 

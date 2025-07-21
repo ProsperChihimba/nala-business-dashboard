@@ -55,7 +55,8 @@ const BusinessCardBox = () => {
             {/* view section */}
            <Flex
             cursor='pointer'
-            onClick={()=> navigate('/account-view')}
+            onClick={()=> navigate('/consultation')}
+            // onClick={()=> navigate('/account-view')}
            >
                 <Text
                     style={{

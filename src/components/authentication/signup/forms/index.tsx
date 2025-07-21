@@ -8,12 +8,11 @@ import {
     useSteps 
 } from '@chakra-ui/react'
 import PersonalDetails from './personal_details'
-import CompanyWebsite from './company_website'
-import CompanySize from './company_size'
-import CompanyRevenue from './company_revenue'
+
 import SetPassword from './password'
 import AppButton from '../../../layout/button'
 import { useNavigate } from 'react-router-dom'
+import LicenceNumber from './licence_number'
 
 const steps = [
     {
@@ -22,22 +21,15 @@ const steps = [
     },
     {
         index: 2,
-        component: <CompanyWebsite />
+        component: <LicenceNumber />
     },
     {
         index: 3,
-        component: <CompanySize />
-    },
-    {
-        index: 4,
-        component: <CompanyRevenue />
-    },
-    {
-        index: 5,
         component: <SetPassword />
     },
+   
     {
-        index: 6,
+        index: 4,
     }
 ]
 
@@ -51,9 +43,8 @@ const SignupForms = () => {
     const navigate = useNavigate();
 
   return (
-    <Flex marginTop='40px' direction='column' paddingTop='40px'>
+    <Flex marginTop='40px' direction='column' paddingTop='40px' paddingBottom="20px">
 
-        {/* steps */}
         <Center>
             <Stepper index={activeStep} >
                 {steps.map((step) => (
@@ -67,22 +58,21 @@ const SignupForms = () => {
         </Center>
 
        <Center>
-            {/* personal details */}
+           
             {steps.map((step) => (
                 <Flex direction='column' key={step.index} display={activeStep === step.index ? 'inherit' : 'none'}>
                     <Box>
                         {step.component}
                     </Box>
-                    {/* button */}
                     <Flex justifyContent='flex-end'>
                         <AppButton
-                            label='Submit'
+                            label='Next'
                             background='#073DFC'
                             color='#fff'
                             width='160px'
                             borderColor='#073DFC'
                             onClick={() => {
-                                step.index === 5 ? navigate('/email-sent') : setActiveStep(activeStep + 1)
+                                step.index === 3 ? navigate('/email-sent') : setActiveStep(activeStep + 1)
                             }}
                         />
                     </Flex>

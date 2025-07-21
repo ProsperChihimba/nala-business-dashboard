@@ -12,6 +12,10 @@ import TeamPage from "../components/team"
 import NewVendor from "../components/vendor/body/new_vendor"
 import InboxPage from '../components/inbox';
 import ExpensesPage from '../components/expenses';
+import Login from '../components/login';
+import Consultation from '../components/consultation';
+import ClientDetails from '../components/consultation/client_details';
+import PatientDetailsPage from '../components/consultation/client_details/[id]';
 
 const AppRouter = () => {
     return (
@@ -19,10 +23,15 @@ const AppRouter = () => {
         <Route path="/" Component={SignupPage} /> 
         <Route path="/accounts-page" Component={Accounts} />
         <Route path="/email-sent" Component={EmailSent} />
+        <Route path="/login" Component={Login} />
+        {/* <Route path="/patient-details" Component={ClientDetails} /> */}
+        <Route path="/patient-details/:id" Component={PatientDetailsPage} />
+        
         <Route path="/account-view" Component={AccountView} />
         <Route path="/deposit" Component={DepositPage} />
         <Route path="/send" Component={SendTransaction} />
         <Route path="/vendors" Component={Vendors} />
+        <Route path="/consultation" Component={Consultation} />
         <Route path="/vendors/new-vendor" Component={NewVendor} />
         <Route path="/wallet" Component={WalletPage} />
         <Route path="/reports" Component={ReportsPage} />

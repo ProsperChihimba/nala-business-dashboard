@@ -10,7 +10,7 @@ const PersonalDetails = () => {
   return (
     <Flex direction='column' marginTop='80px'>
         {/* heading */}
-        <DepositHeading title='Welcome Nala for businesses' />
+        <DepositHeading title='Welcome Care_Link' />
 
         {/* header desc */}
         <Text
@@ -21,7 +21,7 @@ const PersonalDetails = () => {
                 color: '#9A9A9A',
             }}
         >
-            Few details about your business
+           Few details about you
         </Text>
 
 
@@ -51,17 +51,10 @@ const PersonalDetails = () => {
             </Box>
         </Flex>
 
-        <DepositInput 
-            title='Work email'
-            value=''
-            placeholder=''
-            isReadOnly={false}
-            marginBottom='0px'
-            marginTop='20px'
-        />
+       
 
         <DepositInput
-            title='Company name'
+            title='Hospital name'
             value=''
             placeholder=''
             isReadOnly={false}
@@ -70,9 +63,18 @@ const PersonalDetails = () => {
             marginTop='20px'
         />
 
+         <DepositInput 
+            title='Work email'
+            value=''
+            placeholder=''
+            isReadOnly={false}
+            marginBottom='0px'
+            marginTop='20px'
+        />
+
         <Flex
             direction='column'
-            marginBottom='80px'
+            marginBottom='20px'
             marginTop='20px'
         >
 
@@ -101,7 +103,7 @@ const PersonalDetails = () => {
                         fontSize='15px'
                         fontWeight= '500'
                         color='#000'
-                        value='UK'
+                        value='TZ'
                         _placeholder={{
                             fontFamily: 'IBM Plex Sans, sans-serif',
                             color: '#9A9A9A',
@@ -132,6 +134,16 @@ const PersonalDetails = () => {
             </Flex>
             
         </Flex>
+
+         <DepositInput
+            title='Referal Code - Optional'
+            value=''
+            placeholder=''
+            isReadOnly={false}
+            percentage='20%'
+            marginBottom='20px'
+            marginTop='0'
+        />
     </Flex>
   )
 }

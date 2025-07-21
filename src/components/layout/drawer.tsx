@@ -2,15 +2,15 @@ import { Drawer, DrawerOverlay, DrawerContent, DrawerBody } from '@chakra-ui/rea
 import React from 'react';
 
 interface DrawerProps {
-    isOpen: boolean;
-    onClose: () => void;
+    isOpenSide: boolean;
+    onCloseSide: () => void;
     modalSize: 'sm' | 'md' | 'lg' | 'xl' | 'full';
     children: React.ReactNode;
 }
 
-const AppDrawer = ({isOpen, onClose, modalSize, children}: DrawerProps) => {
+const AppDrawer = ({isOpenSide, onCloseSide, modalSize, children}: DrawerProps) => {
   return (
-    <Drawer onClose={onClose} isOpen={isOpen} size={modalSize}>
+    <Drawer onClose={onCloseSide} isOpen={isOpenSide} size={modalSize}>
 
         <DrawerOverlay
             bg='blackAlpha.300'
