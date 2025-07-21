@@ -1,7 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { Image, Typography } from "antd";
 import learn1 from "../../../../../assets/learn2.png";
-import learn2 from "../../../../../assets/learn3.png";
 import ArticleTag from "./tag";
 
 const LearnArticle = () => {

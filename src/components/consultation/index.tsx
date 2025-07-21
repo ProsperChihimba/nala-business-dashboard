@@ -3,7 +3,6 @@ import { Avatar, Box, Flex, Text, useDisclosure } from '@chakra-ui/react'
 import ConsultationBody from './body'
 import { RxDividerVertical } from 'react-icons/rx'
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import AppButton from '../layout/button'
 import AppModal from '../layout/modal'
 import ProfileModal from './profile_modal'
 

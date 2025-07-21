@@ -5,13 +5,11 @@ import image1 from '../../../../assets/p1 (1).png'
 import image2 from '../../../../assets/p1 (2).png'
 import image3 from '../../../../assets/p1 (3).png'
 import image4 from '../../../../assets/p1 (4).png'
-import image5 from '../../../../assets/p1 (5).png'
 import image6 from '../../../../assets/p1 (6).png'
 import image7 from '../../../../assets/p1 (7).png'
 import image8 from '../../../../assets/p1 (8).png'
 import image9 from '../../../../assets/p1 (9).png'
 import image10 from '../../../../assets/p1 (10).png'
-import image11 from '../../../../assets/p1 (11).png'
 
 const ViewVitalSide = () => {
   // Mock data for vitals display

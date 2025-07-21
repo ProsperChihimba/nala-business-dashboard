@@ -14,12 +14,9 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react"
-import type React from "react"
 
-interface TreatmentModalProps {
-  isOpen: boolean
-  onClose: () => void
-}
+
+
 
 const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
   return (

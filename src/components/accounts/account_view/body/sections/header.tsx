@@ -1,5 +1,4 @@
 import { Flex } from '@chakra-ui/react'
-import { FiChevronDown } from 'react-icons/fi'
 import { Typography } from 'antd';
 import AppButton from '../../../../layout/button';
 

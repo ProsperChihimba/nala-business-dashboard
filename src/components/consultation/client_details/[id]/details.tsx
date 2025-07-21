@@ -58,7 +58,6 @@ import {
   AlignJustifyIcon,
 } from "lucide-react";
 import TreatmentModal from "./treatment_model";
-import { CiVideoOn } from "react-icons/ci";
 import PatientTransfer from "./patient_transfer_model";
 
 // Mock data for a single patient

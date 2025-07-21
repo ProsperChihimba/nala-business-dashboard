@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import type React from "react";
 import DepositHeading from "../../../layout/heading";
 import DepositInput from "../../../layout/input";
-import { User, Plus } from "lucide-react"; // Using Lucide React for icons
+import {  Plus } from "lucide-react"; // Using Lucide React for icons
 import { Image } from "antd";
 import { Box, Flex, Text } from "@chakra-ui/react";
 

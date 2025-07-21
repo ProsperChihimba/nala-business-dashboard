@@ -1,8 +1,7 @@
-import { Flex, FormLabel, Input, ModalCloseButton, Box } from "@chakra-ui/react";
+import { Flex, ModalCloseButton } from "@chakra-ui/react";
 import { Divider, Typography } from "antd";
 import { FiPhone, FiShare2, FiGift, FiLogOut } from "react-icons/fi";
 import { HiOutlineUser } from "react-icons/hi";
-import AppButton from "../layout/button";
 
 const { Text } = Typography;
 

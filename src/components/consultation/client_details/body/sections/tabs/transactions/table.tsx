@@ -3,8 +3,7 @@
 import type React from "react";
 import { useState } from "react";
 import {
-  Tab,
-  TabList,
+ 
   TabPanel,
   TabPanels,
   Tabs,
@@ -214,11 +213,11 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
 const SingleAccountTabs = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [methodFilter, setMethodFilter] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [searchTerm] = useState("");
+  const [statusFilter] = useState("");
+  const [methodFilter] = useState("");
+  const [fromDate] = useState("");
+  const [toDate] = useState("");
   const [activeTab, setActiveTab] = useState(0);
 
   // Mock data - replace with your actual data
@@ -426,14 +425,7 @@ const SingleAccountTabs = () => {
     }
   };
 
-  const handleClearFilters = () => {
-    setSearchTerm("");
-    setStatusFilter("");
-    setMethodFilter("");
-    setFromDate("");
-    setToDate("");
-    setCurrentPage(1);
-  };
+
 
   return (
     <Box color="black" marginTop="30px">

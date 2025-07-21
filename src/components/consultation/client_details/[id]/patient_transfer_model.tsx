@@ -1,15 +1,12 @@
 import {
   Flex,
-  FormLabel,
-  Input,
+ 
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Divider, Typography } from "antd";
-import DepositProcessTabs from "../../../deposit/sections/deposit_tabs";
+import {  Typography } from "antd";
 import AppButton from "../../../layout/button";
 import AppModal from "../../../layout/modal";
-import ProvisionalDetails from "./provisional_model";
 import SearchDoctor from "./search_doctor_modal";
 
 const { Text } = Typography;

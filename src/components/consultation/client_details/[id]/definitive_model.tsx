@@ -1,6 +1,5 @@
 import { Flex, FormLabel, Input, ModalCloseButton } from '@chakra-ui/react'
 import { Divider, Typography } from 'antd';
-import DepositProcessTabs from '../../../deposit/sections/deposit_tabs';
 import AppButton from '../../../layout/button';
 
 const { Text } = Typography;

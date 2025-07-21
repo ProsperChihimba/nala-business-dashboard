@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Image, Layout, Typography } from 'antd';
+import {  Layout, Typography } from 'antd';
 import { Box, Flex } from '@chakra-ui/react';
 
 // side bar icons
@@ -8,12 +8,10 @@ import { FiInbox } from "react-icons/fi";
 import { BsBank2 } from "react-icons/bs";
 import { CiReceipt } from "react-icons/ci";
 import { AiOutlineLineChart } from "react-icons/ai";
-import { HiOutlineUserGroup, HiOutlineUsers } from "react-icons/hi";
 import { LuHotel } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa";
 
 // assets
-import logo from '../../../assets/Logo.svg';
 import { To, useNavigate } from 'react-router-dom';
 
 
