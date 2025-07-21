@@ -94,11 +94,14 @@ const TransactionsTable = () => {
 
         {/* drawer */}
         <AppDrawer
-            isOpen={isOpen}
-            onClose={onClose}
+            isOpenSide={isOpen}
+            onCloseSide={onClose}
             modalSize='md'
             children={<ViewTransaction />}
         />
+
+
+  
     </Box>
   )
 }
