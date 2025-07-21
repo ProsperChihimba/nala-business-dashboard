@@ -114,8 +114,8 @@ const VendorTable = () => {
 
         {/* drawer */}
         <AppDrawer
-            isOpen={isOpenModalTwo}
-            onClose={onCloseModalTwo}
+            isOpenSide={isOpenModalTwo}
+            onCloseSide={onCloseModalTwo}
             modalSize='md'
             children={<VendorDetailsDrawer />}
         />

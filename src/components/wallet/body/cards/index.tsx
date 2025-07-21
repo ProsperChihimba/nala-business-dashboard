@@ -225,8 +225,8 @@ const WalletCard = () => {
 
             {/* drawer */}
             <AppDrawer
-                isOpen={isOpenModalTwo}
-                onClose={onCloseModalTwo}
+                isOpenSide={isOpenModalTwo}
+                onCloseSide={onCloseModalTwo}
                 modalSize='md'
                 children={<CardsLists />}
             />

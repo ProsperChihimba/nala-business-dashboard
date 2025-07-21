@@ -102,8 +102,8 @@ const TeamTable = () => {
 
         {/* drawer */}
         <AppDrawer
-            isOpen={isOpenModalOne}
-            onClose={onCloseModalOne}
+            isOpenSide={isOpenModalOne}
+            onCloseSide={onCloseModalOne}
             modalSize='md'
             children={<ViewUser />}
         />
