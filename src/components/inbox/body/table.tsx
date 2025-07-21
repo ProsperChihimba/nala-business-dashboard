@@ -108,10 +108,12 @@ const InboxTable = () => {
 
         {/* drawer */}
         <AppDrawer
-            isOpen={isOpenModalOne}
-            onClose={onCloseModalOne}
+            isOpenSide={isOpenModalOne}
+            onCloseSide={onCloseModalOne}
             modalSize='md'
             children={<ViewPayment />}
+
+           
         />
     </Flex>
   )
