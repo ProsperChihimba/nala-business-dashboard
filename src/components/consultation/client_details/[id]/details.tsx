@@ -71,6 +71,9 @@ import TreatmentModal from "./treatment_model";
 import PatientTransfer from "./patient_transfer_model";
 import InvestigationSteps from "../investigation_steps";
 import InvestigationModal from "./investigation_modal";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import SendNotification from "./send_notification_modal";
+import ClerkDrawer from "./clerk_drawer";
 
 // Mock data for a single patient
 const mockPatientDetails = [
@@ -107,7 +110,7 @@ interface TestItem {
 
 const Details = () => {
   const { id } = useParams<{ id: string }>();
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [tests, setTests] = useState<TestItem[]>([
     { id: "1", name: "HAEMOGLOBIN (POC)", isSelected: false },
     { id: "2", name: "HELICOBACTER PYLORI AG. TEST (POC)", isSelected: true },
@@ -125,6 +128,13 @@ const Details = () => {
     isOpen: isNewVitalDrawerOpen,
     onOpen: onNewVitalDrawerOpen,
     onClose: onNewVitalDrawerClose,
+  } = useDisclosure();
+
+
+   const {
+    isOpen: isClerkDrawerOpen,
+    onOpen: onClerkDrawerOpen,
+    onClose: onClerkDrawerClose,
   } = useDisclosure();
   // State for the "View Vital" drawer
   const {
@@ -144,6 +154,12 @@ const Details = () => {
     isOpen: isPatientTransferModalOpen,
     onOpen: onPatientTransferModalOpen,
     onClose: onPatientTransferModalClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isNotificationModalOpen,
+    onOpen: onNotificationModalOpen,
+    onClose: onNotificationModalClose,
   } = useDisclosure();
   const {
     isOpen: isTreatmentModalOpen,
@@ -216,10 +232,8 @@ const Details = () => {
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-
-    const handleAddSheet = () => {
-    
-    navigate("/add-clerksheet"); 
+  const handleAddSheet = () => {
+    navigate("/add-clerksheet");
   };
 
   return (
@@ -272,6 +286,20 @@ const Details = () => {
                   <MenuItem>
                     <MdSms />
                     <Text style={{ marginLeft: "10px" }}>SMS Chat</Text>
+                  </MenuItem>
+                  <MenuItem onClick={onNotificationModalOpen}>
+                    <IoMdNotificationsOutline />
+                    <Text style={{ marginLeft: "10px" }}>
+                      Send Notification
+                    </Text>
+                    <AppModal
+                      isOpen={isNotificationModalOpen} // Use specific state
+                      onClose={onNotificationModalClose} // Use specific state
+                      modalSize="md"
+                      children={
+                        <SendNotification onClose={onNotificationModalClose} />
+                      }
+                    />
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -937,10 +965,9 @@ const Details = () => {
                       <Td fontSize="10px">
                         <Link
                           color="blue"
-                          onClick={onProvisionalDetailsModalOpen}
+                          onClick={onClerkDrawerOpen}
                         >
-                          {" "}
-                          {/* Trigger ProvisionalDetails modal */}
+                        
                           details
                         </Link>
                       </Td>
@@ -972,6 +999,13 @@ const Details = () => {
               onCloseSide={onViewVitalDrawerClose}
               modalSize="md"
               children={<ViewVitalSide />}
+            />
+
+             <AppDrawer
+              isOpenSide={isClerkDrawerOpen}
+              onCloseSide={onClerkDrawerClose}
+              modalSize="md"
+              children={<ClerkDrawer />}
             />
             <FilterSection />
             <Box
