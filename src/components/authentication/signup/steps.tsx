@@ -1,8 +1,6 @@
-import { Box, Center, Flex, Step, StepDescription, StepIndicator, StepSeparator, StepStatus, StepTitle, Stepper, useSteps } from '@chakra-ui/react'
-import { Image } from 'antd'
+import { Box, Center,  Step, StepDescription, StepIndicator, StepSeparator, StepStatus, StepTitle, Stepper, useSteps } from '@chakra-ui/react'
 
 // assets
-import logo from '../../../assets/Logo.svg';
 
 // icons
 import { TbLockCog } from "react-icons/tb";
@@ -36,7 +34,7 @@ const SignupSteps = () => {
     >
 
       {/* logo */}
-      <Flex justifyContent='flex-end'>
+      {/* <Flex justifyContent='flex-end'>
         <Image
             src={logo}
             style={{
@@ -45,7 +43,7 @@ const SignupSteps = () => {
             }}
             preview={false}
         />
-      </Flex>
+      </Flex> */}
 
       {/* steps */}
      <Center>

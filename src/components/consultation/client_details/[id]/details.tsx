@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Flex,
@@ -19,6 +19,8 @@ import {
   useDisclosure,
   Avatar,
   Textarea,
+  Input,
+  VStack,
 } from "@chakra-ui/react";
 import {
   TableContainer,
@@ -31,8 +33,16 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { Divider, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
+
 import { useParams } from "react-router-dom";
-import { FiChevronDown, FiChevronRight, FiPlus, FiVideo } from "react-icons/fi";
+import {
+  FiCheck,
+  FiChevronDown,
+  FiChevronRight,
+  FiPlus,
+  FiVideo,
+} from "react-icons/fi";
 import { AiOutlineEye } from "react-icons/ai";
 import { GoInfo } from "react-icons/go";
 import { TbNotes } from "react-icons/tb";
@@ -59,6 +69,8 @@ import {
 } from "lucide-react";
 import TreatmentModal from "./treatment_model";
 import PatientTransfer from "./patient_transfer_model";
+import InvestigationSteps from "../investigation_steps";
+import InvestigationModal from "./investigation_modal";
 
 // Mock data for a single patient
 const mockPatientDetails = [
@@ -86,8 +98,27 @@ const mockPatientDetails = [
   },
 ];
 
+interface TestItem {
+  id: string;
+  name: string;
+  isSelected: boolean;
+  category?: string;
+}
+
 const Details = () => {
   const { id } = useParams<{ id: string }>();
+   const navigate = useNavigate();
+  const [tests, setTests] = useState<TestItem[]>([
+    { id: "1", name: "HAEMOGLOBIN (POC)", isSelected: false },
+    { id: "2", name: "HELICOBACTER PYLORI AG. TEST (POC)", isSelected: true },
+    { id: "3", name: "FAST BLOOD GLUCOSE", isSelected: false },
+    { id: "4", name: "URINE PREGNANCY TEST", isSelected: false },
+  ]);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // State for the "New Vital" drawer
   const {
@@ -109,8 +140,7 @@ const Details = () => {
     onClose: onPatientDetailsModalClose,
   } = useDisclosure();
 
-
-    const {
+  const {
     isOpen: isPatientTransferModalOpen,
     onOpen: onPatientTransferModalOpen,
     onClose: onPatientTransferModalClose,
@@ -120,6 +150,13 @@ const Details = () => {
     onOpen: onTreatmentModalOpen,
     onClose: onTreatmentModalClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isInvestigationModalOpen,
+    onOpen: onInvestigationModalOpen,
+    onClose: onInvestigationModalClose,
+  } = useDisclosure();
+
   const {
     isOpen: isProvisionalDetailsModalOpen,
     onOpen: onProvisionalDetailsModalOpen,
@@ -140,8 +177,67 @@ const Details = () => {
     return <Text>Patient not found.</Text>;
   }
 
+  const toggleTest = (testId: string) => {
+    setTests(
+      tests.map((test) =>
+        test.id === testId ? { ...test, isSelected: !test.isSelected } : test
+      )
+    );
+  };
+
+  const handleInputClick = () => {
+    setIsDropdownOpen(true);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setIsDropdownOpen(true);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Filter tests based on search query
+  const filteredTests = tests.filter((test) =>
+    test.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
+    const handleAddSheet = () => {
+    
+    navigate("/add-clerksheet"); 
+  };
+
   return (
     <Box p={6} bg=" #F9F9F9" minH="100vh" rounded={9}>
+      <Box paddingLeft={2}>
+        <Text
+          style={{
+            fontFamily: "IBM Plex Sans, sans-serif",
+            fontSize: "11px",
+            fontWeight: 500,
+            color: "#000000",
+            marginBottom: 10,
+          }}
+        >
+          Consultation {`>`}{" "}
+          <span style={{ color: "#6D6D6D" }}>Client Details</span>
+        </Text>
+      </Box>
       {/* Header */}
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
         <Text
@@ -157,16 +253,26 @@ const Details = () => {
           {patient.name} - Sinza C
         </Text>
         <HStack spacing={4}>
-          {tabIndex !== 2 && tabIndex !== 3 && (
+          {tabIndex !== 2 && tabIndex !== 3 && tabIndex !== 1 && (
             <>
               <Menu>
                 <MenuButton as={Button} rightIcon={<FiChevronDown />} size="sm">
                   Contact Patient
                 </MenuButton>
                 <MenuList>
-                  <MenuItem> <FiVideo  /> <Text style={{marginLeft:"10px"}}>Video Call</Text></MenuItem>
-                  <MenuItem><MdOutlineCall /><Text style={{marginLeft:"10px"}}>Audio Call</Text></MenuItem>
-                  <MenuItem><MdSms /><Text style={{marginLeft:"10px"}}>SMS Chat</Text></MenuItem>
+                  <MenuItem>
+                    {" "}
+                    <FiVideo />{" "}
+                    <Text style={{ marginLeft: "10px" }}>Video Call</Text>
+                  </MenuItem>
+                  <MenuItem>
+                    <MdOutlineCall />
+                    <Text style={{ marginLeft: "10px" }}>Audio Call</Text>
+                  </MenuItem>
+                  <MenuItem>
+                    <MdSms />
+                    <Text style={{ marginLeft: "10px" }}>SMS Chat</Text>
+                  </MenuItem>
                 </MenuList>
               </Menu>
               <Menu>
@@ -207,6 +313,18 @@ const Details = () => {
               icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
               width="140px"
               onClick={onProvisionalDetailsModalOpen} // Trigger ProvisionalDetails modal
+            />
+          )}
+
+          {tabIndex === 1 && (
+            <AppButton
+              label="Add Clerk Sheet"
+              background="#073DFC"
+              borderColor="#DCDCDC"
+              color="white"
+              icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
+              width="140px"
+              onClick={handleAddSheet} // Trigger ProvisionalDetails modal
             />
           )}
         </HStack>
@@ -301,7 +419,7 @@ const Details = () => {
                           marginRight: "5px",
                           cursor: "pointer",
                         }}
-                        // onClick={onPatientDetailsModalOpen} 
+                        // onClick={onPatientDetailsModalOpen}
                       >
                         patient consultation description
                       </Text>
@@ -409,14 +527,14 @@ const Details = () => {
                     onClick={onPatientDetailsModalOpen} // Trigger PatientDetails modal
                   />
 
-                     <AppModal
-                isOpen={isPatientDetailsModalOpen} // Use specific state
-                onClose={onPatientDetailsModalClose} // Use specific state
-                modalSize="md"
-                children={
-                  <PatientDetails onClose={onPatientDetailsModalClose} />
-                }
-              />
+                  <AppModal
+                    isOpen={isPatientDetailsModalOpen} // Use specific state
+                    onClose={onPatientDetailsModalClose} // Use specific state
+                    modalSize="md"
+                    children={
+                      <PatientDetails onClose={onPatientDetailsModalClose} />
+                    }
+                  />
                 </Flex>
                 <Divider style={{ margin: 0 }} />
                 {/* */}
@@ -1146,156 +1264,182 @@ const Details = () => {
                 <ProvisionalDetails onClose={onProvisionalDetailsModalClose} />
               }
             />
-            <FilterSection />
-            <Box
+
+            <Flex
               width="100%"
+              justifyContent="space-between"
               fontFamily="IBM Plex Sans, sans-serif"
               border="1px solid #D9D9D9"
               borderRadius="10px"
               marginTop="30px"
+              gap={5}
             >
-              {/* table title */}
-              <Flex
-                padding="10px 20px"
-                justifyContent="space-between"
-                alignItems="center"
+              <InvestigationSteps />
+              <Box
+                width="100%"
+                // bg="white"
+                // border="1px solid"
+                // borderColor="gray.200"
+                borderRadius="12px"
+                fontFamily="IBM Plex Sans, sans-serif"
+                overflow="visible"
+                ref={dropdownRef}
+                position="relative"
               >
-                <Text
-                  style={{
-                    fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "11px",
-                    fontWeight: 500,
-                    color: "#454545",
-                  }}
-                >
-                  Recent
-                </Text>
-                <Flex>
+                <Box p={4}>
                   <Text
                     style={{
                       fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "10px",
-                      fontWeight: 400,
-                      color: "#073DFC",
+                      fontSize: "19px",
+                      fontWeight: 500,
+                      color: "#211f1fff",
+                      marginBottom: "10px",
                     }}
                   >
-                    View All
+                    {/* fontSize="lg" fontWeight="600" color="gray.700" */}
+                    Haematology
                   </Text>
-                  <FiChevronRight
-                    size="15px"
-                    style={{ marginLeft: 8 }}
-                    color="#073DFC"
+                </Box>
+                {/* Header */}
+                <Box p={4} borderBottom="1px solid" borderColor="gray.200">
+                  <Text
+                    style={{
+                      fontFamily: "IBM Plex Sans, sans-serif",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      color: "#454545",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    {/* fontSize="lg" fontWeight="600" color="gray.700" */}
+                    Select Test
+                  </Text>
+                </Box>
+
+                {/* Search Input */}
+                <Box p={4} position="relative">
+                  <Input
+                    ref={inputRef}
+                    value={searchQuery}
+                    onChange={handleInputChange}
+                    onClick={handleInputClick}
+                    placeholder="Search for tests..."
+                    bg="gray.50"
+                    border="1px solid"
+                    borderColor="gray.200"
+                    borderRadius="8px"
+                    fontSize="sm"
+                    color="gray.600"
+                    _placeholder={{ color: "gray.400" }}
+                    _focus={{
+                      borderColor: "blue.400",
+                      boxShadow: "0 0 0 1px #63B3ED",
+                    }}
+                  />
+
+                  {/* Dropdown */}
+                  {isDropdownOpen && (
+                    <Box
+                      position="absolute"
+                      top="100%"
+                      left="0"
+                      right="0"
+                      bg="white"
+                      paddingX={3}
+                      border="1px solid"
+                      borderColor="gray.200"
+                      borderRadius="8px"
+                      boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
+                      zIndex="1000"
+                      mt={1}
+                      maxHeight="300px"
+                      overflowY="auto"
+                    >
+                      <VStack spacing={0} align="stretch">
+                        {filteredTests.length > 0 ? (
+                          filteredTests.map((test, index) => (
+                            <HStack
+                              key={test.id}
+                              p={3}
+                              spacing={3}
+                              borderBottom={
+                                index < filteredTests.length - 1
+                                  ? "1px solid"
+                                  : "none"
+                              }
+                              borderColor="gray.100"
+                              cursor="pointer"
+                              _hover={{ bg: "gray.50" }}
+                              onClick={() => toggleTest(test.id)}
+                            >
+                              <Flex justifyContent="space-between" width="100%">
+                                <Text
+                                // fontSize="sm"
+                                // color="gray.700"
+                                // flex="1"
+                                // fontWeight="500"
+                                >
+                                  {test.name}
+                                </Text>
+
+                                <Box
+                                  width="20px"
+                                  height="20px"
+                                  borderRadius="4px"
+                                  border="2px solid"
+                                  borderColor={
+                                    test.isSelected ? "blue.500" : "gray.300"
+                                  }
+                                  bg={
+                                    test.isSelected ? "blue.500" : "transparent"
+                                  }
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                  transition="all 0.2s"
+                                >
+                                  {test.isSelected ? (
+                                    <FiCheck color="white" size={12} />
+                                  ) : (
+                                    <FiPlus color="#CBD5E0" size={12} />
+                                  )}
+                                </Box>
+                              </Flex>
+                            </HStack>
+                          ))
+                        ) : (
+                          <Box p={4} textAlign="center">
+                            <Text>
+                              {/* fontSize="sm" color="gray.500" */}
+                              No tests found
+                            </Text>
+                          </Box>
+                        )}
+                      </VStack>
+                    </Box>
+                  )}
+                </Box>
+                <AppModal
+                  isOpen={isInvestigationModalOpen} // Use specific state
+                  onClose={onInvestigationModalClose} // Use specific state
+                  modalSize="md"
+                  children={
+                    <InvestigationModal onClose={onInvestigationModalClose} />
+                  }
+                />
+                {/* Footer with Share Button */}
+                <Flex p={4} justifyContent="flex-end">
+                  <AppButton
+                    label="Share"
+                    background="#073DFC"
+                    color="white"
+                    width="140px"
+                    borderColor="#DCDCDC"
+                    onClick={onInvestigationModalOpen}
                   />
                 </Flex>
-              </Flex>
-              <Divider style={{ marginTop: "0px", marginBottom: "10px" }} />
-              {/* rows */}
-              <TableContainer w="100%" h="100%">
-                <Table
-                  size="sm"
-                  bg="transparent"
-                  rounded="md"
-                  variant="unstyled"
-                  mb="20px"
-                  border="1px"
-                >
-                  <Thead
-                    bg="transparent"
-                    rounded="3xl"
-                    style={{ color: "#000000" }}
-                  >
-                    <Tr
-                      style={{
-                        borderRadius: "7px",
-                        borderWidth: "1px",
-                        borderColor: "transparent",
-                      }}
-                    >
-                      <Th
-                        style={{
-                          fontSize: "10px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Date
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "10px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Recorded by
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "10px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Recorded details
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "10px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Action
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody
-                    overflow="auto"
-                    sx={{
-                      "&::-webkit-scrollbar": {
-                        display: "none",
-                      },
-                    }}
-                  >
-                    <Tr
-                      mb="5px"
-                      style={{
-                        borderRadius: "40px",
-                        borderColor: "transparent",
-                        fontSize: "10px",
-                        borderWidth: "1px",
-                        backgroundColor: "transparent",
-                      }}
-                    >
-                      <Td fontSize="10px">Jun 20</Td>
-                      <Td fontSize="10px">Prosper Absalom</Td>
-                      <Td fontSize="10px">Chief Complaints, Diagnosis</Td>
-                      <Td fontSize="10px">
-                        <Link
-                          color="blue"
-                          onClick={onProvisionalDetailsModalOpen}
-                        >
-                          {" "}
-                          {/* Trigger ProvisionalDetails modal */}
-                          details
-                        </Link>
-                      </Td>
-                      <Td fontSize="10px">
-                        <FiChevronRight
-                          size="15px"
-                          style={{ marginLeft: 8 }}
-                          color="#000"
-                        />
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Box>
+              </Box>
+            </Flex>
           </TabPanel>
           {/* Investigation Result Tab Content (Placeholder) */}
           <TabPanel>
