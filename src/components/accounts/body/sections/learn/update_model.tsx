@@ -1,10 +1,36 @@
-import { Flex, FormLabel, Input, ModalCloseButton } from '@chakra-ui/react'
+import { Flex, FormLabel, Input, ModalCloseButton, useToast } from '@chakra-ui/react'
 import { Divider, Typography } from 'antd';
 import AppButton from '../../../../layout/button';
+import { useState } from 'react';
 
 const { Text } = Typography;
 
-const UpdateModel = ({onClose}: {onClose: () => void}) => {
+interface UpdateModelProps {
+  onClose: () => void;
+  onUpdate: (consultationFee: number) => void;
+  isLoading?: boolean;
+}
+
+const UpdateModel = ({ onUpdate, isLoading = false }: UpdateModelProps) => {
+  const [consultationFee, setConsultationFee] = useState<string>('');
+  const toast = useToast();
+
+  const handleUpdate = () => {
+    const fee = parseFloat(consultationFee);
+    
+    if (isNaN(fee) || fee <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid consultation fee",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    onUpdate(fee);
+  };
   return (
     <Flex direction='column' marginBottom='10px'>
         
@@ -27,12 +53,13 @@ const UpdateModel = ({onClose}: {onClose: () => void}) => {
          <Flex flexDir="column" mt={5}>
         <FormLabel>Amount in TZS</FormLabel>
         <Input
-        
-          value=""
-          placeholder=""
+          value={consultationFee}
+          placeholder="Enter consultation fee in TZS"
           isReadOnly={false}
           marginBottom="80px"
           marginTop="20px"
+          onChange={(e) => setConsultationFee(e.target.value)}
+          type="number"
         />
       </Flex>
 
@@ -41,12 +68,13 @@ const UpdateModel = ({onClose}: {onClose: () => void}) => {
         {/* button */}
         <Flex justifyContent='flex-end'>
             <AppButton
-                label="Update"
+                label={isLoading ? "Updating..." : "Update"}
                 background='#073DFC'
                 color='#fff'
                 width='150px'
                 borderColor='#073DFC'
-                onClick={onClose}
+                onClick={handleUpdate}
+                disabled={isLoading || !consultationFee}
             />
         </Flex>
     </Flex>

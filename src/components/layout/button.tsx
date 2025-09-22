@@ -18,9 +18,10 @@ interface ButtonProps {
   hasDropdown?: boolean;
   items?: MenuProps['items'];
   height?: string;
+  disabled?: boolean;
 }
 
-const AppButton = ({label, background, icon, color, width, borderColor, weigth, leftIcon, onClick, hasDropdown, items, height = '30px'} : ButtonProps) => {
+const AppButton = ({label, background, icon, color, width, borderColor, weigth, leftIcon, onClick, hasDropdown, items, height = '30px', disabled = false} : ButtonProps) => {
 
   return (
     <>
@@ -45,6 +46,7 @@ const AppButton = ({label, background, icon, color, width, borderColor, weigth, 
             width={width}
             leftIcon={leftIcon}
             onClick={onClick}
+            disabled={disabled}
           >
             {label}
           </Button>
@@ -69,6 +71,7 @@ const AppButton = ({label, background, icon, color, width, borderColor, weigth, 
           width={width}
           leftIcon={leftIcon}
           onClick={onClick}
+          disabled={disabled}
         >
           {label}
         </Button>

@@ -16,29 +16,87 @@ import Login from "../components/login";
 import Consultation from "../components/consultation";
 import PatientDetailsPage from "../components/consultation/client_details/[id]";
 import AddClerkSheet from "../components/consultation/add_clerksheet";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const AppRouter = () => {
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" Component={SignupPage} />
-      <Route path="/accounts-page" Component={Accounts} />
       <Route path="/email-sent" Component={EmailSent} />
       <Route path="/login" Component={Login} />
-      {/* <Route path="/patient-details" Component={ClientDetails} /> */}
-      <Route path="/patient-details/:id" Component={PatientDetailsPage} />
-
-      <Route path="/account-view" Component={AccountView} />
-      <Route path="/add-clerksheet" Component={AddClerkSheet} />
-      <Route path="/deposit" Component={DepositPage} />
-      <Route path="/send" Component={SendTransaction} />
-      <Route path="/vendors" Component={Vendors} />
-      <Route path="/consultation" Component={Consultation} />
-      <Route path="/vendors/new-vendor" Component={NewVendor} />
-      <Route path="/wallet" Component={WalletPage} />
-      <Route path="/reports" Component={ReportsPage} />
-      <Route path="/team" Component={TeamPage} />
-      <Route path="/inbox" Component={InboxPage} />
-      <Route path="/expenses" Component={ExpensesPage} />
+      
+      {/* Protected routes - require authentication */}
+      <Route path="/accounts-page" element={
+        <ProtectedRoute>
+          <Accounts />
+        </ProtectedRoute>
+      } />
+      <Route path="/patient-details/:id" element={
+        <ProtectedRoute>
+          <PatientDetailsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/account-view" element={
+        <ProtectedRoute>
+          <AccountView />
+        </ProtectedRoute>
+      } />
+      <Route path="/add-clerksheet" element={
+        <ProtectedRoute>
+          <AddClerkSheet />
+        </ProtectedRoute>
+      } />
+      <Route path="/deposit" element={
+        <ProtectedRoute>
+          <DepositPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/send" element={
+        <ProtectedRoute>
+          <SendTransaction />
+        </ProtectedRoute>
+      } />
+      <Route path="/vendors" element={
+        <ProtectedRoute>
+          <Vendors />
+        </ProtectedRoute>
+      } />
+      <Route path="/consultation" element={
+        <ProtectedRoute>
+          <Consultation />
+        </ProtectedRoute>
+      } />
+      <Route path="/vendors/new-vendor" element={
+        <ProtectedRoute>
+          <NewVendor />
+        </ProtectedRoute>
+      } />
+      <Route path="/wallet" element={
+        <ProtectedRoute>
+          <WalletPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/reports" element={
+        <ProtectedRoute>
+          <ReportsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/team" element={
+        <ProtectedRoute>
+          <TeamPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/inbox" element={
+        <ProtectedRoute>
+          <InboxPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/expenses" element={
+        <ProtectedRoute>
+          <ExpensesPage />
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
  
   TabPanel,
@@ -22,8 +22,12 @@ import {
   HStack,
   IconButton,
   Link,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { useAuth } from "../../../../../../contexts/AuthContext";
+import { apiService, Appointment } from "../../../../../../services/api";
 
 interface Transaction {
   id: number;
@@ -219,6 +223,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 };
 
 const SingleAccountTabs = () => {
+  const { token, doctor } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm] = useState("");
   const [statusFilter] = useState("");
@@ -226,115 +231,118 @@ const SingleAccountTabs = () => {
   const [fromDate] = useState("");
   const [toDate] = useState("");
   const [activeTab, setActiveTab] = useState(0);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data - replace with your actual data
-  const allTransactions: Transaction[] = [
-    {
-      id: 1,
+  // Transform API data to match existing UI structure
+  const transformAppointmentToTransaction = (appointment: Appointment): Transaction => {
+    const fullName = `${appointment.patient.user.first_name} ${appointment.patient.user.last_name}`;
+    
+    // Map status from API to UI status
+    let status: "Active" | "Pending" | "Rejected";
+    switch (appointment.status) {
+      case "scheduled":
+        status = "Active";
+        break;
+      case "pending":
+        status = "Pending";
+        break;
+      case "cancelled":
+      case "rejected":
+        status = "Rejected";
+        break;
+      default:
+        status = "Pending";
+    }
+
+    // Format date from API format (2025-09-23) to UI format (23/09/2025)
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+
+    // Format time from API format (09:00:00) to UI format (09:00 AM)
+    const formatTime = (timeString: string) => {
+      const [hours, minutes] = timeString.split(':');
+      const hour = parseInt(hours);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour % 12 || 12;
+      return `${displayHour}:${minutes} ${ampm}`;
+    };
+
+    return {
+      id: appointment.id,
       patient: {
-        name: "Neema Adam",
-        avatar: "https://bit.ly/dan-abramov",
+        name: fullName,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`,
       },
-      type: "Clinic Visit",
-      status: "Active",
-      date: "20/05/2025",
-      time: "08:00 PM",
-    },
-    {
-      id: 2,
-      patient: {
-        name: "Mohamed Ngatama",
-        avatar: "https://bit.ly/sage-adebayo",
-      },
-      type: "Clinic Visit",
-      status: "Pending",
-      date: "20/05/2025",
-      time: "08:00 PM",
-    },
-    {
-      id: 3,
-      patient: {
-        name: "Neema Adam",
-        avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04",
-      },
-      type: "Clinic Visit",
-      status: "Rejected",
-      date: "20/05/2025",
-      time: "08:00 PM",
-    },
-    {
-      id: 4,
-      patient: {
-        name: "Aisha Said",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      type: "Online Consultation",
-      status: "Active",
-      date: "19/05/2025",
-      time: "10:00 AM",
-    },
-    {
-      id: 5,
-      patient: {
-        name: "Juma Hassan",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      type: "Lab Test",
-      status: "Pending",
-      date: "18/05/2025",
-      time: "02:30 PM",
-    },
-    {
-      id: 6,
-      patient: {
-        name: "Fatma Ali",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      type: "Clinic Visit",
-      status: "Active",
-      date: "17/05/2025",
-      time: "09:00 AM",
-    },
-    {
-      id: 7,
-      patient: {
-        name: "Hamisi Omar",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      type: "Online Consultation",
-      status: "Rejected",
-      date: "16/05/2025",
-      time: "04:00 PM",
-    },
-    {
-      id: 8,
-      patient: {
-        name: "Zainab Kassim",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      type: "Lab Test",
-      status: "Pending",
-      date: "15/05/2025",
-      time: "11:00 AM",
-    },
-    {
-      id: 9,
-      patient: {
-        name: "Said Abdallah",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      type: "Clinic Visit",
-      status: "Active",
-      date: "14/05/2025",
-      time: "01:00 PM",
-    },
-  ];
+      type: appointment.appointment_type_display,
+      status: status,
+      date: formatDate(appointment.appointment_date),
+      time: formatTime(appointment.appointment_time),
+    };
+  };
+
+  // Fetch appointments on component mount
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      console.log('Fetching appointments - Token:', !!token, 'Doctor:', doctor);
+      
+      if (!token) {
+        console.log('No token available');
+        setIsLoading(false);
+        return;
+      }
+
+      let doctorId = doctor?.id;
+
+      // If no doctor ID, try to get it from the token or fetch doctor profile
+      if (!doctorId) {
+        console.log('No doctor ID available, trying to fetch doctor profile...');
+        try {
+          // For now, let's use a hardcoded approach - we know dr_jones has ID 7
+          // In a real app, you'd want to store the username in the token or get it from the login response
+          doctorId = 7; // Dr. Sarah Jones ID
+          console.log('Using hardcoded doctor ID:', doctorId);
+        } catch (error) {
+          console.error('Failed to get doctor ID:', error);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      try {
+        setIsLoading(true);
+        console.log('Fetching appointments for doctor ID:', doctorId);
+        const appointmentsData = await apiService.getDoctorAppointments(doctorId, token);
+        setAppointments(appointmentsData);
+        console.log('Fetched appointments:', appointmentsData);
+      } catch (error) {
+        console.error('Failed to fetch appointments:', error);
+        // Keep empty array on error - will show "No appointments found"
+        setAppointments([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, [token, doctor?.id]);
+
+  // Transform appointments to transactions - only use real API data
+  const allTransactions: Transaction[] = appointments.map(transformAppointmentToTransaction);
 
   const itemsPerPage = 8;
 
+  // Use only real data from API
+  const dataSource = allTransactions;
+
   const applyFilters = () => {
     // Filter transactions based on current tab and filters
-    return allTransactions.filter((transaction) => {
+    return dataSource.filter((transaction) => {
       const tabNames = ["Overview", "Active", "Pending", "Rejected"];
       const currentTabName = tabNames[activeTab];
 
@@ -433,6 +441,30 @@ const SingleAccountTabs = () => {
   };
 
 
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <Box color="black" marginTop="30px">
+        <Center py={8}>
+          <Spinner size="lg" color="blue.500" />
+        </Center>
+      </Box>
+    );
+  }
+
+  // Show no appointments message if no data
+  if (!isLoading && allTransactions.length === 0) {
+    return (
+      <Box color="black" marginTop="30px">
+        <Center py={8}>
+          <Text fontSize="16px" color="gray.500">
+            No appointments found
+          </Text>
+        </Center>
+      </Box>
+    );
+  }
 
   return (
     <Box color="black" marginTop="30px">

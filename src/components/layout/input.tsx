@@ -14,9 +14,11 @@ interface InputProps  {
     width?: string,
     height?: string,
     elementPadding?: string,
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    type?: string;
 }
 
-const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, percentage, marginBottom, marginTop, width, height, elementPadding} : InputProps) => {
+const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, percentage, marginBottom, marginTop, width, height, elementPadding, onChange, type} : InputProps) => {
 
     const { Text } = Typography;
   return (
@@ -53,6 +55,8 @@ const DepositInput = ({title, value, placeholder, isReadOnly, rightElement, perc
                 color='#000'
                 value={value}
                 isReadOnly={isReadOnly}
+                onChange={onChange}
+                type={type || 'text'}
                 _placeholder={{
                     fontFamily: 'IBM Plex Sans, sans-serif',
                     color: '#9A9A9A',
