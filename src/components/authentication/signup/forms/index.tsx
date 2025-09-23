@@ -131,7 +131,7 @@ const SignupForms = () => {
             
             const missingFields = requiredFields.filter(field => {
                 const keys = field.split('.');
-                let value = doctorData;
+                let value: any = doctorData;
                 for (const key of keys) {
                     value = value?.[key];
                 }

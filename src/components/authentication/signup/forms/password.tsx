@@ -6,7 +6,6 @@ import { useState } from "react";
 
 const SetPassword = () => {
   const { formData, updateFormData } = useRegistration();
-  const { Text } = Typography;
   
   const [username, setUsername] = useState(formData.user?.username || '');
   const [password, setPassword] = useState(formData.user?.password || '');
@@ -16,8 +15,11 @@ const SetPassword = () => {
     setUsername(value);
     updateFormData({
       user: {
-        ...formData.user,
         username: value,
+        first_name: formData.user?.first_name || '',
+        last_name: formData.user?.last_name || '',
+        email: formData.user?.email || '',
+        password: formData.user?.password || '',
       }
     });
   };
@@ -26,7 +28,10 @@ const SetPassword = () => {
     setPassword(value);
     updateFormData({
       user: {
-        ...formData.user,
+        username: formData.user?.username || '',
+        first_name: formData.user?.first_name || '',
+        last_name: formData.user?.last_name || '',
+        email: formData.user?.email || '',
         password: value,
       }
     });

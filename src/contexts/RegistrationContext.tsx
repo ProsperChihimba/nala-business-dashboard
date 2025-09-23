@@ -31,14 +31,24 @@ export const RegistrationProvider: React.FC<RegistrationProviderProps> = ({ chil
   const [error, setError] = useState<string | null>(null);
 
   const updateFormData = (data: Partial<DoctorRegistrationData>) => {
-    setFormData(prev => ({
-      ...prev,
-      ...data,
-      user: {
-        ...prev.user,
-        ...data.user,
-      },
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        ...data,
+      };
+      
+      if (data.user) {
+        newData.user = {
+          username: data.user.username || prev.user?.username || '',
+          first_name: data.user.first_name || prev.user?.first_name || '',
+          last_name: data.user.last_name || prev.user?.last_name || '',
+          email: data.user.email || prev.user?.email || '',
+          password: data.user.password || prev.user?.password || '',
+        };
+      }
+      
+      return newData;
+    });
   };
 
   const resetFormData = () => {
