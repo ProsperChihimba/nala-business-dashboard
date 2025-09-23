@@ -8,7 +8,7 @@ const SetPassword = () => {
   const { formData, updateFormData } = useRegistration();
   
   const [username, setUsername] = useState(formData.user?.username || '');
-  const [password, setPassword] = useState(formData.user?.password || '');
+  const [password, setPassword] = useState(formData.password || '');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   // Sync local state with form data
@@ -16,10 +16,10 @@ const SetPassword = () => {
     if (formData.user?.username !== username) {
       setUsername(formData.user?.username || '');
     }
-    if (formData.user?.password !== password) {
-      setPassword(formData.user?.password || '');
+    if (formData.password !== password) {
+      setPassword(formData.password || '');
     }
-  }, [formData.user?.username, formData.user?.password, username, password]);
+  }, [formData.user?.username, formData.password, username, password]);
 
   const handleUsernameChange = (value: string) => {
     setUsername(value);
@@ -29,20 +29,21 @@ const SetPassword = () => {
         first_name: formData.user?.first_name || '',
         last_name: formData.user?.last_name || '',
         email: formData.user?.email || '',
-        password: formData.user?.password || '',
       }
     });
   };
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
+    
+    // Update password at root level and user data separately
     updateFormData({
+      password: value,
       user: {
         username: formData.user?.username || '',
         first_name: formData.user?.first_name || '',
         last_name: formData.user?.last_name || '',
         email: formData.user?.email || '',
-        password: value,
       }
     });
   };

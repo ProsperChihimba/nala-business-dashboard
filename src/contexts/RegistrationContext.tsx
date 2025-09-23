@@ -43,8 +43,12 @@ export const RegistrationProvider: React.FC<RegistrationProviderProps> = ({ chil
           first_name: data.user.first_name || prev.user?.first_name || '',
           last_name: data.user.last_name || prev.user?.last_name || '',
           email: data.user.email || prev.user?.email || '',
-          password: data.user.password || prev.user?.password || '',
         };
+      }
+      
+      // Handle password separately since it's at root level
+      if (data.password !== undefined) {
+        newData.password = data.password;
       }
       
       return newData;

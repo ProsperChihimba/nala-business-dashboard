@@ -53,7 +53,7 @@ const SignupForms = () => {
         // Check each field individually for better error reporting
         const missingFields = [];
         if (!formData.user?.username) missingFields.push('username');
-        if (!formData.user?.password) missingFields.push('password');
+        if (!formData.password || formData.password.trim() === '') missingFields.push('password');
         if (!formData.user?.first_name) missingFields.push('first name');
         if (!formData.user?.last_name) missingFields.push('last name');
         if (!formData.user?.email) missingFields.push('email');
@@ -68,7 +68,7 @@ const SignupForms = () => {
             return;
         }
 
-        if (formData.user!.password.length < 8) {
+        if (formData.password!.length < 8) {
             setError('Password must be at least 8 characters long');
             return;
         }
@@ -99,8 +99,8 @@ const SignupForms = () => {
                     first_name: formData.user!.first_name,
                     last_name: formData.user!.last_name,
                     email: formData.user!.email,
-                    password: formData.user!.password,
                 },
+                password: formData.password!,
                 specialization: formData.specialization!,
                 license_number: formData.license_number!,
                 phone_number: formData.phone_number!,
@@ -111,6 +111,7 @@ const SignupForms = () => {
                 ...(formData.profile_picture && { profile_picture: formData.profile_picture }),
                 is_available: formData.is_available ?? true,
             };
+            
 
             
             // Validate required fields before sending
