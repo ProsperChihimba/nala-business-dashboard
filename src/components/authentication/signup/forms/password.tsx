@@ -2,7 +2,7 @@ import { Flex, Text, Box } from "@chakra-ui/react";
 import DepositHeading from "../../../layout/heading";
 import DepositInput from "../../../layout/input";
 import { useRegistration } from "../../../../contexts/RegistrationContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const SetPassword = () => {
   const { formData, updateFormData } = useRegistration();
@@ -10,6 +10,16 @@ const SetPassword = () => {
   const [username, setUsername] = useState(formData.user?.username || '');
   const [password, setPassword] = useState(formData.user?.password || '');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Sync local state with form data
+  useEffect(() => {
+    if (formData.user?.username !== username) {
+      setUsername(formData.user?.username || '');
+    }
+    if (formData.user?.password !== password) {
+      setPassword(formData.user?.password || '');
+    }
+  }, [formData.user?.username, formData.user?.password, username, password]);
 
   const handleUsernameChange = (value: string) => {
     setUsername(value);
@@ -35,6 +45,10 @@ const SetPassword = () => {
         password: value,
       }
     });
+  };
+
+  const handleConfirmPasswordChange = (value: string) => {
+    setConfirmPassword(value);
   };
 
   // Password validation
@@ -87,7 +101,7 @@ const SetPassword = () => {
         marginBottom="20px"
         marginTop="20px"
         type="password"
-        onChange={(e) => setConfirmPassword(e.target.value)}
+        onChange={(e) => handleConfirmPasswordChange(e.target.value)}
       />
 
       {/* Password validation feedback */}

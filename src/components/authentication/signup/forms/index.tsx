@@ -50,18 +50,31 @@ const SignupForms = () => {
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
-        if (!formData.user?.username || !formData.user?.password || !formData.user?.first_name || 
-            !formData.user?.last_name || !formData.user?.email || !formData.license_number || 
-            !formData.specialization || !formData.phone_number || !formData.address || 
-            !formData.experience_years) {
-            setError('Please fill in all required fields');
+        // Check each field individually for better error reporting
+        const missingFields = [];
+        if (!formData.user?.username) missingFields.push('username');
+        if (!formData.user?.password) missingFields.push('password');
+        if (!formData.user?.first_name) missingFields.push('first name');
+        if (!formData.user?.last_name) missingFields.push('last name');
+        if (!formData.user?.email) missingFields.push('email');
+        if (!formData.license_number) missingFields.push('license number');
+        if (!formData.specialization) missingFields.push('specialization');
+        if (!formData.phone_number) missingFields.push('phone number');
+        if (!formData.address) missingFields.push('address');
+        if (!formData.experience_years) missingFields.push('experience years');
+        
+        if (missingFields.length > 0) {
+            setError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
             return;
         }
 
-        if (formData.user.password.length < 8) {
+        if (formData.user!.password.length < 8) {
             setError('Password must be at least 8 characters long');
             return;
         }
+
+        // Note: We can't validate password confirmation here since it's local state
+        // The password confirmation validation is handled in the UI component
 
         // Validate specialization is one of the valid choices
         const validSpecializations = [
@@ -70,7 +83,7 @@ const SignupForms = () => {
             'oncology', 'ophthalmology'
         ];
         
-        if (!validSpecializations.includes(formData.specialization)) {
+        if (!validSpecializations.includes(formData.specialization!)) {
             setError('Please select a valid specialization');
             return;
         }
@@ -80,47 +93,25 @@ const SignupForms = () => {
         setError(null);
 
         try {
-            console.log('Current form data:', formData);
-            
             const doctorData = {
                 user: {
-                    username: formData.user.username,
-                    first_name: formData.user.first_name,
-                    last_name: formData.user.last_name,
-                    email: formData.user.email,
-                    password: formData.user.password,
+                    username: formData.user!.username,
+                    first_name: formData.user!.first_name,
+                    last_name: formData.user!.last_name,
+                    email: formData.user!.email,
+                    password: formData.user!.password,
                 },
-                specialization: formData.specialization,
-                license_number: formData.license_number,
-                phone_number: formData.phone_number,
-                address: formData.address,
-                experience_years: Number(formData.experience_years),
+                specialization: formData.specialization!,
+                license_number: formData.license_number!,
+                phone_number: formData.phone_number!,
+                address: formData.address!,
+                experience_years: Number(formData.experience_years!),
                 // Only include optional fields if they have values
                 ...(formData.bio && { bio: formData.bio }),
                 ...(formData.profile_picture && { profile_picture: formData.profile_picture }),
                 is_available: formData.is_available ?? true,
             };
 
-            console.log('Submitting doctor data:', JSON.stringify(doctorData, null, 2));
-            
-            // Log the expected API format for comparison
-            console.log('Expected API format:', {
-                user: {
-                    username: "dr_jones",
-                    first_name: "Sarah", 
-                    last_name: "Jones",
-                    email: "dr.jones@example.com",
-                    password: "doctorpass456"
-                },
-                specialization: "dermatology",
-                license_number: "MD789012", 
-                phone_number: "+1987654321",
-                address: "456 Skin Care Clinic, Dermatology City, DC 54321",
-                experience_years: 8,
-                bio: "Board-certified dermatologist...",
-                profile_picture: "https://example.com/dr_jones.jpg",
-                is_available: true
-            });
             
             // Validate required fields before sending
             const requiredFields = [
@@ -142,8 +133,7 @@ const SignupForms = () => {
                 throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
             }
             
-            const response = await apiService.registerDoctor(doctorData);
-            console.log('Doctor registered successfully:', response);
+            await apiService.registerDoctor(doctorData);
             
             // Reset form and navigate to success page
             resetFormData();
