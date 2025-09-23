@@ -8,9 +8,12 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, token } = useAuth();
+
+  console.log('ProtectedRoute - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading, 'token:', token ? 'Present' : 'Missing');
 
   if (isLoading) {
+    console.log('ProtectedRoute - Showing loading spinner');
     return (
       <Center height="100vh">
         <Box textAlign="center">
@@ -24,9 +27,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isAuthenticated) {
+    console.log('ProtectedRoute - Not authenticated, redirecting to login');
+    console.log('Current token:', token);
+    console.log('Current localStorage token:', localStorage.getItem('doctorToken'));
     return <Navigate to="/login" replace />;
   }
 
+  console.log('ProtectedRoute - Authenticated, rendering children');
   return <>{children}</>;
 };
 

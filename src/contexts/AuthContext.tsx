@@ -28,7 +28,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with true to check stored auth
   const [doctor, setDoctor] = useState<DoctorResponse | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,9 +37,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const loadStoredAuth = async () => {
       const storedToken = localStorage.getItem('doctorToken');
+      console.log('Checking stored token:', storedToken ? 'Found' : 'Not found');
+      
       if (storedToken) {
         setToken(storedToken);
         setIsAuthenticated(true);
+        console.log('Authentication state set to true');
         
         // Try to fetch doctor profile if we have a token
         try {
@@ -49,7 +52,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch (error) {
           console.warn('Could not load stored authentication:', error);
         }
+      } else {
+        console.log('No stored token found, user not authenticated');
       }
+      
+      // Always set loading to false after checking
+      setIsLoading(false);
     };
     
     loadStoredAuth();

@@ -21,6 +21,11 @@ import {
   Textarea,
   Input,
   VStack,
+  Text,
+  Spinner,
+  Center,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import {
   TableContainer,
@@ -36,6 +41,8 @@ import { Divider, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { apiService, AppointmentPatient } from "../../../../services/api";
 import {
   FiCheck,
   FiChevronDown,
@@ -75,31 +82,22 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import SendNotification from "./send_notification_modal";
 import ClerkDrawer from "./clerk_drawer";
 
-// Mock data for a single patient
-const mockPatientDetails = [
-  {
-    id: 1,
-    name: "Mohamed Ngarama",
-    patientNumber: "**** 3102",
-    amountPaid: "TZS 100,000.00",
-    consultationDescription:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus ante id sapien congue, sed congue tortor euismod. Suspendisse sed velit ac mauris malesuada rutrum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus ante id sapien congue...",
-    assignedHospital: "Muhimbili Hospital",
-    assignedDoctor: "Dr. Bege",
-    reportPeriod: "Jun 1 - Jun 30, 2023",
-  },
-  {
-    id: 2,
-    name: "Kim Ngarama",
-    patientNumber: "**** 3102",
-    amountPaid: "TZS 100,000.00",
-    consultationDescription:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus ante id sapien congue, sed congue tortor euismod. Suspendisse sed velit ac mauris malesuada rutrum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus ante id sapien congue...",
-    assignedHospital: "Muhimbili Hospital",
-    assignedDoctor: "Dr. Bege",
-    reportPeriod: "Jun 1 - Jun 30, 2023",
-  },
-];
+// Patient details interface
+interface PatientDetails {
+  id: number;
+  name: string;
+  patientNumber: string;
+  amountPaid: string;
+  consultationDescription: string;
+  assignedHospital: string;
+  assignedDoctor: string;
+  reportPeriod: string;
+  email: string;
+  phone: string;
+  address: string;
+  dateOfBirth: string;
+  gender: string;
+}
 
 interface TestItem {
   id: string;
@@ -111,6 +109,13 @@ interface TestItem {
 const Details = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { token, isAuthenticated } = useAuth();
+  const [patient, setPatient] = useState<PatientDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  console.log('PatientDetails - Component loaded with id:', id, 'isAuthenticated:', isAuthenticated, 'token:', token ? 'Present' : 'Missing');
+  
   const [tests, setTests] = useState<TestItem[]>([
     { id: "1", name: "HAEMOGLOBIN (POC)", isSelected: false },
     { id: "2", name: "HELICOBACTER PYLORI AG. TEST (POC)", isSelected: true },
@@ -187,12 +192,6 @@ const Details = () => {
   const { Text } = Typography;
   const [tabIndex, setTabIndex] = useState(0);
 
-  const patient = mockPatientDetails.find((p) => p.id === Number(id));
-
-  if (!patient) {
-    return <Text>Patient not found.</Text>;
-  }
-
   const toggleTest = (testId: string) => {
     setTests(
       tests.map((test) =>
@@ -227,6 +226,47 @@ const Details = () => {
     };
   }, []);
 
+  // Fetch patient data
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      if (!id || !token) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const patientId = parseInt(id);
+        const patientData = await apiService.getPatient(patientId, token);
+        
+        // Transform API data to match UI structure
+        const transformedPatient: PatientDetails = {
+          id: patientData.id,
+          name: `${patientData.user.first_name} ${patientData.user.last_name}`,
+          patientNumber: `**** ${patientData.id.toString().padStart(4, '0')}`,
+          amountPaid: "TZS 100,000.00", // This would come from appointment data
+          consultationDescription: "Patient consultation details will be displayed here.",
+          assignedHospital: "Muhimbili Hospital", // This would come from appointment data
+          assignedDoctor: "Dr. Current Doctor", // This would come from appointment data
+          reportPeriod: "Current Period", // This would come from appointment data
+          email: patientData.user.email,
+          phone: patientData.phone_number,
+          address: patientData.address,
+          dateOfBirth: patientData.date_of_birth,
+          gender: patientData.gender,
+        };
+        
+        setPatient(transformedPatient);
+      } catch (err) {
+        console.error('Error fetching patient data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch patient data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPatientData();
+  }, [id, token]);
+
   // Filter tests based on search query
   const filteredTests = tests.filter((test) =>
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -235,6 +275,48 @@ const Details = () => {
   const handleAddSheet = () => {
     navigate("/add-clerksheet");
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <Box p={6} bg="#F9F9F9" minH="100vh" rounded={9}>
+        <Center h="50vh">
+          <VStack spacing={4}>
+            <Spinner size="xl" color="blue.500" />
+            <Text>Loading patient details...</Text>
+          </VStack>
+        </Center>
+      </Box>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box p={6} bg="#F9F9F9" minH="100vh" rounded={9}>
+        <Center h="50vh">
+          <Alert status="error" maxW="md">
+            <AlertIcon />
+            <Box>
+              <Text fontWeight="bold">Error loading patient details</Text>
+              <Text fontSize="sm">{error}</Text>
+            </Box>
+          </Alert>
+        </Center>
+      </Box>
+    );
+  }
+
+  // Show not found state
+  if (!patient) {
+    return (
+      <Box p={6} bg="#F9F9F9" minH="100vh" rounded={9}>
+        <Center h="50vh">
+          <Text>Patient not found</Text>
+        </Center>
+      </Box>
+    );
+  }
 
   return (
     <Box p={6} bg=" #F9F9F9" minH="100vh" rounded={9}>

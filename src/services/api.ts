@@ -296,6 +296,15 @@ class ApiService {
       },
     });
   }
+
+  // Get patient details by ID
+  async getPatient(patientId: number, token: string): Promise<AppointmentPatient> {
+    return this.request<AppointmentPatient>(`/patients/patients/${patientId}/`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
 }
 
 export const apiService = new ApiService();

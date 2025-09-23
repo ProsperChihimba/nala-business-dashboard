@@ -31,6 +31,7 @@ import { apiService, Appointment } from "../../../../../../services/api";
 
 interface Transaction {
   id: number;
+  patientId: number;
   patient: {
     name: string;
     avatar: string;
@@ -127,7 +128,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                   Details
                 </Text> */}
 
-                  <Link href={`/patient-details/${transaction.id}`}>
+                  <Link href={`/patient-details/${transaction.patientId}`}>
                   <Text as="a" fontSize="12px" color="#073DFC" cursor="pointer">
                     Details
                   </Text>
@@ -275,6 +276,7 @@ const SingleAccountTabs = () => {
 
     return {
       id: appointment.id,
+      patientId: appointment.patient.id,
       patient: {
         name: fullName,
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`,
