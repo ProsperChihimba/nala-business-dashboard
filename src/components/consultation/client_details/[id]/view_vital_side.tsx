@@ -1,6 +1,7 @@
 "use client"
 
-import { Box, Flex, Text, DrawerCloseButton, Image } from "@chakra-ui/react"
+import { Box, Flex, Text, DrawerCloseButton, Image, Spinner, Center } from "@chakra-ui/react"
+import { PatientVital } from "../../../../services/api"
 import image1 from '../../../../assets/p1 (1).png'
 import image2 from '../../../../assets/p1 (2).png'
 import image3 from '../../../../assets/p1 (3).png'
@@ -11,19 +12,57 @@ import image8 from '../../../../assets/p1 (8).png'
 import image9 from '../../../../assets/p1 (9).png'
 import image10 from '../../../../assets/p1 (10).png'
 
-const ViewVitalSide = () => {
-  // Mock data for vitals display
+interface ViewVitalSideProps {
+  vital?: PatientVital | null;
+}
+
+const ViewVitalSide: React.FC<ViewVitalSideProps> = ({ vital }) => {
+  // Calculate BMI
+  const calculateBMI = (weight: number, height: number) => {
+    if (height === 0) return 0;
+    const heightInMeters = height / 100; // Convert cm to meters
+    return (weight / (heightInMeters * heightInMeters)).toFixed(2);
+  };
+
+  const getBMIStatus = (bmi: number) => {
+    if (bmi < 18.5) return "Underweight";
+    if (bmi < 25) return "Normal";
+    if (bmi < 30) return "Overweight";
+    return "Obese";
+  };
+
+  if (!vital) {
+    return (
+      <Flex direction="column" height="100%" bg="white">
+        <Flex justifyContent="space-between" alignItems="center" px={6} py={4}>
+          <Text fontSize="xl" fontWeight="medium">
+            View Vitals
+          </Text>
+          <DrawerCloseButton />
+        </Flex>
+        <Box height="1px" width="100%" bg="gray.200" mb={4} />
+        <Center flexGrow={1}>
+          <Text color="gray.500">No vital selected</Text>
+        </Center>
+      </Flex>
+    );
+  }
+
+  const bmi = calculateBMI(vital.weight, vital.height);
+  const bmiStatus = getBMIStatus(parseFloat(bmi));
+
+  // Real data from API
   const vitalsData = {
-    systolicPressure: { value: "30", unit: "Mmhg", image: image4 },
-    diastolicPressure: { value: "80", unit: "Mmhg", image: image10 },
-    randomBloodGlucose: { value: "5", unit: "Mmol/L", image: image9 },
-    pulseRate: { value: "30", unit: "Mmhg", image: image8 },
-    oxygenSaturation: { value: "30", unit: "%", image: image7 },
-    temperature: { value: "80", unit: "Mmhg", image: image6 },
-    respiratoryRate: { value: "80", unit: "Mmhg", image: image4 },
-    weight: { value: "5", unit: "Mmol/L", image: image3 },
-    height: { value: "5", unit: "Mmol/L", image: image2 },
-    bmi: { value: "52.08", status: "Obesity", illustration: image1 },
+    systolicPressure: { value: vital.systolic_pressure.toString(), unit: "mmHg", image: image4 },
+    diastolicPressure: { value: vital.diastolic_pressure.toString(), unit: "mmHg", image: image10 },
+    randomBloodGlucose: { value: vital.random_blood_glucose.toString(), unit: "Mmol/L", image: image9 },
+    pulseRate: { value: vital.pulse_rate.toString(), unit: "BPM", image: image8 },
+    oxygenSaturation: { value: vital.oxygen_saturation.toString(), unit: "%", image: image7 },
+    temperature: { value: vital.temperature.toString(), unit: "°F", image: image6 },
+    respiratoryRate: { value: vital.respiratory_rate.toString(), unit: "Breaths/Min", image: image4 },
+    weight: { value: vital.weight.toString(), unit: "kg", image: image3 },
+    height: { value: vital.height.toString(), unit: "cm", image: image2 },
+    bmi: { value: bmi, status: bmiStatus, illustration: image1 },
   }
 
   const VitalDisplayItem = ({
@@ -49,9 +88,20 @@ const ViewVitalSide = () => {
     <Flex direction="column" height="100%" bg="white">
       {/* Header */}
       <Flex justifyContent="space-between" alignItems="center" px={6} py={4}>
-        <Text fontSize="xl" fontWeight="medium">
-          View Vitals
-        </Text>
+        <Box>
+          <Text fontSize="xl" fontWeight="medium">
+            View Vitals
+          </Text>
+          <Text fontSize="sm" color="gray.600">
+            Recorded on {new Date(vital.created_at).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </Text>
+        </Box>
         <DrawerCloseButton />
       </Flex>
 

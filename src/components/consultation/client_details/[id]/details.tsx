@@ -42,7 +42,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { apiService, AppointmentPatient } from "../../../../services/api";
+import { apiService, AppointmentPatient, PatientVital } from "../../../../services/api";
 import {
   FiCheck,
   FiChevronDown,
@@ -111,7 +111,10 @@ const Details = () => {
   const navigate = useNavigate();
   const { token, isAuthenticated } = useAuth();
   const [patient, setPatient] = useState<PatientDetails | null>(null);
+  const [vitals, setVitals] = useState<PatientVital[]>([]);
+  const [selectedVital, setSelectedVital] = useState<PatientVital | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isVitalsLoading, setIsVitalsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   console.log('PatientDetails - Component loaded with id:', id, 'isAuthenticated:', isAuthenticated, 'token:', token ? 'Present' : 'Missing');
@@ -267,6 +270,29 @@ const Details = () => {
     fetchPatientData();
   }, [id, token]);
 
+  // Fetch patient vitals function
+  const fetchVitalsData = async () => {
+    if (!id || !token) return;
+    
+    try {
+      setIsVitalsLoading(true);
+      const patientId = parseInt(id);
+      const vitalsResponse = await apiService.getPatientVitals(patientId, token);
+      setVitals(vitalsResponse.results);
+      console.log('Fetched vitals:', vitalsResponse.results);
+    } catch (err) {
+      console.error('Error fetching vitals data:', err);
+      // Don't set error for vitals as it's not critical
+    } finally {
+      setIsVitalsLoading(false);
+    }
+  };
+
+  // Fetch patient vitals on mount
+  useEffect(() => {
+    fetchVitalsData();
+  }, [id, token]);
+
   // Filter tests based on search query
   const filteredTests = tests.filter((test) =>
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -274,6 +300,16 @@ const Details = () => {
 
   const handleAddSheet = () => {
     navigate("/add-clerksheet");
+  };
+
+  const handleViewVital = (vital: PatientVital) => {
+    setSelectedVital(vital);
+    onViewVitalDrawerOpen();
+  };
+
+  const handleCloseViewVital = () => {
+    setSelectedVital(null);
+    onViewVitalDrawerClose();
   };
 
   // Show loading state
@@ -1073,14 +1109,14 @@ const Details = () => {
               isOpenSide={isNewVitalDrawerOpen}
               onCloseSide={onNewVitalDrawerClose}
               modalSize="md"
-              children={<VitalSide />}
+              children={<VitalSide onVitalAdded={fetchVitalsData} />}
             />
             {/* AppDrawer for viewing vital details */}
             <AppDrawer
               isOpenSide={isViewVitalDrawerOpen}
-              onCloseSide={onViewVitalDrawerClose}
+              onCloseSide={handleCloseViewVital}
               modalSize="md"
-              children={<ViewVitalSide />}
+              children={<ViewVitalSide vital={selectedVital} />}
             />
 
              <AppDrawer
@@ -1204,33 +1240,63 @@ const Details = () => {
                       },
                     }}
                   >
-                    <Tr
-                      mb="5px"
-                      style={{
-                        borderRadius: "40px",
-                        borderColor: "transparent",
-                        fontSize: "10px",
-                        borderWidth: "1px",
-                        backgroundColor: "transparent",
-                      }}
-                    >
-                      <Td fontSize="10px">Jun 20</Td>
-                      <Td fontSize="10px">Prosper Absalom</Td>
-                      <Td fontSize="10px">Chief Complaints, Diagnosis</Td>
-                      <Td fontSize="10px">
-                        <Link color="blue" onClick={onViewVitalDrawerOpen}>
-                          {" "}
-                          details
-                        </Link>
-                      </Td>
-                      <Td fontSize="10px">
-                        <FiChevronRight
-                          size="15px"
-                          style={{ marginLeft: 8 }}
-                          color="#000"
-                        />
-                      </Td>
-                    </Tr>
+                    {isVitalsLoading ? (
+                      <Tr>
+                        <Td colSpan={4} textAlign="center" py={4}>
+                          <Spinner size="sm" color="blue.500" />
+                          <Text fontSize="10px" mt={2}>Loading vitals...</Text>
+                        </Td>
+                      </Tr>
+                    ) : vitals.length === 0 ? (
+                      <Tr>
+                        <Td colSpan={4} textAlign="center" py={4}>
+                          <Text fontSize="10px" color="gray.500">No vitals recorded yet</Text>
+                        </Td>
+                      </Tr>
+                    ) : (
+                      vitals.map((vital) => {
+                        // Format date from API format (2025-09-23T06:19:30.306282Z) to UI format (Sep 23)
+                        const formatDate = (dateString: string) => {
+                          const date = new Date(dateString);
+                          const month = date.toLocaleDateString('en-US', { month: 'short' });
+                          const day = date.getDate();
+                          return `${month} ${day}`;
+                        };
+
+                        // Create vital summary
+                        const vitalSummary = `BP: ${vital.systolic_pressure}/${vital.diastolic_pressure}, HR: ${vital.pulse_rate}, Temp: ${vital.temperature}°F, SpO2: ${vital.oxygen_saturation}%`;
+
+                        return (
+                          <Tr
+                            key={vital.id}
+                            mb="5px"
+                            style={{
+                              borderRadius: "40px",
+                              borderColor: "transparent",
+                              fontSize: "10px",
+                              borderWidth: "1px",
+                              backgroundColor: "transparent",
+                            }}
+                          >
+                            <Td fontSize="10px">{formatDate(vital.created_at)}</Td>
+                            <Td fontSize="10px">{patient?.name || 'Doctor'}</Td>
+                            <Td fontSize="10px">{vitalSummary}</Td>
+                            <Td fontSize="10px">
+                              <Link color="blue" onClick={() => handleViewVital(vital)}>
+                                details
+                              </Link>
+                            </Td>
+                            <Td fontSize="10px">
+                              <FiChevronRight
+                                size="15px"
+                                style={{ marginLeft: 8 }}
+                                color="#000"
+                              />
+                            </Td>
+                          </Tr>
+                        );
+                      })
+                    )}
                   </Tbody>
                 </Table>
               </TableContainer>

@@ -129,6 +129,21 @@ export interface Appointment {
   updated_at: string;
 }
 
+export interface PatientVital {
+  id: number;
+  systolic_pressure: number;
+  diastolic_pressure: number;
+  random_blood_glucose: number;
+  pulse_rate: number;
+  oxygen_saturation: number;
+  temperature: number;
+  respiratory_rate: number;
+  height: number;
+  weight: number;
+  created_at: string;
+  patient: number;
+}
+
 class ApiService {
   private async request<T>(
     endpoint: string,
@@ -303,6 +318,27 @@ class ApiService {
       headers: {
         'Authorization': `Token ${token}`,
       },
+    });
+  }
+
+  // Get patient vitals by patient ID
+  async getPatientVitals(patientId: number, token: string): Promise<PaginatedResponse<PatientVital>> {
+    return this.request<PaginatedResponse<PatientVital>>(`/patients/vitals/?patient=${patientId}`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
+  // Add patient vitals
+  async addPatientVital(vitalData: Omit<PatientVital, 'id' | 'created_at'>, token: string): Promise<PatientVital> {
+    return this.request<PatientVital>('/patients/vitals/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(vitalData),
     });
   }
 }
