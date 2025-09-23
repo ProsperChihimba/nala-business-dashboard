@@ -117,7 +117,7 @@ const SignupForms = () => {
             // Validate required fields before sending
             const requiredFields = [
                 'user.username', 'user.first_name', 'user.last_name', 
-                'user.email', 'user.password', 'specialization', 
+                'user.email', 'password', 'specialization', 
                 'license_number', 'phone_number', 'address', 'experience_years'
             ];
             
