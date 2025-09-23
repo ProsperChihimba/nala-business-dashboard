@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex, Text, DrawerCloseButton, Image, Spinner, Center } from "@chakra-ui/react"
+import { Box, Flex, Text, DrawerCloseButton, Image, Center } from "@chakra-ui/react"
 import { PatientVital } from "../../../../services/api"
 import image1 from '../../../../assets/p1 (1).png'
 import image2 from '../../../../assets/p1 (2).png'
@@ -49,7 +49,7 @@ const ViewVitalSide: React.FC<ViewVitalSideProps> = ({ vital }) => {
   }
 
   const bmi = calculateBMI(vital.weight, vital.height);
-  const bmiStatus = getBMIStatus(parseFloat(bmi));
+  const bmiStatus = getBMIStatus(parseFloat(bmi.toString()));
 
   // Real data from API
   const vitalsData = {

@@ -37,12 +37,12 @@ import {
   Td,
   Badge,
 } from "@chakra-ui/react";
-import { Divider, Typography } from "antd";
+import { Divider } from "antd";
 import { useNavigate } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { apiService, AppointmentPatient, PatientVital } from "../../../../services/api";
+import { apiService, PatientVital } from "../../../../services/api";
 import {
   FiCheck,
   FiChevronDown,
@@ -192,7 +192,6 @@ const Details = () => {
     onClose: onDefinitiveDetailsModalClose,
   } = useDisclosure();
 
-  const { Text } = Typography;
   const [tabIndex, setTabIndex] = useState(0);
 
   const toggleTest = (testId: string) => {
