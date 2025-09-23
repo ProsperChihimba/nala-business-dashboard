@@ -24,7 +24,7 @@ const SingleTab = () => {
         />
         <Instruction 
             title='Bank information' 
-            descritpion='Column NA - NALA
+            descritpion='Column NA - Just Tap App
             1110 Gorgas Ave, Suite A4-700, San Francisco, 
             CA, 94129' 
         />

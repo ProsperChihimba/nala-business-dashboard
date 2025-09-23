@@ -28,7 +28,7 @@ const DepositProcess = ({onClose}: {onClose: () => void}) => {
         {/* instructions */}
         <Instruction no='1' title=': Sign in to your bank account.' />
         <Instruction no='2' title=": Navigate to your bank's page for making transfers." />
-        <Instruction no='3' title=': Enter the following account details to send money to your Nala business account.' />
+        <Instruction no='3' title=': Enter the following account details to send money to your Just Tap App account.' />
 
         {/* tabs */}
         <DepositProcessTabs />

@@ -48,7 +48,7 @@ const AccountsHeader = () => {
             label: (
                 <DropdownItem
                     label='Deposit money'
-                    descritpion='Fund your Nala wallet or business account'
+                    descritpion='Fund your Just Tap App wallet or business account'
                     icon={<RiBankLine size='20px' style={{ marginRight: 8 }} color='#000000' />}
                     onClick={() => navigate('/deposit')}
                 />
@@ -64,7 +64,7 @@ const AccountsHeader = () => {
             label: (
                 <DropdownItem
                     label='Make credit payment'
-                    descritpion='Through your Nala credit card'
+                    descritpion='Through your Just Tap App credit card'
                     icon={<BsCreditCard2Front size='20px' style={{ marginRight: 8 }} color='#000000' />}
                 />
             ),

@@ -53,13 +53,13 @@ const MultipleUpload = () => {
                             paddingLeft: '5px'
                         }}
                     >
-                        In order to upload multiple vendors to your NALA business account download the our Excel template that will guide you how to fill in vendors details
+                        In order to upload multiple vendors to your Just Tap App account download the our Excel template that will guide you how to fill in vendors details
                         <br /> <br />
                         Fill in the Excel file with your vendors details and save that file in your computer
                         <br /> <br />
                         Then upload Excel file by clicking the Upload button with the light blue colour below,
                         <br /> <br />
-                        Then click save button to upload vendors details to your NALA business account, this process will take only few seconds, and you will see your vendor details in your account.
+                        Then click save button to upload vendors details to your Just Tap App account, this process will take only few seconds, and you will see your vendor details in your account.
                     </Text>
                 </Center>
 

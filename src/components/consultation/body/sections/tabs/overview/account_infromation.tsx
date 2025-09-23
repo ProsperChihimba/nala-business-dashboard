@@ -94,7 +94,7 @@ const AccountInfromation = () => {
                                 marginRight: '5px'
                             }}
                         >
-                            Ensure your Nala balance always has the funds you need.
+                            Ensure your Just Tap App balance always has the funds you need.
                         </Text>
                     </Flex>
                 </Flex>

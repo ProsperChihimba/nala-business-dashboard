@@ -32,19 +32,19 @@ const steps = [
   {
     title: "Review of other systems",
     description:
-      "As we’re setting up your business account it’s important for Nala to know your company size",
+      "As we're setting up your business account it's important for Just Tap App to know your company size",
     icon: <CiCircleCheck size="18px" />,
   },
   {
     title: "Past Medical and Surgical History",
     description:
-      "As our clients it’s import for Nala to know average business revenue",
+      "As our clients it's import for Just Tap App to know average business revenue",
     icon: <CiCircleCheck size="18px" />,
   },
   {
     title: "Family and Social history ",
     description:
-      "Security is our first priority at NALA so it’s for your account to have a password",
+      "Security is our first priority at Just Tap App so it's for your account to have a password",
     icon: <CiCircleCheck size="18px" />,
   },
 ];

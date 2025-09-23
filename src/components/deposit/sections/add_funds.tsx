@@ -44,7 +44,7 @@ const AddFunds = () => {
 
         <DepositInput
             title='To'
-            value='Nala business account'
+            value='Just Tap App account'
             placeholder='Account'
             isReadOnly={true}
             percentage='20%'

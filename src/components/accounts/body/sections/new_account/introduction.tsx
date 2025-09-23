@@ -19,7 +19,7 @@ const Introduction = () => {
                 marginBottom: '20px',
             }}
         >
-            How Nala additional account works 
+            How Just Tap App additional account works 
         </Text>
 
         {/*  */}
@@ -33,7 +33,7 @@ const Introduction = () => {
 
         <DropdownItem
             label='Credit limit'
-            descritpion='Your credit limit will be based on the balance in your Primary business account. Your Nala card can only be used to access funds from your Primary business account.'
+            descritpion='Your credit limit will be based on the balance in your Primary business account. Your Just Tap App card can only be used to access funds from your Primary business account.'
             icon={<BsCreditCard2Front size='50px' style={{ marginRight: 8 }} color='#000000' />}
         />
     </Flex>
