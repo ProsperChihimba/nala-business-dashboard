@@ -1,9 +1,27 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { DoctorRegistrationData } from '../services/api';
+
+interface RegistrationFormData {
+  user?: {
+    username?: string;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    password?: string;
+  };
+  password?: string;
+  specialization?: string;
+  license_number?: string;
+  phone_number?: string;
+  address?: string;
+  experience_years?: number;
+  bio?: string;
+  profile_picture?: string;
+  is_available?: boolean;
+}
 
 interface RegistrationContextType {
-  formData: Partial<DoctorRegistrationData>;
-  updateFormData: (data: Partial<DoctorRegistrationData>) => void;
+  formData: RegistrationFormData;
+  updateFormData: (data: RegistrationFormData) => void;
   resetFormData: () => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
@@ -26,29 +44,22 @@ interface RegistrationProviderProps {
 }
 
 export const RegistrationProvider: React.FC<RegistrationProviderProps> = ({ children }) => {
-  const [formData, setFormData] = useState<Partial<DoctorRegistrationData>>({});
+  const [formData, setFormData] = useState<RegistrationFormData>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateFormData = (data: Partial<DoctorRegistrationData>) => {
+  const updateFormData = (data: RegistrationFormData) => {
     setFormData(prev => {
-      const newData = {
+      const newData: RegistrationFormData = {
         ...prev,
         ...data,
       };
       
       if (data.user) {
         newData.user = {
-          username: data.user.username || prev.user?.username || '',
-          first_name: data.user.first_name || prev.user?.first_name || '',
-          last_name: data.user.last_name || prev.user?.last_name || '',
-          email: data.user.email || prev.user?.email || '',
+          ...prev.user,
+          ...data.user,
         };
-      }
-      
-      // Handle password separately since it's at root level
-      if (data.password !== undefined) {
-        newData.password = data.password;
       }
       
       return newData;

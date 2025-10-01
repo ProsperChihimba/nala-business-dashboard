@@ -26,9 +26,9 @@ const SetPassword = () => {
     updateFormData({
       user: {
         username: value,
-        first_name: formData.user?.first_name || '',
-        last_name: formData.user?.last_name || '',
-        email: formData.user?.email || '',
+        first_name: formData.user?.first_name,
+        last_name: formData.user?.last_name,
+        email: formData.user?.email,
       }
     });
   };
@@ -36,15 +36,9 @@ const SetPassword = () => {
   const handlePasswordChange = (value: string) => {
     setPassword(value);
     
-    // Update password at root level and user data separately
+    // Update password at root level
     updateFormData({
       password: value,
-      user: {
-        username: formData.user?.username || '',
-        first_name: formData.user?.first_name || '',
-        last_name: formData.user?.last_name || '',
-        email: formData.user?.email || '',
-      }
     });
   };
 

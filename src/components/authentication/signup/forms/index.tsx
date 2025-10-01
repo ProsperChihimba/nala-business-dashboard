@@ -16,7 +16,7 @@ import AppButton from '../../../layout/button'
 import { useNavigate } from 'react-router-dom'
 import LicenceNumber from './licence_number'
 import { useRegistration } from '../../../../contexts/RegistrationContext'
-import { apiService } from '../../../../services/api'
+import { apiService, DoctorRegistrationData } from '../../../../services/api'
 import { useState } from 'react'
 
 const steps = [
@@ -93,19 +93,19 @@ const SignupForms = () => {
         setError(null);
 
         try {
-            const doctorData = {
+            const doctorData: DoctorRegistrationData = {
                 user: {
-                    username: formData.user!.username,
-                    first_name: formData.user!.first_name,
-                    last_name: formData.user!.last_name,
-                    email: formData.user!.email,
+                    username: formData.user?.username || '',
+                    first_name: formData.user?.first_name || '',
+                    last_name: formData.user?.last_name || '',
+                    email: formData.user?.email || '',
                 },
-                password: formData.password!,
-                specialization: formData.specialization!,
-                license_number: formData.license_number!,
-                phone_number: formData.phone_number!,
-                address: formData.address!,
-                experience_years: Number(formData.experience_years!),
+                password: formData.password || '',
+                specialization: formData.specialization || '',
+                license_number: formData.license_number || '',
+                phone_number: formData.phone_number || '',
+                address: formData.address || '',
+                experience_years: Number(formData.experience_years || 0),
                 // Only include optional fields if they have values
                 ...(formData.bio && { bio: formData.bio }),
                 ...(formData.profile_picture && { profile_picture: formData.profile_picture }),
@@ -122,12 +122,17 @@ const SignupForms = () => {
             ];
             
             const missingFields = requiredFields.filter(field => {
-                const keys = field.split('.');
-                let value: any = doctorData;
-                for (const key of keys) {
-                    value = value?.[key];
-                }
-                return !value || value === '';
+                if (field === 'user.username') return !doctorData.user?.username || doctorData.user.username === '';
+                if (field === 'user.first_name') return !doctorData.user?.first_name || doctorData.user.first_name === '';
+                if (field === 'user.last_name') return !doctorData.user?.last_name || doctorData.user.last_name === '';
+                if (field === 'user.email') return !doctorData.user?.email || doctorData.user.email === '';
+                if (field === 'password') return !doctorData.password || doctorData.password === '';
+                if (field === 'specialization') return !doctorData.specialization || doctorData.specialization === '';
+                if (field === 'license_number') return !doctorData.license_number || doctorData.license_number === '';
+                if (field === 'phone_number') return !doctorData.phone_number || doctorData.phone_number === '';
+                if (field === 'address') return !doctorData.address || doctorData.address === '';
+                if (field === 'experience_years') return doctorData.experience_years === undefined || doctorData.experience_years === 0;
+                return false;
             });
             
             if (missingFields.length > 0) {

@@ -21,10 +21,7 @@ const PersonalDetails = () => {
         setFirstName(value);
         updateFormData({
             user: {
-                username: formData.user?.username || '',
                 first_name: value,
-                last_name: formData.user?.last_name || '',
-                email: formData.user?.email || '',
             }
         });
     };
@@ -33,10 +30,7 @@ const PersonalDetails = () => {
         setLastName(value);
         updateFormData({
             user: {
-                username: formData.user?.username || '',
-                first_name: formData.user?.first_name || '',
                 last_name: value,
-                email: formData.user?.email || '',
             }
         });
     };
@@ -45,9 +39,6 @@ const PersonalDetails = () => {
         setEmail(value);
         updateFormData({
             user: {
-                username: formData.user?.username || '',
-                first_name: formData.user?.first_name || '',
-                last_name: formData.user?.last_name || '',
                 email: value,
             }
         });
