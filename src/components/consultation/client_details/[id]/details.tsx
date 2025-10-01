@@ -38,7 +38,6 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { Divider } from "antd";
-import { useNavigate } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../../contexts/AuthContext";
@@ -64,6 +63,9 @@ import ProvisionalDetails from "./provisional_model";
 import AppDrawer from "../../../layout/drawer";
 import VitalSide from "./add_vital_side";
 import ViewVitalSide from "./view_vital_side";
+import AddLabTestSide from "./add_lab_test_side";
+import ClerkSheetForm from "./clerk_sheet_form";
+import AddPrescriptionSide from "./add_prescription_side";
 import {
   LinkIcon,
   PenIcon,
@@ -108,7 +110,6 @@ interface TestItem {
 
 const Details = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { token, isAuthenticated } = useAuth();
   const [patient, setPatient] = useState<PatientDetails | null>(null);
   const [vitals, setVitals] = useState<PatientVital[]>([]);
@@ -149,6 +150,27 @@ const Details = () => {
     isOpen: isViewVitalDrawerOpen,
     onOpen: onViewVitalDrawerOpen,
     onClose: onViewVitalDrawerClose,
+  } = useDisclosure();
+
+  // State for the "Add Lab Test" drawer
+  const {
+    isOpen: isAddLabTestDrawerOpen,
+    onOpen: onAddLabTestDrawerOpen,
+    onClose: onAddLabTestDrawerClose,
+  } = useDisclosure();
+
+  // State for the "Clerk Sheet" drawer
+  const {
+    isOpen: isClerkSheetDrawerOpen,
+    onOpen: onClerkSheetDrawerOpen,
+    onClose: onClerkSheetDrawerClose,
+  } = useDisclosure();
+
+  // State for the "Add Prescription" drawer
+  const {
+    isOpen: isAddPrescriptionDrawerOpen,
+    onOpen: onAddPrescriptionDrawerOpen,
+    onClose: onAddPrescriptionDrawerClose,
   } = useDisclosure();
 
   // Separate states for each modal type
@@ -287,6 +309,45 @@ const Details = () => {
     }
   };
 
+  // Function to refresh lab tests data
+  const fetchLabTestsData = async () => {
+    if (!id || !token) return;
+    
+    try {
+      // For now, we'll just show a success message
+      // In the future, we can fetch and display lab tests
+      console.log('Lab tests data refreshed');
+    } catch (error) {
+      console.error('Error fetching lab tests:', error);
+    }
+  };
+
+  // Function to refresh clerk sheets data
+  const fetchClerkSheetsData = async () => {
+    if (!id || !token) return;
+    
+    try {
+      // For now, we'll just show a success message
+      // In the future, we can fetch and display clerk sheets
+      console.log('Clerk sheets data refreshed');
+    } catch (error) {
+      console.error('Error fetching clerk sheets:', error);
+    }
+  };
+
+  // Function to refresh prescriptions data
+  const fetchPrescriptionsData = async () => {
+    if (!id || !token) return;
+    
+    try {
+      // For now, we'll just show a success message
+      // In the future, we can fetch and display prescriptions
+      console.log('Prescriptions data refreshed');
+    } catch (error) {
+      console.error('Error fetching prescriptions:', error);
+    }
+  };
+
   // Fetch patient vitals on mount
   useEffect(() => {
     fetchVitalsData();
@@ -297,9 +358,6 @@ const Details = () => {
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAddSheet = () => {
-    navigate("/add-clerksheet");
-  };
 
   const handleViewVital = (vital: PatientVital) => {
     setSelectedVital(vital);
@@ -439,15 +497,26 @@ const Details = () => {
             </>
           )}
           {tabIndex === 2 && (
-            <AppButton
-              label="New Vital"
-              background="#073DFC"
-              color="white"
-              icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
-              width="140px"
-              borderColor="#DCDCDC"
-              onClick={onNewVitalDrawerOpen}
-            />
+            <>
+              <AppButton
+                label="New Vital"
+                background="#073DFC"
+                color="white"
+                icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
+                width="140px"
+                borderColor="#DCDCDC"
+                onClick={onNewVitalDrawerOpen}
+              />
+              <AppButton
+                label="Add Lab Test"
+                background="#28a745"
+                color="white"
+                icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
+                width="150px"
+                borderColor="#28a745"
+                onClick={onAddLabTestDrawerOpen}
+              />
+            </>
           )}
           {tabIndex === 3 && (
             <AppButton
@@ -469,7 +538,18 @@ const Details = () => {
               color="white"
               icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
               width="140px"
-              onClick={handleAddSheet} // Trigger ProvisionalDetails modal
+              onClick={onClerkSheetDrawerOpen}
+            />
+          )}
+          {tabIndex === 6 && (
+            <AppButton
+              label="Add Prescription"
+              background="#28a745"
+              borderColor="#28a745"
+              color="white"
+              icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
+              width="150px"
+              onClick={onAddPrescriptionDrawerOpen}
             />
           )}
         </HStack>
@@ -1116,6 +1196,27 @@ const Details = () => {
               onCloseSide={handleCloseViewVital}
               modalSize="md"
               children={<ViewVitalSide vital={selectedVital} />}
+            />
+            {/* AppDrawer for adding lab test */}
+            <AppDrawer
+              isOpenSide={isAddLabTestDrawerOpen}
+              onCloseSide={onAddLabTestDrawerClose}
+              modalSize="lg"
+              children={<AddLabTestSide onLabTestAdded={fetchLabTestsData} />}
+            />
+            {/* AppDrawer for clerk sheet */}
+            <AppDrawer
+              isOpenSide={isClerkSheetDrawerOpen}
+              onCloseSide={onClerkSheetDrawerClose}
+              modalSize="xl"
+              children={<ClerkSheetForm onClerkSheetAdded={fetchClerkSheetsData} />}
+            />
+            {/* AppDrawer for prescription */}
+            <AppDrawer
+              isOpenSide={isAddPrescriptionDrawerOpen}
+              onCloseSide={onAddPrescriptionDrawerClose}
+              modalSize="xl"
+              children={<AddPrescriptionSide onPrescriptionAdded={fetchPrescriptionsData} />}
             />
 
              <AppDrawer

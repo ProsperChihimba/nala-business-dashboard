@@ -144,6 +144,89 @@ export interface PatientVital {
   patient: number;
 }
 
+export interface LabTest {
+  id: number;
+  patient: number;
+  doctor: number;
+  file_number: string;
+  test_date: string;
+  test_time: string;
+  laboratory_name: string;
+  test_type: string;
+  status: string;
+  test_takes: number;
+  recorded_details: string;
+  notes?: string;
+  follow_up_required: boolean;
+  follow_up_date?: string;
+  follow_up_notes?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InvestigationResult {
+  id: number;
+  test_name: string;
+  normal_range: string;
+  result: string;
+  unit: string;
+  is_normal: boolean;
+  reference_value: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DoctorNote {
+  id: number;
+  patient: number;
+  doctor: number;
+  file_number: string;
+  note_type: string;
+  note_type_display: string;
+  recorded_by: string;
+  recorded_details: string;
+  diagnosis?: string;
+  symptoms?: string;
+  treatment_plan?: string;
+  follow_up_required: boolean;
+  follow_up_date?: string;
+  follow_up_notes?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Prescription {
+  id: number;
+  patient: number;
+  doctor: number;
+  file_number: string;
+  prescription_date: string;
+  prescription_time: string;
+  prescription_details: string;
+  status: string;
+  follow_up_required: boolean;
+  follow_up_date?: string;
+  notes?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Medication {
+  id: number;
+  prescription: number;
+  medication_name: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  instructions: string;
+  quantity: number;
+  created_at: string;
+  updated_at: string;
+}
+
 class ApiService {
   private async request<T>(
     endpoint: string,
@@ -339,6 +422,111 @@ class ApiService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(vitalData),
+    });
+  }
+
+  // Add lab test for patient
+  async addLabTest(labTestData: Omit<LabTest, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<LabTest> {
+    return this.request<LabTest>('/lab-tests/tests/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(labTestData),
+    });
+  }
+
+  // Get lab tests for patient
+  async getPatientLabTests(patientId: number, token: string): Promise<PaginatedResponse<LabTest>> {
+    return this.request<PaginatedResponse<LabTest>>(`/lab-tests/tests/?patient=${patientId}`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
+  // Add investigation result
+  async addInvestigationResult(resultData: Omit<InvestigationResult, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<InvestigationResult> {
+    return this.request<InvestigationResult>('/lab-tests/investigation-results/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(resultData),
+    });
+  }
+
+  // Add doctor note (including clerk sheet)
+  async addDoctorNote(noteData: Omit<DoctorNote, 'id' | 'created_at' | 'updated_at' | 'note_type_display'>, token: string): Promise<DoctorNote> {
+    return this.request<DoctorNote>('/appointments/doctor-notes/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(noteData),
+    });
+  }
+
+  // Get doctor notes for patient
+  async getPatientDoctorNotes(patientId: number, token: string): Promise<PaginatedResponse<DoctorNote>> {
+    return this.request<PaginatedResponse<DoctorNote>>(`/appointments/doctor-notes/?patient=${patientId}`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
+  // Get clerk sheets for patient
+  async getPatientClerkSheets(patientId: number, token: string): Promise<PaginatedResponse<DoctorNote>> {
+    return this.request<PaginatedResponse<DoctorNote>>(`/appointments/doctor-notes/?patient=${patientId}&note_type_display=Clerk%20Sheet`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
+  // Add prescription for patient
+  async addPrescription(prescriptionData: Omit<Prescription, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Prescription> {
+    return this.request<Prescription>('/prescriptions/prescriptions/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(prescriptionData),
+    });
+  }
+
+  // Get prescriptions for patient
+  async getPatientPrescriptions(patientId: number, token: string): Promise<PaginatedResponse<Prescription>> {
+    return this.request<PaginatedResponse<Prescription>>(`/prescriptions/prescriptions/?patient=${patientId}`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
+  // Add medication to prescription
+  async addMedication(medicationData: Omit<Medication, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Medication> {
+    return this.request<Medication>('/prescriptions/medications/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(medicationData),
+    });
+  }
+
+  // Get medications for prescription
+  async getPrescriptionMedications(prescriptionId: number, token: string): Promise<PaginatedResponse<Medication>> {
+    return this.request<PaginatedResponse<Medication>>(`/prescriptions/medications/?prescription=${prescriptionId}`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
     });
   }
 }
