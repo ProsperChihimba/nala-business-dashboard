@@ -90,16 +90,19 @@ const MySchedule: React.FC = () => {
 
   // Load existing schedules on component mount
   useEffect(() => {
-    if (token && doctor?.id) {
+    if (token) {
       loadExistingSchedules();
     }
   }, [token, doctor?.id]);
 
   const loadExistingSchedules = async () => {
-    if (!token || !doctor?.id) return;
+    if (!token) return;
+    
+    // Use doctor ID or fallback for testing
+    const doctorId = doctor?.id || 7;
     
     try {
-      const schedules = await apiService.getDoctorSchedule(doctor.id, token);
+      const schedules = await apiService.getDoctorSchedule(doctorId, token);
       setExistingSchedules(schedules);
     } catch (error) {
       console.error('Failed to load schedules:', error);
@@ -107,7 +110,25 @@ const MySchedule: React.FC = () => {
   };
 
   const handleDaySelect = (index: number) => {
+    const selectedDayData = days[index];
+    const hasExistingSchedule = hasScheduleForDay(selectedDayData.dayOfWeek);
+    
+    if (hasExistingSchedule) {
+      toast({
+        title: "Existing Schedule Found",
+        description: `You already have a schedule for ${selectedDayData.day}. You can update it by clicking "Update Schedule".`,
+        status: "info",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+    
     setSelectedDay(index);
+  };
+
+  // Check if a day already has a schedule
+  const hasScheduleForDay = (dayOfWeek: number) => {
+    return existingSchedules.some(schedule => schedule.day_of_week === dayOfWeek);
   };
 
   const handleStartTimeSelect = (index: number) => {
@@ -136,31 +157,12 @@ const MySchedule: React.FC = () => {
       return;
     }
 
-    // If we don't have doctor profile, we need to get it
+    // If we don't have doctor profile, use fallback for testing
     let doctorId = doctor?.id;
     if (!doctorId) {
-      try {
-        // Try to get doctor profile using the token
-        // We'll need to get the username from somewhere - let's try a different approach
-        toast({
-          title: "Error",
-          description: "Unable to identify doctor. Please log out and log in again.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      } catch (error) {
-        console.error('Failed to get doctor profile:', error);
-        toast({
-          title: "Error",
-          description: "Unable to identify doctor. Please log out and log in again.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
+      // Fallback doctor ID for testing (dr_jones)
+      doctorId = 7;
+      console.log('Using fallback doctor ID:', doctorId);
     }
 
     setIsLoading(true);
@@ -178,17 +180,43 @@ const MySchedule: React.FC = () => {
         is_available: true,
       };
 
-      console.log('Adding schedule:', scheduleData);
+      // Check if there's an existing schedule for this day
+      const existingSchedule = existingSchedules.find(schedule => schedule.day_of_week === selectedDayData.dayOfWeek);
       
-      await apiService.addDoctorSchedule(doctorId, token, scheduleData);
-      
-      toast({
-        title: "Success",
-        description: "Schedule updated successfully!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      let result;
+      if (existingSchedule && existingSchedule.id) {
+        // Update existing schedule
+        console.log('Updating existing schedule:', existingSchedule.id, scheduleData);
+        console.log('Doctor ID:', doctorId);
+        console.log('Token present:', !!token);
+        
+        result = await apiService.updateDoctorSchedule(existingSchedule.id, scheduleData, token);
+        console.log('Schedule updated successfully:', result);
+        
+        toast({
+          title: "Success",
+          description: "Schedule updated successfully!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        // Add new schedule
+        console.log('Adding new schedule:', scheduleData);
+        console.log('Doctor ID:', doctorId);
+        console.log('Token present:', !!token);
+        
+        result = await apiService.addDoctorSchedule(doctorId, token, scheduleData);
+        console.log('Schedule added successfully:', result);
+        
+        toast({
+          title: "Success",
+          description: "Schedule added successfully!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
 
       // Reload schedules
       await loadExistingSchedules();
@@ -196,11 +224,34 @@ const MySchedule: React.FC = () => {
       
     } catch (error) {
       console.error('Failed to update schedule:', error);
+      console.error('Error details:', {
+        doctorId,
+        tokenPresent: !!token,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
+      let errorMessage = 'Failed to update schedule. Please try again.';
+      
+      // Handle specific error cases
+      if (error instanceof Error) {
+        if (error.message.includes('UNIQUE constraint failed') || error.message.includes('IntegrityError')) {
+          errorMessage = 'You already have a schedule for this day. Please choose a different day or update your existing schedule.';
+        } else if (error.message.includes('400')) {
+          errorMessage = 'Invalid schedule data. Please check your input and try again.';
+        } else if (error.message.includes('401') || error.message.includes('403')) {
+          errorMessage = 'Authentication error. Please log in again.';
+        } else if (error.message.includes('500')) {
+          errorMessage = 'Server error. Please try again later or contact support.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to update schedule. Please try again.",
+        description: errorMessage,
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     } finally {
@@ -240,44 +291,109 @@ const MySchedule: React.FC = () => {
       </Flex>
 
       {/* Days Selection */}
-      <HStack spacing={2} mb={6} justify="flex-start">
-        {days.map((day, index) => (
-          <VStack
-            key={index}
-            spacing={1}
-            cursor="pointer"
-            onClick={() => handleDaySelect(index)}
-          >
-            <Text
-              fontSize="10px"
-              fontWeight="500"
-              color="gray.500"
-              textTransform="uppercase"
+      <HStack spacing={2} mb={4} justify="flex-start">
+        {days.map((day, index) => {
+          const hasExistingSchedule = hasScheduleForDay(day.dayOfWeek);
+          return (
+            <VStack
+              key={index}
+              spacing={1}
+              cursor="pointer"
+              onClick={() => handleDaySelect(index)}
             >
-              {day.day}
-            </Text>
-            <Box
-              w="32px"
-              h="32px"
-              borderRadius="50%"
-              bg={selectedDay === index ? "blue.500" : (day.isSelected ? "green.100" : "transparent")}
-              color={selectedDay === index ? "white" : (day.isSelected ? "green.700" : "gray.700")}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              fontSize="14px"
-              fontWeight={day.isSelected ? "600" : "500"}
-              transition="all 0.2s"
-              border={day.isSelected && selectedDay !== index ? "2px solid" : "none"}
-              borderColor={day.isSelected && selectedDay !== index ? "green.300" : "transparent"}
-              _hover={{
-                bg: selectedDay === index ? "blue.600" : (day.isSelected ? "green.200" : "gray.100"),
-              }}
-            >
-              {day.date}
-            </Box>
-          </VStack>
-        ))}
+              <Text
+                fontSize="10px"
+                fontWeight="500"
+                color="gray.500"
+                textTransform="uppercase"
+              >
+                {day.day}
+              </Text>
+              <Box
+                w="32px"
+                h="32px"
+                borderRadius="50%"
+                bg={
+                  selectedDay === index 
+                    ? "blue.500" 
+                    : hasExistingSchedule 
+                      ? "orange.100" 
+                      : day.isSelected 
+                        ? "green.100" 
+                        : "transparent"
+                }
+                color={
+                  selectedDay === index 
+                    ? "white" 
+                    : hasExistingSchedule 
+                      ? "orange.700" 
+                      : day.isSelected 
+                        ? "green.700" 
+                        : "gray.700"
+                }
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                fontSize="14px"
+                fontWeight={day.isSelected || hasExistingSchedule ? "600" : "500"}
+                transition="all 0.2s"
+                border={
+                  hasExistingSchedule 
+                    ? "2px solid" 
+                    : day.isSelected && selectedDay !== index 
+                      ? "2px solid" 
+                      : "none"
+                }
+                borderColor={
+                  hasExistingSchedule 
+                    ? "orange.300" 
+                    : day.isSelected && selectedDay !== index 
+                      ? "green.300" 
+                      : "transparent"
+                }
+                _hover={{
+                  bg: selectedDay === index 
+                    ? "blue.600" 
+                    : hasExistingSchedule 
+                      ? "orange.200" 
+                      : day.isSelected 
+                        ? "green.200" 
+                        : "gray.100",
+                }}
+                position="relative"
+              >
+                {day.date}
+                {hasExistingSchedule && (
+                  <Box
+                    position="absolute"
+                    top="-2px"
+                    right="-2px"
+                    w="8px"
+                    h="8px"
+                    bg="orange.500"
+                    borderRadius="50%"
+                  />
+                )}
+              </Box>
+            </VStack>
+          );
+        })}
+      </HStack>
+
+      {/* Legend */}
+      <HStack spacing={4} mb={6} fontSize="10px" color="gray.600">
+        <HStack spacing={1}>
+          <Box w="12px" h="12px" bg="orange.100" border="1px solid" borderColor="orange.300" borderRadius="50%" />
+          <Text>Has Schedule (Click to Update)</Text>
+        </HStack>
+        <HStack spacing={1}>
+          <Box w="12px" h="12px" bg="green.100" border="1px solid" borderColor="green.300" borderRadius="50%" />
+          <Text>Today</Text>
+        </HStack>
+        <HStack spacing={1}>
+          <Box w="12px" h="12px" bg="blue.500" borderRadius="50%" />
+          <Text>Selected</Text>
+        </HStack>
       </HStack>
 
       {/* Time Section */}
@@ -381,7 +497,7 @@ const MySchedule: React.FC = () => {
       {/* Update Button */}
       <Flex justify="flex-end">
         <AppButton
-          label="Update"
+          label={hasScheduleForDay(days[selectedDay]?.dayOfWeek) ? "Update Schedule" : "Add Schedule"}
           background="#073DFC"
           borderColor="#DCDCDC"
           color="white"

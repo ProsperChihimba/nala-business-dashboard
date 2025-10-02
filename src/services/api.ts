@@ -488,6 +488,22 @@ class ApiService {
     });
   }
 
+  // Update existing doctor schedule
+  async updateDoctorSchedule(
+    scheduleId: number,
+    scheduleData: Partial<AddScheduleRequest>,
+    token: string
+  ): Promise<ScheduleItem> {
+    return this.request<ScheduleItem>(`/doctors/schedules/${scheduleId}/`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(scheduleData),
+    });
+  }
+
   // Add prescription for patient
   async addPrescription(prescriptionData: Omit<Prescription, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Prescription> {
     return this.request<Prescription>('/prescriptions/prescriptions/', {
