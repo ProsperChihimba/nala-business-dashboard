@@ -299,22 +299,15 @@ const SingleAccountTabs = () => {
         return;
       }
 
-      let doctorId = doctor?.id;
-
-      // If no doctor ID, try to get it from the token or fetch doctor profile
-      if (!doctorId) {
-        console.log('No doctor ID available, trying to fetch doctor profile...');
-        try {
-          // For now, let's use a hardcoded approach - we know dr_jones has ID 7
-          // In a real app, you'd want to store the username in the token or get it from the login response
-          doctorId = 7; // Dr. Sarah Jones ID
-          console.log('Using hardcoded doctor ID:', doctorId);
-        } catch (error) {
-          console.error('Failed to get doctor ID:', error);
-          setIsLoading(false);
-          return;
-        }
+      // Ensure we have doctor profile
+      if (!doctor?.id) {
+        console.log('No doctor profile available');
+        setAppointments([]);
+        setIsLoading(false);
+        return;
       }
+
+      const doctorId = doctor.id;
 
       try {
         setIsLoading(true);

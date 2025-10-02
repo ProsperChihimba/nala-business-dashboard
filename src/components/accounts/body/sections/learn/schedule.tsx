@@ -96,14 +96,12 @@ const MySchedule: React.FC = () => {
   }, [token, doctor?.id]);
 
   const loadExistingSchedules = async () => {
-    if (!token) return;
-    
-    // Use doctor ID or fallback for testing
-    const doctorId = doctor?.id || 7;
+    if (!token || !doctor?.id) return;
     
     try {
-      const schedules = await apiService.getDoctorSchedule(doctorId, token);
+      const schedules = await apiService.getDoctorSchedule(doctor.id, token);
       setExistingSchedules(schedules);
+      console.log('Loaded schedules for doctor ID:', doctor.id, 'Count:', schedules.length);
     } catch (error) {
       console.error('Failed to load schedules:', error);
     }
@@ -157,13 +155,19 @@ const MySchedule: React.FC = () => {
       return;
     }
 
-    // If we don't have doctor profile, use fallback for testing
-    let doctorId = doctor?.id;
-    if (!doctorId) {
-      // Fallback doctor ID for testing (dr_jones)
-      doctorId = 7;
-      console.log('Using fallback doctor ID:', doctorId);
+    // Ensure we have doctor profile
+    if (!doctor?.id) {
+      toast({
+        title: "Error",
+        description: "Doctor profile not found. Please log out and log in again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
     }
+    
+    const doctorId = doctor.id;
 
     setIsLoading(true);
     
@@ -287,7 +291,7 @@ const MySchedule: React.FC = () => {
         </Text>
         <Text fontSize="11px" color="blue.500" fontWeight="500">
           Today: {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-        </Text>
+      </Text>
       </Flex>
 
       {/* Days Selection */}
@@ -295,24 +299,24 @@ const MySchedule: React.FC = () => {
         {days.map((day, index) => {
           const hasExistingSchedule = hasScheduleForDay(day.dayOfWeek);
           return (
-            <VStack
-              key={index}
-              spacing={1}
-              cursor="pointer"
-              onClick={() => handleDaySelect(index)}
+          <VStack
+            key={index}
+            spacing={1}
+            cursor="pointer"
+            onClick={() => handleDaySelect(index)}
+          >
+            <Text
+              fontSize="10px"
+              fontWeight="500"
+              color="gray.500"
+              textTransform="uppercase"
             >
-              <Text
-                fontSize="10px"
-                fontWeight="500"
-                color="gray.500"
-                textTransform="uppercase"
-              >
-                {day.day}
-              </Text>
-              <Box
-                w="32px"
-                h="32px"
-                borderRadius="50%"
+              {day.day}
+            </Text>
+            <Box
+              w="32px"
+              h="32px"
+              borderRadius="50%"
                 bg={
                   selectedDay === index 
                     ? "blue.500" 
@@ -331,12 +335,12 @@ const MySchedule: React.FC = () => {
                         ? "green.700" 
                         : "gray.700"
                 }
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                fontSize="14px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              fontSize="14px"
                 fontWeight={day.isSelected || hasExistingSchedule ? "600" : "500"}
-                transition="all 0.2s"
+              transition="all 0.2s"
                 border={
                   hasExistingSchedule 
                     ? "2px solid" 
@@ -351,7 +355,7 @@ const MySchedule: React.FC = () => {
                       ? "green.300" 
                       : "transparent"
                 }
-                _hover={{
+              _hover={{
                   bg: selectedDay === index 
                     ? "blue.600" 
                     : hasExistingSchedule 
@@ -361,8 +365,8 @@ const MySchedule: React.FC = () => {
                         : "gray.100",
                 }}
                 position="relative"
-              >
-                {day.date}
+            >
+              {day.date}
                 {hasExistingSchedule && (
                   <Box
                     position="absolute"
@@ -374,8 +378,8 @@ const MySchedule: React.FC = () => {
                     borderRadius="50%"
                   />
                 )}
-              </Box>
-            </VStack>
+            </Box>
+          </VStack>
           );
         })}
       </HStack>

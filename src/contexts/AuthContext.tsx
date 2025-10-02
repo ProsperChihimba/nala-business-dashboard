@@ -46,9 +46,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Try to fetch doctor profile if we have a token
         try {
-          // We need to get the username from somewhere - for now, let's try a different approach
-          // We'll let the components handle this when they need the doctor ID
-          console.log('Token found, but doctor profile will be fetched when needed');
+          // We can't fetch doctor profile without username, so we'll let components handle this
+          // when they need the doctor ID, or we could store the username in localStorage too
+          console.log('Token found, doctor profile will be fetched when needed by components');
         } catch (error) {
           console.warn('Could not load stored authentication:', error);
         }
@@ -82,29 +82,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         console.log('Fetching doctor profile for username:', credentials.username);
         
-        // For now, use hardcoded mapping since the API doesn't filter by username correctly
-        let doctorId = 7; // Default to dr_jones (Sarah Jones)
+        // Use the proper API method to get doctor by username
+        const doctorProfile = await apiService.getDoctorByUsername(credentials.username, response.token);
+        setDoctor(doctorProfile);
+        console.log('Doctor profile loaded successfully:', doctorProfile);
+        console.log('Doctor ID:', doctorProfile.id, 'for username:', credentials.username);
+      } catch (profileError) {
+        console.error('Could not fetch doctor profile:', profileError);
         
-        // Map usernames to doctor IDs
+        // Fallback to hardcoded mapping if API fails
+        console.log('API failed, using fallback mapping for username:', credentials.username);
         const usernameToDoctorId: { [key: string]: number } = {
           'dr_jones': 7,
           'procnotion': 8,
           'liam_harris': 6,
           'isabella_green': 5,
-          'henry_white': 4
+          'henry_white': 4,
+          'dr_thompson': 3
         };
         
         if (usernameToDoctorId[credentials.username]) {
-          doctorId = usernameToDoctorId[credentials.username];
+          const doctorId = usernameToDoctorId[credentials.username];
+          console.log('Using fallback doctor ID:', doctorId, 'for username:', credentials.username);
+          const doctorProfile = await apiService.getDoctorProfile(doctorId, response.token);
+          setDoctor(doctorProfile);
+          console.log('Doctor profile loaded via fallback:', doctorProfile);
+        } else {
+          console.warn('No fallback mapping found for username:', credentials.username);
         }
-        
-        console.log('Using doctor ID:', doctorId, 'for username:', credentials.username);
-        const doctorProfile = await apiService.getDoctorProfile(doctorId, response.token);
-        setDoctor(doctorProfile);
-        console.log('Doctor profile loaded successfully:', doctorProfile);
-      } catch (profileError) {
-        console.error('Could not fetch doctor profile:', profileError);
-        // Continue with login even if profile fetch fails
       }
       
       console.log('Login successful, token received:', response.token);
