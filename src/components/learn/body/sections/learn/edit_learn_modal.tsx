@@ -77,9 +77,8 @@ const EditLearnModal = ({ article, onClose, onSuccess }: EditLearnModalProps) =>
       };
 
       // Prefer PUT (backend expects complete body); fall back to PATCH on failure
-      let _updated;
       try {
-        _updated = await apiService.updateLearnArticle(
+        await apiService.updateLearnArticle(
           article.id,
           fullUpdate,
           token,
@@ -96,7 +95,7 @@ const EditLearnModal = ({ article, onClose, onSuccess }: EditLearnModalProps) =>
           tags: fullUpdate.tags,
           image_url: fullUpdate.image_url,
         };
-        _updated = await apiService.updateLearnArticle(
+        await apiService.updateLearnArticle(
           article.id,
           patchData,
           token,
