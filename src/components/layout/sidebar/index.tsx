@@ -3,8 +3,6 @@ import {  Layout, Typography } from 'antd';
 import { Box, Flex } from '@chakra-ui/react';
 
 // side bar icons
-import { BiWallet } from "react-icons/bi";
-import { FiInbox } from "react-icons/fi";
 import { BsBank2 } from "react-icons/bs";
 import { CiReceipt } from "react-icons/ci";
 import { AiOutlineLineChart } from "react-icons/ai";
@@ -31,18 +29,7 @@ interface NavigationItem {
 const SideBar = () => {
 
     // personal menu items
-    const personalMenu: NavigationItem[] = [
-        {
-            label: "Wallet", 
-            path: '/wallet', 
-            icon: <BiWallet width='20px' height='20px' color='#000000' />, 
-        },
-        {
-            label: "Inbox", 
-            path: '/inbox', 
-            icon: <FiInbox width='20px' height='20px' color='#000000' />, 
-        },
-    ];
+    const personalMenu: NavigationItem[] = [];
 
     // company menu items
     const companylMenu: NavigationItem[] = [
@@ -98,21 +85,25 @@ const SideBar = () => {
             /> */}
 
             {/* personal items */}
-            <SelectedNavigationSection
-                icon={<FaRegUser width='20px' height='20px' color='#BBBBBB' />}
-                label='Personal'
-            />
-            {
-                personalMenu.map((item, index) => (
-                    <SelectedNavigationItem 
-                        icon={item.icon} 
-                        label={item.label}
-                        isSelected={pathname === item.path } 
-                        key={index} 
-                        path={item.path}
-                    />
-                ))
-            }
+            {personalMenu.length > 0 && (
+              <>
+                <SelectedNavigationSection
+                    icon={<FaRegUser width='20px' height='20px' color='#BBBBBB' />}
+                    label='Personal'
+                />
+                {
+                    personalMenu.map((item, index) => (
+                        <SelectedNavigationItem 
+                            icon={item.icon} 
+                            label={item.label}
+                            isSelected={pathname === item.path } 
+                            key={index} 
+                            path={item.path}
+                        />
+                    ))
+                }
+              </>
+            )}
 
             {/* divider */}
             <Box

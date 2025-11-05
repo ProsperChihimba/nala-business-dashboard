@@ -6,11 +6,9 @@ import AccountView from "../components/accounts/account_view";
 import DepositPage from "../components/deposit";
 import SendTransaction from "../components/send";
 import Vendors from "../components/vendor";
-import WalletPage from "../components/wallet";
 import ReportsPage from "../components/reports";
 import TeamPage from "../components/team";
 import NewVendor from "../components/vendor/body/new_vendor";
-import InboxPage from "../components/inbox";
 import ExpensesPage from "../components/expenses";
 import Login from "../components/login";
 import Consultation from "../components/consultation";
@@ -78,11 +76,6 @@ const AppRouter = () => {
           <NewVendor />
         </ProtectedRoute>
       } />
-      <Route path="/wallet" element={
-        <ProtectedRoute>
-          <WalletPage />
-        </ProtectedRoute>
-      } />
       <Route path="/reports" element={
         <ProtectedRoute>
           <ReportsPage />
@@ -91,11 +84,6 @@ const AppRouter = () => {
       <Route path="/team" element={
         <ProtectedRoute>
           <TeamPage />
-        </ProtectedRoute>
-      } />
-      <Route path="/inbox" element={
-        <ProtectedRoute>
-          <InboxPage />
         </ProtectedRoute>
       } />
       <Route path="/expenses" element={
