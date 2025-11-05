@@ -59,7 +59,7 @@ const SideBar = () => {
         },
         {
             label: "Learn", 
-            path: '/vendors', 
+            path: '/learn', 
             icon: <AiOutlineLineChart width='20px' height='20px' color='#000000' />, 
         },
        

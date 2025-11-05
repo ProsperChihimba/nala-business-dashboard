@@ -53,8 +53,6 @@ const ViewVitalSide: React.FC<ViewVitalSideProps> = ({ vital }) => {
 
   // Real data from API
   const vitalsData = {
-    systolicPressure: { value: vital.systolic_pressure.toString(), unit: "mmHg", image: image4 },
-    diastolicPressure: { value: vital.diastolic_pressure.toString(), unit: "mmHg", image: image10 },
     randomBloodGlucose: { value: vital.random_blood_glucose.toString(), unit: "Mmol/L", image: image9 },
     pulseRate: { value: vital.pulse_rate.toString(), unit: "BPM", image: image8 },
     oxygenSaturation: { value: vital.oxygen_saturation.toString(), unit: "%", image: image7 },
@@ -110,26 +108,14 @@ const ViewVitalSide: React.FC<ViewVitalSideProps> = ({ vital }) => {
 
       {/* Content Area */}
       <Flex direction="column" px={6} flexGrow={1} overflowY="auto">
-        {/* Blood Pressure Section */}
+        {/* Blood Glucose Section */}
         <Flex alignItems="center" mb={4}>
           <Text fontSize="sm" fontWeight="medium" color="gray.600" mr={2} whiteSpace="nowrap">
-            Blood Pressure
+            Blood Glucose
           </Text>
           <Box height="0.7px" width="100%" bg="gray.300" />
         </Flex>
         <Box p={4} mb={6} borderRadius="lg" border="1px solid" borderColor="gray.200" bg="white">
-          <VitalDisplayItem
-            label="Systolic Pressure"
-            value={vitalsData.systolicPressure.value}
-            unit={vitalsData.systolicPressure.unit}
-            imageSrc={vitalsData.systolicPressure.image}
-          />
-          <VitalDisplayItem
-            label="Diastolic Pressure"
-            value={vitalsData.diastolicPressure.value}
-            unit={vitalsData.diastolicPressure.unit}
-            imageSrc={vitalsData.diastolicPressure.image}
-          />
           <VitalDisplayItem
             label="Random Blood Glucose"
             value={vitalsData.randomBloodGlucose.value}

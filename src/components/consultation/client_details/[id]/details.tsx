@@ -41,7 +41,7 @@ import { Divider } from "antd";
 
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { apiService, PatientVital } from "../../../../services/api";
+import { apiService, PatientVital, BloodPressureReading } from "../../../../services/api";
 import {
   FiCheck,
   FiChevronDown,
@@ -66,6 +66,7 @@ import ViewVitalSide from "./view_vital_side";
 import AddLabTestSide from "./add_lab_test_side";
 import ClerkSheetForm from "./clerk_sheet_form";
 import AddPrescriptionSide from "./add_prescription_side";
+import BloodPressureSide from "./blood_pressure_side";
 import {
   LinkIcon,
   PenIcon,
@@ -114,8 +115,11 @@ const Details = () => {
   const [patient, setPatient] = useState<PatientDetails | null>(null);
   const [vitals, setVitals] = useState<PatientVital[]>([]);
   const [selectedVital, setSelectedVital] = useState<PatientVital | null>(null);
+  const [bloodPressureReadings, setBloodPressureReadings] = useState<BloodPressureReading[]>([]);
+  const [selectedBloodPressureReading, setSelectedBloodPressureReading] = useState<BloodPressureReading | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isVitalsLoading, setIsVitalsLoading] = useState(true);
+  const [isBloodPressureLoading, setIsBloodPressureLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   console.log('PatientDetails - Component loaded with id:', id, 'isAuthenticated:', isAuthenticated, 'token:', token ? 'Present' : 'Missing');
@@ -212,6 +216,20 @@ const Details = () => {
     isOpen: isDefinitiveDetailsModalOpen,
     onOpen: onDefinitiveDetailsModalOpen,
     onClose: onDefinitiveDetailsModalClose,
+  } = useDisclosure();
+
+  // State for the "New Blood Pressure" drawer
+  const {
+    isOpen: isNewBloodPressureDrawerOpen,
+    onOpen: onNewBloodPressureDrawerOpen,
+    onClose: onNewBloodPressureDrawerClose,
+  } = useDisclosure();
+
+  // State for the "View Blood Pressure" drawer
+  const {
+    isOpen: isViewBloodPressureDrawerOpen,
+    onOpen: onViewBloodPressureDrawerOpen,
+    onClose: onViewBloodPressureDrawerClose,
   } = useDisclosure();
 
   const [tabIndex, setTabIndex] = useState(0);
@@ -353,6 +371,28 @@ const Details = () => {
     fetchVitalsData();
   }, [id, token]);
 
+  // Fetch blood pressure readings function
+  const fetchBloodPressureData = async () => {
+    if (!id || !token) return;
+    
+    try {
+      setIsBloodPressureLoading(true);
+      const patientId = parseInt(id);
+      const bloodPressureResponse = await apiService.getPatientBloodPressureReadings(patientId, token);
+      setBloodPressureReadings(bloodPressureResponse);
+      console.log('Fetched blood pressure readings:', bloodPressureResponse);
+    } catch (err) {
+      console.error('Error fetching blood pressure data:', err);
+    } finally {
+      setIsBloodPressureLoading(false);
+    }
+  };
+
+  // Fetch blood pressure readings on mount
+  useEffect(() => {
+    fetchBloodPressureData();
+  }, [id, token]);
+
   // Filter tests based on search query
   const filteredTests = tests.filter((test) =>
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -417,7 +457,7 @@ const Details = () => {
         <Text
           style={{
             fontFamily: "IBM Plex Sans, sans-serif",
-            fontSize: "11px",
+            fontSize: "15px",
             fontWeight: 500,
             color: "#000000",
             marginBottom: 10,
@@ -571,6 +611,9 @@ const Details = () => {
             Vitals
           </Tab>
           <Tab fontWeight="500" fontSize="13px">
+            Blood Pressure
+          </Tab>
+          <Tab fontWeight="500" fontSize="13px">
             Provisional Diagnosis
           </Tab>
           <Tab fontWeight="500" fontSize="13px">
@@ -653,7 +696,7 @@ const Details = () => {
                     <Text
                       style={{
                         fontFamily: "IBM Plex Sans, sans-serif",
-                        fontSize: "10px",
+                        fontSize: "14px",
                         fontWeight: 400,
                         color: "#454545",
                         marginLeft: "8px",
@@ -863,7 +906,7 @@ const Details = () => {
                 <Text
                   style={{
                     fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "11px",
+                    fontSize: "15px",
                     fontWeight: 500,
                     color: "#454545",
                   }}
@@ -874,7 +917,7 @@ const Details = () => {
                   <Text
                     style={{
                       fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "10px",
+                      fontSize: "14px",
                       fontWeight: 400,
                       color: "#073DFC",
                     }}
@@ -913,7 +956,7 @@ const Details = () => {
                     >
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -923,7 +966,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -933,7 +976,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -943,7 +986,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -953,7 +996,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -961,7 +1004,7 @@ const Details = () => {
                       ></Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -982,16 +1025,16 @@ const Details = () => {
                       style={{
                         borderRadius: "40px",
                         borderColor: "transparent",
-                        fontSize: "10px",
+                        fontSize: "14px",
                         borderWidth: "1px",
                         backgroundColor: "transparent",
                       }}
                     >
-                      <Td fontSize="10px">Jun 20</Td>
-                      <Td fontSize="10px">FACEBOOK</Td>
-                      <Td fontSize="10px">$230</Td>
-                      <Td fontSize="10px">Prosper Absalom</Td>
-                      <Td fontSize="10px">
+                      <Td fontSize="14px">Jun 20</Td>
+                      <Td fontSize="14px">FACEBOOK</Td>
+                      <Td fontSize="14px">$230</Td>
+                      <Td fontSize="14px">Prosper Absalom</Td>
+                      <Td fontSize="14px">
                         <Badge
                           colorScheme="green"
                           color="#00BA07"
@@ -1003,7 +1046,7 @@ const Details = () => {
                         </Badge>
                       </Td>
                       <Td
-                        fontSize="10px"
+                        fontSize="14px"
                         onClick={onPatientDetailsModalOpen}
                         cursor="pointer"
                       >
@@ -1048,7 +1091,7 @@ const Details = () => {
                 <Text
                   style={{
                     fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "11px",
+                    fontSize: "15px",
                     fontWeight: 500,
                     color: "#454545",
                   }}
@@ -1059,7 +1102,7 @@ const Details = () => {
                   <Text
                     style={{
                       fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "10px",
+                      fontSize: "14px",
                       fontWeight: 400,
                       color: "#073DFC",
                     }}
@@ -1098,7 +1141,7 @@ const Details = () => {
                     >
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1108,7 +1151,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1118,7 +1161,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1128,7 +1171,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1151,15 +1194,15 @@ const Details = () => {
                       style={{
                         borderRadius: "40px",
                         borderColor: "transparent",
-                        fontSize: "10px",
+                        fontSize: "14px",
                         borderWidth: "1px",
                         backgroundColor: "transparent",
                       }}
                     >
-                      <Td fontSize="10px">Jun 20</Td>
-                      <Td fontSize="10px">Prosper Absalom</Td>
-                      <Td fontSize="10px">Chief Complaints, Diagnosis</Td>
-                      <Td fontSize="10px">
+                      <Td fontSize="14px">Jun 20</Td>
+                      <Td fontSize="14px">Prosper Absalom</Td>
+                      <Td fontSize="14px">Chief Complaints, Diagnosis</Td>
+                      <Td fontSize="14px">
                         <Link
                           color="blue"
                           onClick={onClerkDrawerOpen}
@@ -1168,7 +1211,7 @@ const Details = () => {
                           details
                         </Link>
                       </Td>
-                      <Td fontSize="10px">
+                      <Td fontSize="14px">
                         <FiChevronRight
                           size="15px"
                           style={{ marginLeft: 8 }}
@@ -1242,7 +1285,7 @@ const Details = () => {
                 <Text
                   style={{
                     fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "11px",
+                    fontSize: "15px",
                     fontWeight: 500,
                     color: "#454545",
                   }}
@@ -1253,7 +1296,7 @@ const Details = () => {
                   <Text
                     style={{
                       fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "10px",
+                      fontSize: "14px",
                       fontWeight: 400,
                       color: "#073DFC",
                     }}
@@ -1292,7 +1335,7 @@ const Details = () => {
                     >
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1302,7 +1345,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1312,7 +1355,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1322,7 +1365,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1344,13 +1387,13 @@ const Details = () => {
                       <Tr>
                         <Td colSpan={4} textAlign="center" py={4}>
                           <Spinner size="sm" color="blue.500" />
-                          <Text fontSize="10px" mt={2}>Loading vitals...</Text>
+                          <Text fontSize="14px" mt={2}>Loading vitals...</Text>
                         </Td>
                       </Tr>
                     ) : vitals.length === 0 ? (
                       <Tr>
                         <Td colSpan={4} textAlign="center" py={4}>
-                          <Text fontSize="10px" color="gray.500">No vitals recorded yet</Text>
+                          <Text fontSize="14px" color="gray.500">No vitals recorded yet</Text>
                         </Td>
                       </Tr>
                     ) : (
@@ -1364,7 +1407,7 @@ const Details = () => {
                         };
 
                         // Create vital summary
-                        const vitalSummary = `BP: ${vital.systolic_pressure}/${vital.diastolic_pressure}, HR: ${vital.pulse_rate}, Temp: ${vital.temperature}°F, SpO2: ${vital.oxygen_saturation}%`;
+                        const vitalSummary = `HR: ${vital.pulse_rate}, Temp: ${vital.temperature}°F, SpO2: ${vital.oxygen_saturation}%`;
 
                         return (
                           <Tr
@@ -1373,25 +1416,258 @@ const Details = () => {
                             style={{
                               borderRadius: "40px",
                               borderColor: "transparent",
-                              fontSize: "10px",
+                              fontSize: "14px",
                               borderWidth: "1px",
                               backgroundColor: "transparent",
                             }}
                           >
-                            <Td fontSize="10px">{formatDate(vital.created_at)}</Td>
-                            <Td fontSize="10px">{patient?.name || 'Doctor'}</Td>
-                            <Td fontSize="10px">{vitalSummary}</Td>
-                            <Td fontSize="10px">
+                            <Td fontSize="14px">{formatDate(vital.created_at)}</Td>
+                            <Td fontSize="14px">{patient?.name || 'Doctor'}</Td>
+                            <Td fontSize="14px">{vitalSummary}</Td>
+                            <Td fontSize="14px">
                               <Link color="blue" onClick={() => handleViewVital(vital)}>
                                 details
                               </Link>
                             </Td>
-                            <Td fontSize="10px">
+                            <Td fontSize="14px">
                               <FiChevronRight
                                 size="15px"
                                 style={{ marginLeft: 8 }}
                                 color="#000"
                               />
+                            </Td>
+                          </Tr>
+                        );
+                      })
+                    )}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </TabPanel>
+          {/* Blood Pressure Tab Content */}
+          <TabPanel>
+            <AppDrawer
+              isOpenSide={isNewBloodPressureDrawerOpen}
+              onCloseSide={onNewBloodPressureDrawerClose}
+              side="right"
+              size="md"
+              children={<BloodPressureSide onBloodPressureAdded={fetchBloodPressureData} />}
+            />
+            <FilterSection />
+            <Box
+              width="100%"
+              fontFamily="IBM Plex Sans, sans-serif"
+              border="1px solid #D9D9D9"
+              borderRadius="10px"
+              marginTop="30px"
+            >
+              {/* table title */}
+              <Flex
+                padding="10px 20px"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Text
+                  style={{
+                    fontFamily: "IBM Plex Sans, sans-serif",
+                    fontSize: "15px",
+                    fontWeight: 500,
+                    color: "#454545",
+                  }}
+                >
+                  Blood Pressure Readings
+                </Text>
+                <Flex>
+                  <Text
+                    style={{
+                      fontFamily: "IBM Plex Sans, sans-serif",
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      color: "#073DFC",
+                    }}
+                  >
+                    View All
+                  </Text>
+                  <Button
+                    size="sm"
+                    backgroundColor="#073DFC"
+                    color="white"
+                    borderRadius="20px"
+                    fontSize="14px"
+                    fontWeight="400"
+                    height="25px"
+                    width="80px"
+                    marginLeft="10px"
+                    onClick={onNewBloodPressureDrawerOpen}
+                  >
+                    Add New
+                  </Button>
+                </Flex>
+              </Flex>
+              <TableContainer>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#454545",
+                        }}
+                      >
+                        Date
+                      </Th>
+                      <Th
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#454545",
+                        }}
+                      >
+                        Time
+                      </Th>
+                      <Th
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#454545",
+                        }}
+                      >
+                        Blood Pressure
+                      </Th>
+                      <Th
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#454545",
+                        }}
+                      >
+                        Pulse Rate
+                      </Th>
+                      <Th
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#454545",
+                        }}
+                      >
+                        Notes
+                      </Th>
+                      <Th
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#454545",
+                        }}
+                      >
+                        Actions
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {isBloodPressureLoading ? (
+                      <Tr>
+                        <Td colSpan={6} textAlign="center" py={8}>
+                          <Spinner size="sm" />
+                          <Text ml={2}>Loading blood pressure readings...</Text>
+                        </Td>
+                      </Tr>
+                    ) : bloodPressureReadings.length === 0 ? (
+                      <Tr>
+                        <Td colSpan={6} textAlign="center" py={8}>
+                          <Text color="gray.500">No blood pressure readings found</Text>
+                        </Td>
+                      </Tr>
+                    ) : (
+                      bloodPressureReadings.map((reading) => {
+                        const date = new Date(reading.reading_date);
+                        const time = reading.reading_time || 'N/A';
+                        const formattedDate = date.toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        });
+
+                        return (
+                          <Tr
+                            key={reading.id}
+                            mb="5px"
+                            style={{
+                              borderBottom: "1px solid #F0F0F0",
+                            }}
+                          >
+                            <Td
+                              style={{
+                                fontFamily: "IBM Plex Sans, sans-serif",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                color: "#454545",
+                              }}
+                            >
+                              {formattedDate}
+                            </Td>
+                            <Td
+                              style={{
+                                fontFamily: "IBM Plex Sans, sans-serif",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                color: "#454545",
+                              }}
+                            >
+                              {time}
+                            </Td>
+                            <Td
+                              style={{
+                                fontFamily: "IBM Plex Sans, sans-serif",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                color: "#454545",
+                              }}
+                            >
+                              {reading.systolic_pressure}/{reading.diastolic_pressure} mmHg
+                            </Td>
+                            <Td
+                              style={{
+                                fontFamily: "IBM Plex Sans, sans-serif",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                color: "#454545",
+                              }}
+                            >
+                              {reading.pulse_rate ? `${reading.pulse_rate} BPM` : 'N/A'}
+                            </Td>
+                            <Td
+                              style={{
+                                fontFamily: "IBM Plex Sans, sans-serif",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                color: "#454545",
+                              }}
+                            >
+                              {reading.notes || 'N/A'}
+                            </Td>
+                            <Td>
+                              <Flex gap={2}>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  fontSize="8px"
+                                  height="20px"
+                                  width="50px"
+                                  onClick={() => {
+                                    setSelectedBloodPressureReading(reading);
+                                    onViewBloodPressureDrawerOpen();
+                                  }}
+                                >
+                                  View
+                                </Button>
+                              </Flex>
                             </Td>
                           </Tr>
                         );
@@ -1429,7 +1705,7 @@ const Details = () => {
                 <Text
                   style={{
                     fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "11px",
+                    fontSize: "15px",
                     fontWeight: 500,
                     color: "#454545",
                   }}
@@ -1440,7 +1716,7 @@ const Details = () => {
                   <Text
                     style={{
                       fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "10px",
+                      fontSize: "14px",
                       fontWeight: 400,
                       color: "#073DFC",
                     }}
@@ -1479,7 +1755,7 @@ const Details = () => {
                     >
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1489,7 +1765,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1499,7 +1775,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1522,14 +1798,14 @@ const Details = () => {
                       style={{
                         borderRadius: "40px",
                         borderColor: "transparent",
-                        fontSize: "10px",
+                        fontSize: "14px",
                         borderWidth: "1px",
                         backgroundColor: "transparent",
                       }}
                     >
-                      <Td fontSize="10px">20/05/2025 08:00 PM</Td>
-                      <Td fontSize="10px">Prosper Absalom</Td>
-                      <Td fontSize="10px">PNEUMONIA</Td>
+                      <Td fontSize="14px">20/05/2025 08:00 PM</Td>
+                      <Td fontSize="14px">Prosper Absalom</Td>
+                      <Td fontSize="14px">PNEUMONIA</Td>
                     </Tr>
                   </Tbody>
                 </Table>
@@ -1744,22 +2020,22 @@ const Details = () => {
               <Table variant="simple" style={{ marginTop: "30px" }} size="sm">
                 <Thead>
                   <Tr>
-                    <Th fontSize="11px" color="#6D6D6D" fontWeight="500">
+                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
                       Patient
                     </Th>
-                    <Th fontSize="11px" color="#6D6D6D" fontWeight="500">
+                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
                       Name
                     </Th>
-                    <Th fontSize="11px" color="#6D6D6D" fontWeight="500">
+                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
                       Type
                     </Th>
-                    <Th fontSize="11px" color="#6D6D6D" fontWeight="500">
+                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
                       Status
                     </Th>
-                    <Th fontSize="11px" color="#6D6D6D" fontWeight="500">
+                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
                       Date
                     </Th>
-                    <Th fontSize="11px" color="#6D6D6D" fontWeight="500">
+                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
                       ACTIONS
                     </Th>
                   </Tr>
@@ -1777,7 +2053,7 @@ const Details = () => {
                     </Td>
                     <Td>
                       <Badge
-                        fontSize="10px"
+                        fontSize="14px"
                         px={2}
                         py={1}
                         width="70px"
@@ -1825,7 +2101,7 @@ const Details = () => {
                 <Text
                   style={{
                     fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "11px",
+                    fontSize: "15px",
                     fontWeight: 500,
                     color: "#454545",
                   }}
@@ -1836,7 +2112,7 @@ const Details = () => {
                   <Text
                     style={{
                       fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "10px",
+                      fontSize: "14px",
                       fontWeight: 400,
                       color: "#073DFC",
                     }}
@@ -1875,7 +2151,7 @@ const Details = () => {
                     >
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1885,7 +2161,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1895,7 +2171,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1905,7 +2181,7 @@ const Details = () => {
                       </Th>
                       <Th
                         style={{
-                          fontSize: "10px",
+                          fontSize: "14px",
                           color: "#6D6D6D",
                           fontWeight: "500",
                           fontFamily: "IBM Plex Sans, sans-serif",
@@ -1928,15 +2204,15 @@ const Details = () => {
                       style={{
                         borderRadius: "40px",
                         borderColor: "transparent",
-                        fontSize: "10px",
+                        fontSize: "14px",
                         borderWidth: "1px",
                         backgroundColor: "transparent",
                       }}
                     >
-                      <Td fontSize="10px">Jun 20</Td>
-                      <Td fontSize="10px">Prosper Absalom</Td>
-                      <Td fontSize="10px">Chief Complaints, Diagnosis</Td>
-                      <Td fontSize="10px">
+                      <Td fontSize="14px">Jun 20</Td>
+                      <Td fontSize="14px">Prosper Absalom</Td>
+                      <Td fontSize="14px">Chief Complaints, Diagnosis</Td>
+                      <Td fontSize="14px">
                         <Link
                           color="blue"
                           onClick={onDefinitiveDetailsModalOpen}
@@ -1946,7 +2222,7 @@ const Details = () => {
                           details
                         </Link>
                       </Td>
-                      <Td fontSize="10px">
+                      <Td fontSize="14px">
                         <FiChevronRight
                           size="15px"
                           style={{ marginLeft: 8 }}

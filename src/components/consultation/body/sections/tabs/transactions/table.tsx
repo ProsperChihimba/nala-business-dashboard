@@ -20,6 +20,7 @@ import {
   Avatar,
   Badge,
   HStack,
+  VStack,
   IconButton,
   Link,
   Spinner,
@@ -46,11 +47,15 @@ interface Transaction {
 interface TransactionTableProps {
   transactions: Transaction[];
   onStatusBadgeColor: (status: string) => string;
+  onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
 const TransactionTable: React.FC<TransactionTableProps> = ({
   transactions,
   onStatusBadgeColor,
+  onRefresh,
+  isLoading = false,
 }) => {
   return (
     <Box
@@ -62,9 +67,27 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       px={2}
       rounded="3"
     >
-      <Text fontSize="12px" fontWeight="500" color="#6D6D6D" mb={3}>
-        Recent
-      </Text>
+      <Flex justifyContent="space-between" alignItems="center" mb={3}>
+        <Text fontSize="12px" fontWeight="500" color="#6D6D6D">
+          Recent Appointments
+        </Text>
+        {onRefresh && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={onRefresh}
+            isLoading={isLoading}
+            loadingText="Refreshing..."
+            fontSize="10px"
+            height="25px"
+            color="#073DFC"
+            borderColor="#073DFC"
+            _hover={{ bg: "#073DFC", color: "white" }}
+          >
+            Refresh
+          </Button>
+        )}
+      </Flex>
       <Table variant="simple" size="sm">
         <Thead>
           <Tr>
@@ -288,44 +311,104 @@ const SingleAccountTabs = () => {
     };
   };
 
-  // Fetch appointments on component mount
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      console.log('Fetching appointments - Token:', !!token, 'Doctor:', doctor);
+  // Fetch appointments function
+  const fetchAppointments = async () => {
+    console.log('Fetching appointments - Token:', !!token, 'Doctor:', doctor);
+    
+    if (!token) {
+      console.log('No token available');
+      setIsLoading(false);
+      return;
+    }
+
+    // Ensure we have doctor profile
+    if (!doctor?.id) {
+      console.log('No doctor profile available, attempting to fetch doctor profile');
       
-      if (!token) {
-        console.log('No token available');
-        setIsLoading(false);
-        return;
-      }
-
-      // Ensure we have doctor profile
-      if (!doctor?.id) {
-        console.log('No doctor profile available');
-        setAppointments([]);
-        setIsLoading(false);
-        return;
-      }
-
-      const doctorId = doctor.id;
-
+      // Try to fetch doctor profile if we don't have it
       try {
-        setIsLoading(true);
-        console.log('Fetching appointments for doctor ID:', doctorId);
-        const appointmentsData = await apiService.getDoctorAppointments(doctorId, token);
-        setAppointments(appointmentsData);
-        console.log('Fetched appointments:', appointmentsData);
+        const storedUsername = localStorage.getItem('doctorUsername');
+        if (storedUsername) {
+          console.log('Attempting to fetch doctor profile for username:', storedUsername);
+          const doctorProfile = await apiService.getDoctorByUsername(storedUsername, token);
+          console.log('Doctor profile fetched successfully:', doctorProfile);
+          
+          // Retry fetching appointments with the new doctor profile
+          if (doctorProfile?.id) {
+            console.log('Fetching appointments for doctor ID:', doctorProfile.id);
+            const appointmentsData = await apiService.getDoctorAppointments(doctorProfile.id, token);
+            setAppointments(appointmentsData);
+            console.log('Fetched appointments:', appointmentsData);
+          }
+        } else {
+          console.log('No stored username found, cannot fetch doctor profile');
+          setAppointments([]);
+        }
       } catch (error) {
-        console.error('Failed to fetch appointments:', error);
-        // Keep empty array on error - will show "No appointments found"
+        console.error('Failed to fetch doctor profile or appointments:', error);
         setAppointments([]);
       } finally {
         setIsLoading(false);
       }
-    };
+      return;
+    }
 
+    const doctorId = doctor.id;
+
+    try {
+      setIsLoading(true);
+      console.log('Fetching appointments for doctor ID:', doctorId);
+      const appointmentsData = await apiService.getDoctorAppointments(doctorId, token);
+      setAppointments(appointmentsData);
+      console.log('Fetched appointments:', appointmentsData);
+    } catch (error) {
+      console.error('Failed to fetch appointments:', error);
+      // Keep empty array on error - will show "No appointments found"
+      setAppointments([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch appointments on component mount
+  useEffect(() => {
     fetchAppointments();
   }, [token, doctor?.id]);
+
+  // Add focus and visibility change listeners to refetch data when user returns to the page
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      console.log('Page visibility changed, checking if appointments need refresh');
+      // Only refetch if we have no appointments and we're not currently loading
+      if (appointments.length === 0 && !isLoading && token && doctor?.id && !document.hidden) {
+        console.log('No appointments found, attempting refresh on visibility change');
+        fetchAppointments();
+      }
+    };
+
+    const handleFocus = () => {
+      console.log('Page focused, checking if appointments need refresh');
+      // Only refetch if we have no appointments and we're not currently loading
+      if (appointments.length === 0 && !isLoading && token && doctor?.id) {
+        console.log('No appointments found, attempting refresh on focus');
+        fetchAppointments();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [appointments.length, isLoading, token, doctor?.id]);
+
+  // Add refresh function that can be called manually
+  const handleRefresh = () => {
+    console.log('Manual refresh triggered');
+    fetchAppointments();
+  };
 
   // Transform appointments to transactions - only use real API data
   const allTransactions: Transaction[] = appointments.map(transformAppointmentToTransaction);
@@ -453,9 +536,21 @@ const SingleAccountTabs = () => {
     return (
       <Box color="black" marginTop="30px">
         <Center py={8}>
-          <Text fontSize="16px" color="gray.500">
-            No appointments found
-          </Text>
+          <VStack spacing={4}>
+            <Text fontSize="16px" color="gray.500">
+              No appointments found
+            </Text>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleRefresh}
+              color="#073DFC"
+              borderColor="#073DFC"
+              _hover={{ bg: "#073DFC", color: "white" }}
+            >
+              Refresh
+            </Button>
+          </VStack>
         </Center>
       </Box>
     );
@@ -487,6 +582,8 @@ const SingleAccountTabs = () => {
             <TransactionTable
               transactions={currentTransactions}
               onStatusBadgeColor={getStatusBadgeColor}
+              onRefresh={handleRefresh}
+              isLoading={isLoading}
             />
             <PaginationControls
               currentPage={currentPage}
@@ -502,6 +599,8 @@ const SingleAccountTabs = () => {
             <TransactionTable
               transactions={currentTransactions}
               onStatusBadgeColor={getStatusBadgeColor}
+              onRefresh={handleRefresh}
+              isLoading={isLoading}
             />
             <PaginationControls
               currentPage={currentPage}
@@ -517,6 +616,8 @@ const SingleAccountTabs = () => {
             <TransactionTable
               transactions={currentTransactions}
               onStatusBadgeColor={getStatusBadgeColor}
+              onRefresh={handleRefresh}
+              isLoading={isLoading}
             />
             <PaginationControls
               currentPage={currentPage}
@@ -532,6 +633,8 @@ const SingleAccountTabs = () => {
             <TransactionTable
               transactions={currentTransactions}
               onStatusBadgeColor={getStatusBadgeColor}
+              onRefresh={handleRefresh}
+              isLoading={isLoading}
             />
             <PaginationControls
               currentPage={currentPage}

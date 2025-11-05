@@ -16,6 +16,7 @@ import Login from "../components/login";
 import Consultation from "../components/consultation";
 import PatientDetailsPage from "../components/consultation/client_details/[id]";
 import AddClerkSheet from "../components/consultation/add_clerksheet";
+import Learn from "../components/learn";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 const AppRouter = () => {
@@ -65,6 +66,11 @@ const AppRouter = () => {
       <Route path="/consultation" element={
         <ProtectedRoute>
           <Consultation />
+        </ProtectedRoute>
+      } />
+      <Route path="/learn" element={
+        <ProtectedRoute>
+          <Learn />
         </ProtectedRoute>
       } />
       <Route path="/vendors/new-vendor" element={

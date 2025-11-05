@@ -44,13 +44,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         console.log('Authentication state set to true');
         
-        // Try to fetch doctor profile if we have a token
+        // Try to fetch doctor profile if we have a token and username
         try {
-          // We can't fetch doctor profile without username, so we'll let components handle this
-          // when they need the doctor ID, or we could store the username in localStorage too
-          console.log('Token found, doctor profile will be fetched when needed by components');
+          const storedUsername = localStorage.getItem('doctorUsername');
+          if (storedUsername) {
+            console.log('Found stored username:', storedUsername, 'fetching doctor profile');
+            const doctorProfile = await apiService.getDoctorByUsername(storedUsername, storedToken);
+            setDoctor(doctorProfile);
+            console.log('Doctor profile loaded successfully:', doctorProfile);
+            console.log('Doctor ID:', doctorProfile.id, 'for username:', storedUsername);
+          } else {
+            console.log('No stored username found, doctor profile will be fetched when needed by components');
+          }
         } catch (error) {
-          console.warn('Could not load stored authentication:', error);
+          console.warn('Could not load stored doctor profile:', error);
+          // Try fallback mapping if API fails
+          const storedUsername = localStorage.getItem('doctorUsername');
+          if (storedUsername) {
+            console.log('API failed, trying fallback mapping for username:', storedUsername);
+            const usernameToDoctorId: { [key: string]: number } = {
+              'dr_jones': 7,
+              'procnotion': 8,
+              'liam_harris': 6,
+              'isabella_green': 5,
+              'henry_white': 4,
+              'dr_thompson': 3
+            };
+            
+            if (usernameToDoctorId[storedUsername]) {
+              const doctorId = usernameToDoctorId[storedUsername];
+              console.log('Using fallback doctor ID:', doctorId, 'for username:', storedUsername);
+              const doctorProfile = await apiService.getDoctorProfile(doctorId, storedToken);
+              setDoctor(doctorProfile);
+              console.log('Doctor profile loaded via fallback:', doctorProfile);
+            } else {
+              console.warn('No fallback mapping found for username:', storedUsername);
+            }
+          }
         }
       } else {
         console.log('No stored token found, user not authenticated');
@@ -73,8 +103,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiService.loginDoctor(credentials);
       console.log('Login successful, received token:', response.token);
       
-      // Store token
+      // Store token and username
       localStorage.setItem('doctorToken', response.token);
+      localStorage.setItem('doctorUsername', credentials.username);
       setToken(response.token);
       setIsAuthenticated(true);
       
@@ -126,6 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('doctorToken');
+    localStorage.removeItem('doctorUsername');
     setToken(null);
     setIsAuthenticated(false);
     setDoctor(null);
