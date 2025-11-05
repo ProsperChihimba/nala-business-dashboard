@@ -85,25 +85,21 @@ const SideBar = () => {
             /> */}
 
             {/* personal items */}
-            {personalMenu.length > 0 && (
-              <>
-                <SelectedNavigationSection
-                    icon={<FaRegUser width='20px' height='20px' color='#BBBBBB' />}
-                    label='Personal'
-                />
-                {
-                    personalMenu.map((item, index) => (
-                        <SelectedNavigationItem 
-                            icon={item.icon} 
-                            label={item.label}
-                            isSelected={pathname === item.path } 
-                            key={index} 
-                            path={item.path}
-                        />
-                    ))
-                }
-              </>
-            )}
+            <SelectedNavigationSection
+                icon={<FaRegUser width='20px' height='20px' color='#BBBBBB' />}
+                label='Personal'
+            />
+            {
+                personalMenu.map((item, index) => (
+                    <SelectedNavigationItem 
+                        icon={item.icon} 
+                        label={item.label}
+                        isSelected={pathname === item.path } 
+                        key={index} 
+                        path={item.path}
+                    />
+                ))
+            }
 
             {/* divider */}
             <Box
