@@ -116,7 +116,6 @@ const Details = () => {
   const [vitals, setVitals] = useState<PatientVital[]>([]);
   const [selectedVital, setSelectedVital] = useState<PatientVital | null>(null);
   const [bloodPressureReadings, setBloodPressureReadings] = useState<BloodPressureReading[]>([]);
-  const [selectedBloodPressureReading, setSelectedBloodPressureReading] = useState<BloodPressureReading | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isVitalsLoading, setIsVitalsLoading] = useState(true);
   const [isBloodPressureLoading, setIsBloodPressureLoading] = useState(true);
@@ -225,12 +224,7 @@ const Details = () => {
     onClose: onNewBloodPressureDrawerClose,
   } = useDisclosure();
 
-  // State for the "View Blood Pressure" drawer
-  const {
-    isOpen: isViewBloodPressureDrawerOpen,
-    onOpen: onViewBloodPressureDrawerOpen,
-    onClose: onViewBloodPressureDrawerClose,
-  } = useDisclosure();
+  // Removed unused Blood Pressure view drawer state
 
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -1450,8 +1444,7 @@ const Details = () => {
             <AppDrawer
               isOpenSide={isNewBloodPressureDrawerOpen}
               onCloseSide={onNewBloodPressureDrawerClose}
-              side="right"
-              size="md"
+              modalSize="md"
               children={<BloodPressureSide onBloodPressureAdded={fetchBloodPressureData} />}
             />
             <FilterSection />
@@ -1587,12 +1580,11 @@ const Details = () => {
                       </Tr>
                     ) : (
                       bloodPressureReadings.map((reading) => {
-                        const date = new Date(reading.reading_date);
+                        const date = reading.reading_date ? new Date(reading.reading_date) : null;
                         const time = reading.reading_time || 'N/A';
-                        const formattedDate = date.toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                        });
+                        const formattedDate = date && !isNaN(date.getTime())
+                          ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                          : 'N/A';
 
                         return (
                           <Tr
@@ -1660,10 +1652,7 @@ const Details = () => {
                                   fontSize="8px"
                                   height="20px"
                                   width="50px"
-                                  onClick={() => {
-                                    setSelectedBloodPressureReading(reading);
-                                    onViewBloodPressureDrawerOpen();
-                                  }}
+                                  onClick={() => {}}
                                 >
                                   View
                                 </Button>

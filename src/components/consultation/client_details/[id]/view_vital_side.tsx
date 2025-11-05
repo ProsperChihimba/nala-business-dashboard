@@ -10,7 +10,6 @@ import image6 from '../../../../assets/p1 (6).png'
 import image7 from '../../../../assets/p1 (7).png'
 import image8 from '../../../../assets/p1 (8).png'
 import image9 from '../../../../assets/p1 (9).png'
-import image10 from '../../../../assets/p1 (10).png'
 
 interface ViewVitalSideProps {
   vital?: PatientVital | null;

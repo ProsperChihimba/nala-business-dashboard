@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Flex, Text, Input, Textarea, Button, Box, useToast, ModalCloseButton, Divider, FormLabel, HStack, Tag, TagLabel, TagCloseButton, Spinner } from "@chakra-ui/react";
-import { Typography } from "antd";
 import AppButton from "../../../../layout/button";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { apiService, LearnArticle as LearnArticleType } from "../../../../../services/api";
@@ -14,7 +13,6 @@ interface EditLearnModalProps {
 }
 
 const EditLearnModal = ({ article, onClose, onSuccess }: EditLearnModalProps) => {
-  const { Text } = Typography;
   const toast = useToast();
   const { token, doctor } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -79,9 +77,9 @@ const EditLearnModal = ({ article, onClose, onSuccess }: EditLearnModalProps) =>
       };
 
       // Prefer PUT (backend expects complete body); fall back to PATCH on failure
-      let updated;
+      let _updated;
       try {
-        updated = await apiService.updateLearnArticle(
+        _updated = await apiService.updateLearnArticle(
           article.id,
           fullUpdate,
           token,
@@ -98,7 +96,7 @@ const EditLearnModal = ({ article, onClose, onSuccess }: EditLearnModalProps) =>
           tags: fullUpdate.tags,
           image_url: fullUpdate.image_url,
         };
-        updated = await apiService.updateLearnArticle(
+        _updated = await apiService.updateLearnArticle(
           article.id,
           patchData,
           token,

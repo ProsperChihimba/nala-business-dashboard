@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Flex, Text, Input, Textarea, Button, Box, useToast, ModalCloseButton, Divider, FormLabel, HStack, Tag, TagLabel, TagCloseButton, Spinner } from "@chakra-ui/react";
-import { Typography } from "antd";
 import AppButton from "../../../../layout/button";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { apiService } from "../../../../../services/api";
@@ -13,7 +12,6 @@ interface CreateLearnModalProps {
 }
 
 const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
-  const { Text } = Typography;
   const toast = useToast();
   const { token, doctor } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
