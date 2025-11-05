@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Flex, Text, Input, Textarea, Button, Box, useToast, ModalCloseButton, Divider, FormLabel, HStack, Tag, TagLabel, TagCloseButton, Spinner } from "@chakra-ui/react";
-import { Typography } from "antd";
 import AppButton from "../../../../layout/button";
 
 interface CreateNewsModalProps {
@@ -11,7 +10,6 @@ interface CreateNewsModalProps {
 }
 
 const CreateNewsModal = ({ onClose, onSuccess }: CreateNewsModalProps) => {
-  const { Text } = Typography;
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   

@@ -59,9 +59,16 @@ const VitalSide: React.FC<VitalSideProps> = ({ onVitalAdded }) => {
       setSuccess(false);
 
       const patientId = parseInt(id);
+      // Sanitize nulls to numbers to satisfy API type expectations
       const vitalData = {
+        random_blood_glucose: formData.random_blood_glucose ?? 0,
+        pulse_rate: formData.pulse_rate ?? 0,
+        oxygen_saturation: formData.oxygen_saturation ?? 0,
+        temperature: formData.temperature ?? 0,
+        respiratory_rate: formData.respiratory_rate ?? 0,
+        height: formData.height ?? 0,
+        weight: formData.weight ?? 0,
         patient: patientId,
-        ...formData
       };
 
       console.log('Submitting vitals:', vitalData);

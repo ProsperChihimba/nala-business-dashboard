@@ -5,7 +5,7 @@ import { Box, Flex, Text, DrawerCloseButton, Input, Alert, AlertIcon, Spinner } 
 import { useParams } from "react-router-dom";
 import AppButton from "../../../layout/button";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { apiService, BloodPressureReading } from "../../../../services/api";
+import { apiService } from "../../../../services/api";
 
 interface BloodPressureFormData {
   systolic_pressure: number | null;
@@ -68,15 +68,17 @@ const BloodPressureSide: React.FC<BloodPressureSideProps> = ({ onBloodPressureAd
       setSuccess(false);
 
       const patientId = parseInt(id);
-      const bloodPressureData = {
+      const bloodPressureData: any = {
         patient: patientId,
-        systolic_pressure: formData.systolic_pressure,
-        diastolic_pressure: formData.diastolic_pressure,
-        pulse_rate: formData.pulse_rate,
+        systolic_pressure: formData.systolic_pressure!,
+        diastolic_pressure: formData.diastolic_pressure!,
         reading_date: formData.reading_date,
         reading_time: formData.reading_time,
         notes: formData.notes,
       };
+      if (formData.pulse_rate !== null) {
+        bloodPressureData.pulse_rate = formData.pulse_rate;
+      }
 
       console.log('Submitting blood pressure reading:', bloodPressureData);
       const result = await apiService.addBloodPressureReading(bloodPressureData, token);
