@@ -11,7 +11,6 @@ import TeamPage from "../components/team";
 import NewVendor from "../components/vendor/body/new_vendor";
 import ExpensesPage from "../components/expenses";
 import Login from "../components/login";
-import Consultation from "../components/consultation";
 import PatientDetailsPage from "../components/consultation/client_details/[id]";
 import AddClerkSheet from "../components/consultation/add_clerksheet";
 import Learn from "../components/learn";

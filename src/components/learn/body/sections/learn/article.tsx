@@ -245,13 +245,13 @@ const LearnArticle = ({ article, isOwner, onEdit, onDelete }: LearnArticleProps)
                 style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '8px' }}
               />
             )}
-            <Text fontSize="24px" fontWeight="600">
+            <Text style={{ fontSize: "24px", fontWeight: "600" }}>
               {article.title}
             </Text>
-            <Text fontSize="12px" color="#6D6D6D">
+            <Text style={{ fontSize: "12px", color: "#6D6D6D" }}>
               {authorName} . {formatDate(article.created_at)}
             </Text>
-            <Text fontSize="14px" color="#454545" marginTop="8px">
+            <Text style={{ fontSize: "14px", color: "#454545", marginTop: "8px" }}>
               {article.description}
             </Text>
             <Box
@@ -260,7 +260,7 @@ const LearnArticle = ({ article, isOwner, onEdit, onDelete }: LearnArticleProps)
               borderRadius="8px"
               marginTop="16px"
             >
-              <Text fontSize="14px" whiteSpace="pre-wrap">
+              <Text style={{ fontSize: "14px", whiteSpace: "pre-wrap" }}>
                 {article.content}
               </Text>
             </Box>

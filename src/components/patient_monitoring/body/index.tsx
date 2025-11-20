@@ -2,7 +2,6 @@ import { Box, Text, Flex, Tabs, TabList, Tab, TabPanels, TabPanel, Table, Thead,
 import { useAuth } from "../../../contexts/AuthContext"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { apiService } from "../../../services/api"
 
 const PatientMonitoringBody = () => {
   const { token } = useAuth()

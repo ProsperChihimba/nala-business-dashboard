@@ -1,12 +1,11 @@
 import { Box, Text, Flex, Select, Button, useToast, useDisclosure } from "@chakra-ui/react"
 import { useAuth } from "../../../contexts/AuthContext"
 import { useState, useEffect } from "react"
-import { apiService } from "../../../services/api"
 import AppModal from "../../layout/modal"
 import SearchDoctorModal from "../../consultation/client_details/[id]/search_doctor_modal"
 
 const ReferPatientBody = () => {
-  const { token, doctor } = useAuth()
+  const { token } = useAuth()
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [patients, setPatients] = useState<any[]>([])
@@ -21,7 +20,7 @@ const ReferPatientBody = () => {
     ])
   }, [token])
 
-  const handleTransfer = (doctorId: string) => {
+  const handleTransfer = (_doctorId: string) => {
     if (!selectedPatient) {
       toast({
         title: "Patient Required",

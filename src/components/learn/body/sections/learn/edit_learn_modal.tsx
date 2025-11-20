@@ -35,16 +35,6 @@ const EditLearnModal = ({ article, onClose, onSuccess }: EditLearnModalProps) =>
     }));
   };
 
-  const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, tagInput.trim()]
-      }));
-      setTagInput("");
-    }
-  };
-
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -109,7 +99,6 @@ const EditLearnModal = ({ article, onClose, onSuccess }: EditLearnModalProps) =>
           description: fullUpdate.description,
           content: fullUpdate.content,
           doctor: fullUpdate.doctor,
-          tags: fullUpdate.tags,
           image_url: fullUpdate.image_url,
         };
         await apiService.updateLearnArticle(

@@ -1,4 +1,4 @@
-import { Box, Text, Flex, Button } from "@chakra-ui/react"
+import { Box, Text, Flex } from "@chakra-ui/react"
 import { useParams } from "react-router-dom"
 import SmartphoneRegistration from "./smartphone"
 import NonSmartphoneRegistration from "./non_smartphone"

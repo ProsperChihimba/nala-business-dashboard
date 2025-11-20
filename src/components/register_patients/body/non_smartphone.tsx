@@ -4,7 +4,7 @@ import { useAuth } from "../../../contexts/AuthContext"
 import { useToast } from "@chakra-ui/react"
 
 const NonSmartphoneRegistration = () => {
-  const { token } = useAuth()
+  const { token: _token } = useAuth()
   const toast = useToast()
   const [formData, setFormData] = useState({
     firstName: "",
