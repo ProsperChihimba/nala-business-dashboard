@@ -1,12 +1,10 @@
 import { Box, Flex, Text, VStack, HStack } from "@chakra-ui/react"
-import { Typography } from "antd"
 import { useAuth } from "../../../../../contexts/AuthContext"
 import { useState, useEffect } from "react"
 import { apiService } from "../../../../../services/api"
 import { AiOutlineDollar } from "react-icons/ai"
 
 const DoctorEarnings = () => {
-  const { Text } = Typography
   const { token, doctor } = useAuth()
   const [earnings, setEarnings] = useState({
     totalEarnings: 0,
@@ -84,12 +82,10 @@ const DoctorEarnings = () => {
         <HStack alignItems="center" gap={2}>
           <AiOutlineDollar size={24} color="#073DFC" />
           <Text
-            style={{
-              fontFamily: "IBM Plex Sans, sans-serif",
-              fontSize: "20px",
-              fontWeight: 500,
-              color: "#000",
-            }}
+            fontSize="20px"
+            fontWeight="500"
+            color="#000"
+            fontFamily="IBM Plex Sans, sans-serif"
           >
             Doctor's Earnings from Patients
           </Text>
