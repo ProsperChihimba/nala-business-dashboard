@@ -1,4 +1,4 @@
-import { Flex, Box, Avatar, Menu, MenuButton, MenuList, MenuItem, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, Box, Avatar, Menu, MenuButton, MenuList, MenuItem, Text } from '@chakra-ui/react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FiLogOut, FiSettings, FiUser, FiEdit } from 'react-icons/fi';

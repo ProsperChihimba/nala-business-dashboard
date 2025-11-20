@@ -5,7 +5,6 @@ import { LearnArticle as LearnArticleType } from "../../../../../services/api";
 import { FiEye, FiEdit2, FiTrash2, FiShare2 } from "react-icons/fi";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import AppModal from "../../../../layout/modal";
-import { useState } from "react";
 
 interface LearnArticleProps {
   article: LearnArticleType;
