@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Table, Thead, Tbody, Tr, Th, Td, Avatar, Button, HStack, Badge } from "@chakra-ui/react"
+import { Box, Flex, Text, Table, Thead, Tbody, Tr, Th, Td, Avatar, Button, Badge } from "@chakra-ui/react"
 import { Typography } from "antd"
 import { useAuth } from "../../../../../contexts/AuthContext"
 import { useState, useEffect } from "react"
