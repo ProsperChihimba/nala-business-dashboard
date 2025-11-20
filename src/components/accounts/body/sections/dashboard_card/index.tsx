@@ -7,7 +7,7 @@ import { apiService } from "../../../../../services/api"
 import { FiFileText, FiChevronRight } from "react-icons/fi"
 
 const DashboardCard = () => {
-  const { Text } = Typography
+  const { Text: AntdText } = Typography
   const { token, doctor } = useAuth()
   const navigate = useNavigate()
   const [stats, setStats] = useState({
@@ -42,9 +42,6 @@ const DashboardCard = () => {
 
       const totalEarnings = appointments.length * avgConsultationFee
       const thisMonthEarnings = thisMonth.length * avgConsultationFee
-      const executionPercentage = appointments.length > 0 
-        ? Math.round((thisMonth.length / appointments.length) * 100)
-        : 0
 
       setStats({
         totalEarnings,
@@ -95,7 +92,7 @@ const DashboardCard = () => {
         {/* Left Section */}
         <Flex flex={1} direction="column" gap={4}>
           {/* Doctor ID */}
-          <Text
+          <AntdText
             style={{
               fontFamily: "IBM Plex Sans, sans-serif",
               fontSize: "14px",
@@ -104,8 +101,8 @@ const DashboardCard = () => {
             }}
           >
             Doctor Number
-          </Text>
-          <Text
+          </AntdText>
+          <AntdText
             style={{
               fontFamily: "IBM Plex Sans, sans-serif",
               fontSize: "18px",
@@ -114,11 +111,11 @@ const DashboardCard = () => {
             }}
           >
             {doctorId}
-          </Text>
+          </AntdText>
 
           {/* Doctor's Earnings */}
           <VStack align="flex-start" spacing={1}>
-            <Text
+            <AntdText
               style={{
                 fontFamily: "IBM Plex Sans, sans-serif",
                 fontSize: "14px",
@@ -127,12 +124,12 @@ const DashboardCard = () => {
               }}
             >
               Doctor's Earnings from Patients
-            </Text>
+            </AntdText>
             {isLoading ? (
               <Text fontSize="14px" color="#6D6D6D">Loading...</Text>
             ) : (
               <>
-                <Text
+                <AntdText
                   style={{
                     fontFamily: "IBM Plex Sans, sans-serif",
                     fontSize: "32px",
@@ -141,8 +138,8 @@ const DashboardCard = () => {
                   }}
                 >
                   {formatCurrency(stats.availableBalance)}
-                </Text>
-                <Text
+                </AntdText>
+                <AntdText
                   style={{
                     fontFamily: "IBM Plex Sans, sans-serif",
                     fontSize: "12px",
@@ -151,7 +148,7 @@ const DashboardCard = () => {
                   }}
                 >
                   out of {formatCurrency(stats.totalEarnings)} Total Earnings
-                </Text>
+                </AntdText>
               </>
             )}
           </VStack>
@@ -183,7 +180,7 @@ const DashboardCard = () => {
               <FiFileText size={20} color="#073DFC" />
             </Box>
             <VStack align="flex-start" spacing={0}>
-              <Text
+              <AntdText
                 style={{
                   fontFamily: "IBM Plex Sans, sans-serif",
                   fontSize: "14px",
@@ -192,8 +189,8 @@ const DashboardCard = () => {
                 }}
               >
                 Earnings Categories
-              </Text>
-              <Text
+              </AntdText>
+              <AntdText
                 style={{
                   fontFamily: "IBM Plex Sans, sans-serif",
                   fontSize: "12px",
@@ -202,7 +199,7 @@ const DashboardCard = () => {
                 }}
               >
                 {stats.totalPatients} Patients
-              </Text>
+              </AntdText>
             </VStack>
           </HStack>
         </Flex>
