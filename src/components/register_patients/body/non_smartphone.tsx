@@ -1,24 +1,38 @@
-import { Box, Text, Flex, Input, FormLabel, Button } from "@chakra-ui/react"
+import { Box, Text, Input, FormLabel, Button, Select, Textarea, HStack, VStack } from "@chakra-ui/react"
 import { useState } from "react"
-import { useAuth } from "../../../contexts/AuthContext"
+// import { useAuth } from "../../../contexts/AuthContext"
 import { useToast } from "@chakra-ui/react"
+import { FiArrowRight } from "react-icons/fi"
 
 const NonSmartphoneRegistration = () => {
-  const { token: _token } = useAuth()
+  // const { token } = useAuth()
   const toast = useToast()
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
-    phone: "",
-    dateOfBirth: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
     gender: "",
+    dateOfBirth: "",
+    purpose: "",
+    phone: "",
     address: "",
+    emergencyContactName: "",
+    emergencyContactPhone: "",
   })
   const [accessCode, setAccessCode] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
 
   const handleGenerateCode = () => {
-    // TODO: Generate access code
+    // TODO: Generate access code via API
     const code = Math.random().toString(36).substring(2, 8).toUpperCase()
     setAccessCode(code)
     toast({
@@ -31,66 +45,351 @@ const NonSmartphoneRegistration = () => {
   }
 
   const handleSubmit = async () => {
-    // TODO: Implement non-smartphone registration with access code
-    toast({
-      title: "Registration Complete",
-      description: "Patient can now use the access code to access Main Manual tree",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    })
+    // Validation
+    if (!formData.firstName || !formData.lastName || !formData.username || 
+        !formData.password || !formData.confirmPassword || !formData.gender || 
+        !formData.dateOfBirth || !formData.purpose || !formData.phone || !accessCode) {
+      toast({
+        title: "Missing Fields",
+        description: "Please fill in all required fields and generate an access code",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      // TODO: Implement non-smartphone registration API call with access code
+      toast({
+        title: "Registration Complete",
+        description: "Patient can now use the access code to access Main Manual tree",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      })
+      
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+        gender: "",
+        dateOfBirth: "",
+        purpose: "",
+        phone: "",
+        address: "",
+        emergencyContactName: "",
+        emergencyContactPhone: "",
+      })
+      setAccessCode("")
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: "Failed to complete registration. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <Box>
-      <Text fontSize="18px" fontWeight="500" marginBottom="20px">
-        Non-Smartphone User Registration
-      </Text>
-      <Flex direction="column" gap={4} maxWidth="600px">
-        <Box>
-          <FormLabel>First Name</FormLabel>
-          <Input value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} />
-        </Box>
-        <Box>
-          <FormLabel>Last Name</FormLabel>
-          <Input value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} />
-        </Box>
-        <Box>
-          <FormLabel>Email</FormLabel>
-          <Input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
-        </Box>
-        <Box>
-          <FormLabel>Phone Number</FormLabel>
-          <Input value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
-        </Box>
-        <Box>
-          <FormLabel>Date of Birth</FormLabel>
-          <Input type="date" value={formData.dateOfBirth} onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})} />
-        </Box>
-        <Box>
-          <FormLabel>Gender</FormLabel>
-          <Input value={formData.gender} onChange={(e) => setFormData({...formData, gender: e.target.value})} />
-        </Box>
-        <Box>
-          <FormLabel>Address</FormLabel>
-          <Input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} />
-        </Box>
-        <Box>
-          <FormLabel>Access Code</FormLabel>
-          <Flex gap={2}>
-            <Input value={accessCode} readOnly placeholder="Click Generate to create access code" />
-            <Button onClick={handleGenerateCode} backgroundColor="#073DFC" color="white">
-              Generate
-            </Button>
-          </Flex>
-        </Box>
-        <Button onClick={handleSubmit} backgroundColor="#073DFC" color="white" width="150px" isDisabled={!accessCode}>
-          Complete Registration
+    <Box fontFamily="IBM Plex Sans, sans-serif" maxWidth="800px">
+      <VStack align="stretch" spacing={6}>
+        {/* Title */}
+        <VStack align="flex-start" spacing={2}>
+          <Text fontSize="24px" fontWeight="600" color="#000">
+            Create your account
+          </Text>
+          <Text fontSize="14px" color="#6D6D6D">
+            Please fill in your details below
+          </Text>
+        </VStack>
+
+        {/* Form Fields */}
+        <VStack align="stretch" spacing={4}>
+          {/* First Name and Last Name */}
+          <HStack spacing={4}>
+            <Box flex={1}>
+              <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+                First name
+              </FormLabel>
+              <Input
+                value={formData.firstName}
+                onChange={(e) => handleInputChange("firstName", e.target.value)}
+                placeholder="First name"
+                height="40px"
+                borderRadius="8px"
+                borderColor="#DCDCDC"
+                _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+                isRequired
+              />
+            </Box>
+            <Box flex={1}>
+              <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+                Last name
+              </FormLabel>
+              <Input
+                value={formData.lastName}
+                onChange={(e) => handleInputChange("lastName", e.target.value)}
+                placeholder="Last name"
+                height="40px"
+                borderRadius="8px"
+                borderColor="#DCDCDC"
+                _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+                isRequired
+              />
+            </Box>
+          </HStack>
+
+          {/* Username */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Username
+            </FormLabel>
+            <Input
+              value={formData.username}
+              onChange={(e) => handleInputChange("username", e.target.value)}
+              placeholder="Username"
+              height="40px"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              isRequired
+            />
+          </Box>
+
+          {/* Password */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Password
+            </FormLabel>
+            <Input
+              type="password"
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              placeholder="Password"
+              height="40px"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              isRequired
+            />
+          </Box>
+
+          {/* Confirm Password */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Confirm password
+            </FormLabel>
+            <Input
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+              placeholder="Confirm password"
+              height="40px"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              isRequired
+            />
+          </Box>
+
+          {/* Gender and Date of Birth */}
+          <HStack spacing={4}>
+            <Box flex={1}>
+              <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+                Select gender
+              </FormLabel>
+              <Select
+                value={formData.gender}
+                onChange={(e) => handleInputChange("gender", e.target.value)}
+                placeholder="Select gender"
+                height="40px"
+                borderRadius="8px"
+                borderColor="#DCDCDC"
+                fontSize="12px"
+                isRequired
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </Select>
+            </Box>
+            <Box flex={1}>
+              <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+                YYYY-MM-DD
+              </FormLabel>
+              <Input
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
+                placeholder="YYYY-MM-DD"
+                height="40px"
+                borderRadius="8px"
+                borderColor="#DCDCDC"
+                _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+                isRequired
+              />
+            </Box>
+          </HStack>
+
+          {/* Purpose */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Select purpose
+            </FormLabel>
+            <Select
+              value={formData.purpose}
+              onChange={(e) => handleInputChange("purpose", e.target.value)}
+              placeholder="Select purpose"
+              height="40px"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              fontSize="12px"
+              isRequired
+            >
+              <option value="medical_aid">Medical aid</option>
+              <option value="consultation">Consultation</option>
+            </Select>
+          </Box>
+
+          {/* Phone Number */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Phone number
+            </FormLabel>
+            <Input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => handleInputChange("phone", e.target.value)}
+              placeholder="Phone number"
+              height="40px"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              isRequired
+            />
+          </Box>
+
+          {/* Full Address (Optional) */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Full address <Text as="span" color="#9CA3AF" fontWeight="400">(optional)</Text>
+            </FormLabel>
+            <Textarea
+              value={formData.address}
+              onChange={(e) => handleInputChange("address", e.target.value)}
+              placeholder="Full address"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              rows={3}
+            />
+          </Box>
+
+          {/* Emergency Contact Name and Phone */}
+          <HStack spacing={4}>
+            <Box flex={1}>
+              <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+                Emergency contact name
+              </FormLabel>
+              <Input
+                value={formData.emergencyContactName}
+                onChange={(e) => handleInputChange("emergencyContactName", e.target.value)}
+                placeholder="Emergency contact name"
+                height="40px"
+                borderRadius="8px"
+                borderColor="#DCDCDC"
+                _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              />
+            </Box>
+            <Box flex={1}>
+              <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+                Emergency contact phone
+              </FormLabel>
+              <Input
+                type="tel"
+                value={formData.emergencyContactPhone}
+                onChange={(e) => handleInputChange("emergencyContactPhone", e.target.value)}
+                placeholder="Emergency contact phone"
+                height="40px"
+                borderRadius="8px"
+                borderColor="#DCDCDC"
+                _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              />
+            </Box>
+          </HStack>
+
+          {/* Access Code (Non-smartphone specific) */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Access Code
+            </FormLabel>
+            <HStack spacing={2}>
+              <Input
+                value={accessCode}
+                readOnly
+                placeholder="Click Generate to create access code"
+                height="40px"
+                borderRadius="8px"
+                borderColor="#DCDCDC"
+                _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+                backgroundColor="#F9FAFB"
+              />
+              <Button
+                onClick={handleGenerateCode}
+                backgroundColor="#073DFC"
+                color="white"
+                height="40px"
+                borderRadius="8px"
+                fontSize="12px"
+                _hover={{ backgroundColor: "#0628C4" }}
+              >
+                Generate
+              </Button>
+            </HStack>
+          </Box>
+        </VStack>
+
+        {/* Submit Button */}
+        <Button
+          onClick={handleSubmit}
+          backgroundColor="#9CA3AF"
+          color="white"
+          width="100%"
+          height="50px"
+          borderRadius="8px"
+          fontSize="14px"
+          fontWeight="600"
+          rightIcon={<FiArrowRight />}
+          isLoading={isLoading}
+          loadingText="Creating Account..."
+          isDisabled={!accessCode}
+          _hover={{ backgroundColor: "#6B7280" }}
+        >
+          CREATE ACCOUNT
         </Button>
-      </Flex>
+      </VStack>
     </Box>
   )
 }
 
 export default NonSmartphoneRegistration
-
