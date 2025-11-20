@@ -1,4 +1,4 @@
-import { Box, Flex, Text, VStack, HStack } from "@chakra-ui/react"
+import { Box, Flex, Text as ChakraText, VStack, HStack } from "@chakra-ui/react"
 import { useAuth } from "../../../../../contexts/AuthContext"
 import { useState, useEffect } from "react"
 import { apiService } from "../../../../../services/api"
@@ -81,18 +81,18 @@ const DoctorEarnings = () => {
       <Flex direction="column" gap={4}>
         <HStack alignItems="center" gap={2}>
           <AiOutlineDollar size={24} color="#073DFC" />
-          <Text
+          <ChakraText
             fontSize="20px"
             fontWeight="500"
             color="#000"
             fontFamily="IBM Plex Sans, sans-serif"
           >
             Doctor's Earnings from Patients
-          </Text>
+          </ChakraText>
         </HStack>
 
         {isLoading ? (
-          <Text fontSize="14px" color="#6D6D6D">Loading earnings...</Text>
+          <ChakraText fontSize="14px" color="#6D6D6D">Loading earnings...</ChakraText>
         ) : (
           <VStack align="stretch" gap={3}>
             <Box
@@ -100,31 +100,31 @@ const DoctorEarnings = () => {
               backgroundColor="#F7FAFC"
               borderRadius="8px"
             >
-              <Text fontSize="12px" color="#6D6D6D" marginBottom="4px">
+              <ChakraText fontSize="12px" color="#6D6D6D" marginBottom="4px">
                 Total Earnings
-              </Text>
-              <Text fontSize="24px" fontWeight="600" color="#000">
+              </ChakraText>
+              <ChakraText fontSize="24px" fontWeight="600" color="#000">
                 {formatCurrency(earnings.totalEarnings)}
-              </Text>
+              </ChakraText>
             </Box>
 
             <Flex gap={4}>
               <Box flex={1} padding="12px" backgroundColor="#F7FAFC" borderRadius="8px">
-                <Text fontSize="11px" color="#6D6D6D" marginBottom="4px">
+                <ChakraText fontSize="11px" color="#6D6D6D" marginBottom="4px">
                   This Month
-                </Text>
-                <Text fontSize="18px" fontWeight="600" color="#073DFC">
+                </ChakraText>
+                <ChakraText fontSize="18px" fontWeight="600" color="#073DFC">
                   {formatCurrency(earnings.thisMonth)}
-                </Text>
+                </ChakraText>
               </Box>
 
               <Box flex={1} padding="12px" backgroundColor="#F7FAFC" borderRadius="8px">
-                <Text fontSize="11px" color="#6D6D6D" marginBottom="4px">
+                <ChakraText fontSize="11px" color="#6D6D6D" marginBottom="4px">
                   This Week
-                </Text>
-                <Text fontSize="18px" fontWeight="600" color="#073DFC">
+                </ChakraText>
+                <ChakraText fontSize="18px" fontWeight="600" color="#073DFC">
                   {formatCurrency(earnings.thisWeek)}
-                </Text>
+                </ChakraText>
               </Box>
             </Flex>
 
@@ -134,9 +134,9 @@ const DoctorEarnings = () => {
               borderRadius="8px"
               border="1px solid #073DFC"
             >
-              <Text fontSize="12px" color="#073DFC" fontWeight="500">
+              <ChakraText fontSize="12px" color="#073DFC" fontWeight="500">
                 Total Patients: {earnings.totalPatients}
-              </Text>
+              </ChakraText>
             </Box>
           </VStack>
         )}
