@@ -7,7 +7,7 @@ import { apiService } from "../../../../../services/api"
 import { FiChevronRight } from "react-icons/fi"
 
 const PatientsList = () => {
-  const { Text } = Typography
+  const { Text: AntdText } = Typography
   const { token, doctor } = useAuth()
   const navigate = useNavigate()
   const [patients, setPatients] = useState<any[]>([])
@@ -96,7 +96,7 @@ const PatientsList = () => {
       backgroundColor="white"
     >
       <Flex direction="column" gap={4}>
-        <Text
+        <AntdText
           style={{
             fontFamily: "IBM Plex Sans, sans-serif",
             fontSize: "20px",
@@ -105,7 +105,7 @@ const PatientsList = () => {
           }}
         >
           List of Patients
-        </Text>
+        </AntdText>
 
         {/* Statistics */}
         <Flex gap={4} flexWrap="wrap">
