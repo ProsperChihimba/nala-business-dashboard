@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Flex, Text, Input, Textarea, Button, Box, useToast, ModalCloseButton, Divider, FormLabel, HStack, Tag, TagLabel, TagCloseButton, Spinner } from "@chakra-ui/react";
+import { useState, useRef } from "react";
+import { Flex, Text, Input, Textarea, Button, Box, useToast, ModalCloseButton, Divider, FormLabel, Spinner, Image } from "@chakra-ui/react";
 import AppButton from "../../../../layout/button";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { apiService } from "../../../../../services/api";
@@ -20,11 +20,12 @@ const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
     title: "",
     description: "",
     content: "",
-    tags: [] as string[],
     imageUrl: "",
+    imageFile: null as File | null,
+    imagePreview: "" as string,
   });
 
-  const [tagInput, setTagInput] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -33,21 +34,45 @@ const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
     }));
   };
 
-  const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, tagInput.trim()]
-      }));
-      setTagInput("");
-    }
-  };
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File",
+          description: "Please select an image file",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
 
-  const handleRemoveTag = (tagToRemove: string) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }));
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Image must be less than 5MB",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({
+          ...prev,
+          imageFile: file,
+          imagePreview: reader.result as string,
+          imageUrl: reader.result as string, // Use base64 data URL
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async () => {
@@ -194,7 +219,6 @@ const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
         description: formData.description.trim(),
         content: formData.content.trim(),
         doctor: doctor.id, // Include doctor ID
-        tags: formData.tags.length > 0 ? formData.tags : undefined,
         image_url: formData.imageUrl.trim() || undefined,
       };
 
@@ -224,7 +248,6 @@ const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
             description: formData.description.trim(),
             content: formData.content.trim(),
             // Omit doctor field - let backend set it from token
-            tags: formData.tags.length > 0 ? formData.tags : undefined,
             image_url: formData.imageUrl.trim() || undefined,
           };
           
@@ -250,9 +273,13 @@ const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
         title: "",
         description: "",
         content: "",
-        tags: [],
         imageUrl: "",
+        imageFile: null,
+        imagePreview: "",
       });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
 
       if (onSuccess) {
         onSuccess();
@@ -302,7 +329,7 @@ const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
           marginTop: "15px",
         }}
       >
-        Create Learn Article
+        Add New Article
       </Text>
 
       {/* Form */}
@@ -361,81 +388,66 @@ const CreateLearnModal = ({ onClose, onSuccess }: CreateLearnModalProps) => {
           />
         </Box>
 
-        {/* Image URL */}
+        {/* Image Upload */}
         <Box>
           <FormLabel fontSize="14px" fontWeight="500" color="#454545">
-            Image URL (Optional)
+            Article Image (Optional)
           </FormLabel>
           <Input
-            value={formData.imageUrl}
-            placeholder="Enter image URL"
-            onChange={(e) => handleInputChange("imageUrl", e.target.value)}
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageSelect}
             marginTop="10px"
-            height="40px"
-            borderRadius="3xl"
-            borderColor="#DCDCDC"
-            _placeholder={{ fontSize: "12px", color: "gray.400" }}
-            isReadOnly={isLoading}
+            display="none"
+            isDisabled={isLoading}
           />
-        </Box>
-
-        {/* Tags */}
-        <Box>
-          <FormLabel fontSize="14px" fontWeight="500" color="#454545">
-            Tags
-          </FormLabel>
-          <HStack marginTop="10px" gap={2}>
-            <Input
-              value={tagInput}
-              placeholder="Enter a tag and press Add"
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleAddTag();
-                }
-              }}
-              height="40px"
-              borderRadius="3xl"
-              borderColor="#DCDCDC"
-              _placeholder={{ fontSize: "12px", color: "gray.400" }}
-              isReadOnly={isLoading}
-            />
+          <Flex direction="column" gap={2} marginTop="10px">
             <Button
-              onClick={handleAddTag}
-              size="md"
-              backgroundColor="#073DFC"
-              color="white"
-              borderRadius="20px"
+              onClick={() => fileInputRef.current?.click()}
+              variant="outline"
+              borderColor="#DCDCDC"
+              color="#454545"
+              borderRadius="3xl"
               fontSize="12px"
               height="40px"
-              px={6}
-              isDisabled={isLoading || !tagInput.trim()}
-              _hover={{ bg: "#0630D9" }}
+              isDisabled={isLoading}
+              _hover={{ borderColor: "#073DFC", color: "#073DFC" }}
             >
-              Add Tag
+              Choose Image from Gallery
             </Button>
-          </HStack>
-          {formData.tags.length > 0 && (
-            <Flex gap={2} marginTop="10px" flexWrap="wrap">
-              {formData.tags.map((tag, index) => (
-                <Tag
-                  key={index}
-                  size="md"
-                  borderRadius="full"
-                  variant="solid"
-                  backgroundColor="#073DFC"
-                  color="white"
+            {formData.imagePreview && (
+              <Box position="relative" width="100%" maxHeight="200px" borderRadius="8px" overflow="hidden">
+                <Image
+                  src={formData.imagePreview}
+                  alt="Preview"
+                  width="100%"
+                  maxHeight="200px"
+                  objectFit="cover"
+                />
+                <Button
+                  position="absolute"
+                  top="8px"
+                  right="8px"
+                  size="sm"
+                  colorScheme="red"
+                  onClick={() => {
+                    setFormData(prev => ({
+                      ...prev,
+                      imageFile: null,
+                      imagePreview: "",
+                      imageUrl: "",
+                    }));
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = "";
+                    }
+                  }}
                 >
-                  <TagLabel>{tag}</TagLabel>
-                  <TagCloseButton
-                    onClick={() => handleRemoveTag(tag)}
-                    isDisabled={isLoading}
-                  />
-                </Tag>
-              ))}
-            </Flex>
-          )}
+                  Remove
+                </Button>
+              </Box>
+            )}
+          </Flex>
         </Box>
       </Flex>
 

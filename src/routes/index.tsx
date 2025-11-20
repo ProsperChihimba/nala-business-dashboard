@@ -15,6 +15,9 @@ import Consultation from "../components/consultation";
 import PatientDetailsPage from "../components/consultation/client_details/[id]";
 import AddClerkSheet from "../components/consultation/add_clerksheet";
 import Learn from "../components/learn";
+import RegisterPatients from "../components/register_patients";
+import PatientMonitoring from "../components/patient_monitoring";
+import ReferPatient from "../components/refer_patient";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 const AppRouter = () => {
@@ -61,14 +64,29 @@ const AppRouter = () => {
           <Vendors />
         </ProtectedRoute>
       } />
-      <Route path="/consultation" element={
-        <ProtectedRoute>
-          <Consultation />
-        </ProtectedRoute>
-      } />
       <Route path="/learn" element={
         <ProtectedRoute>
           <Learn />
+        </ProtectedRoute>
+      } />
+      <Route path="/register-patients" element={
+        <ProtectedRoute>
+          <RegisterPatients />
+        </ProtectedRoute>
+      } />
+      <Route path="/register-patients/:type" element={
+        <ProtectedRoute>
+          <RegisterPatients />
+        </ProtectedRoute>
+      } />
+      <Route path="/patient-monitoring" element={
+        <ProtectedRoute>
+          <PatientMonitoring />
+        </ProtectedRoute>
+      } />
+      <Route path="/refer-patient" element={
+        <ProtectedRoute>
+          <ReferPatient />
         </ProtectedRoute>
       } />
       <Route path="/vendors/new-vendor" element={

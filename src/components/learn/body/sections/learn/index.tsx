@@ -92,7 +92,7 @@ const LearnContent = () => {
             </Text>
           </Flex>
           
-          {/* Create Learn Button */}
+          {/* Add New Article Button */}
           <Button
             onClick={onOpen}
             backgroundColor="#073DFC"
@@ -104,7 +104,7 @@ const LearnContent = () => {
             px={6}
             _hover={{ bg: "#0630D9" }}
           >
-            Create Learn
+            Add New Article
           </Button>
         </Flex>
       </Flex>

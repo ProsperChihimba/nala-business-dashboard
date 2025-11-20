@@ -13,12 +13,41 @@ import {
   Td,
   Button,
   Text,
+  Input,
+  Box,
 } from "@chakra-ui/react"
+import { useState } from "react"
 
+interface SearchDoctorModalProps {
+  onClose: () => void;
+  onTransfer?: (doctorId: string) => void;
+}
 
+const SearchDoctorModal = ({ onClose, onTransfer }: SearchDoctorModalProps) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
 
+  // Sample doctor data - replace with actual API call
+  const doctors = [
+    { id: "1", name: "Kaites proc tche", profile: "General Practitioner", location: "Sinza C", hospital: "Muhimbili" },
+    { id: "2", name: "Kaites proc tche", profile: "General Practitioner", location: "Sinza C", hospital: "Muhimbili" },
+    { id: "3", name: "Kaites proc tche", profile: "General Practitioner", location: "Sinza C", hospital: "Muhimbili" },
+  ];
 
-const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
+  const filteredDoctors = doctors.filter(doctor =>
+    doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    doctor.profile.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    doctor.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    doctor.hospital.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleTransfer = () => {
+    if (selectedDoctor && onTransfer) {
+      onTransfer(selectedDoctor);
+    }
+    onClose();
+  };
+
   return (
     <Flex direction="column" p={4}>
       <ModalCloseButton />
@@ -31,8 +60,23 @@ const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
           marginBottom: "20px",
         }}
       >
-        Select a Doctor to transfer Patient
+        Search for a doctor to transfer patient
       </Text>
+
+      {/* Search Bar */}
+      <Box marginBottom="20px">
+        <Input
+          placeholder="Search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          height="40px"
+          borderRadius="8px"
+          borderColor="#DCDCDC"
+          fontFamily="IBM Plex Sans, sans-serif"
+          fontSize="14px"
+          _placeholder={{ color: "#6D6D6D" }}
+        />
+      </Box>
 
       <TableContainer
         w="100%"
@@ -41,7 +85,7 @@ const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
         borderRadius="10px"
         mt={4}
       >
-        <Table size="sm" bg="transparent" rounded="md" variant="unstyled" mb="20px" >
+        <Table size="sm" bg="transparent" rounded="md" variant="unstyled" mb="20px">
           <Thead bg="#F0F2F5" rounded="3xl" style={{ color: "#000000" }}>
             <Tr
               style={{
@@ -69,7 +113,7 @@ const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
                   fontFamily: "IBM Plex Sans, sans-serif",
                 }}
               >
-                Location
+                Profile
               </Th>
               <Th
                 style={{
@@ -79,7 +123,7 @@ const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
                   fontFamily: "IBM Plex Sans, sans-serif",
                 }}
               >
-                Profile
+                Location
               </Th>
               <Th
                 style={{
@@ -95,95 +139,49 @@ const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
           </Thead>
           <Tbody
             overflow="auto"
-          
-
             sx={{
               "&::-webkit-scrollbar": {
                 display: "none",
               },
             }}
           >
-            <Tr
-              mb="5px"
-              style={{
-                borderRadius: "40px",
-                borderColor: "transparent",
-                fontSize: "10px",
-                borderWidth: "1px",
-                backgroundColor: "transparent",
-              }}
-            >
-              <Td>
-                <Checkbox />
-              </Td>
-              <Td fontSize="12px">E.W-Shasha</Td>
-              <Td fontSize="12px">82 Sinza C</Td>
-              <Td fontSize="12px">General Practitioner</Td>
-              <Td fontSize="12px">Muhimbili</Td>
-            </Tr>
-            <Tr
-              mb="5px"
-              style={{
-                borderRadius: "40px",
-                borderColor: "transparent",
-                fontSize: "10px",
-                borderWidth: "1px",
-                backgroundColor: "transparent",
-              }}
-            >
-              <Td>
-                <Checkbox />
-              </Td>
-              <Td fontSize="12px">Kaites pharmacy tche</Td>
-              <Td fontSize="12px">82 Sinza C</Td>
-              <Td fontSize="12px">General Practitioner</Td>
-              <Td fontSize="12px">Muhimbili</Td>
-            </Tr>
-            <Tr
-              mb="5px"
-              style={{
-                borderRadius: "40px",
-                borderColor: "transparent",
-                fontSize: "10px",
-                borderWidth: "1px",
-                backgroundColor: "transparent",
-              }}
-            >
-              <Td>
-                <Checkbox />
-              </Td>
-              <Td fontSize="12px">Kaites pharmacy tche</Td>
-              <Td fontSize="12px">82 Sinza C</Td>
-              <Td fontSize="12px">General Practitioner</Td>
-              <Td fontSize="12px">Muhimbili</Td>
-            </Tr>
-
+            {filteredDoctors.map((doctor) => (
               <Tr
-              mb="5px"
-              style={{
-                borderRadius: "40px",
-                borderColor: "transparent",
-                fontSize: "10px",
-                borderWidth: "1px",
-                backgroundColor: "transparent",
-              }}
-            >
-              <Td>
-                <Checkbox />
-              </Td>
-              <Td fontSize="12px">Kaites pharmacy tche</Td>
-              <Td fontSize="12px">82 Sinza C</Td>
-              <Td fontSize="12px">General Practitioner</Td>
-              <Td fontSize="12px">Muhimbili</Td>
-            </Tr>
-
-            
+                key={doctor.id}
+                mb="5px"
+                style={{
+                  borderRadius: "40px",
+                  borderColor: "transparent",
+                  fontSize: "10px",
+                  borderWidth: "1px",
+                  backgroundColor: "transparent",
+                }}
+              >
+                <Td>
+                  <Checkbox
+                    isChecked={selectedDoctor === doctor.id}
+                    onChange={() => setSelectedDoctor(doctor.id)}
+                  />
+                </Td>
+                <Td fontSize="12px">{doctor.name}</Td>
+                <Td fontSize="12px">{doctor.profile}</Td>
+                <Td fontSize="12px">{doctor.location}</Td>
+                <Td fontSize="12px">{doctor.hospital}</Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </TableContainer>
 
       <Flex justifyContent="flex-end" mt={6}>
-        <Button background="#073DFC" color="white" width="150px" onClick={onClose}>
+        <Button
+          background="#073DFC"
+          color="white"
+          width="150px"
+          onClick={handleTransfer}
+          isDisabled={!selectedDoctor}
+          fontFamily="IBM Plex Sans, sans-serif"
+        >
           Transfer
         </Button>
       </Flex>
@@ -191,4 +189,4 @@ const TreatmentModal = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
-export default TreatmentModal
+export default SearchDoctorModal

@@ -1,9 +1,9 @@
 import { Box, VStack } from '@chakra-ui/react'
 import SideBar from '../layout/sidebar'
 import NavBar from '../layout/navbar'
-import AccountsBody from './body'
+import ReferPatientBody from './body'
 
-const Accounts = () => {
+const ReferPatient = () => {
   return (
     <Box fontFamily='IBM Plex Sans, sans-serif'>
       <Box
@@ -11,15 +11,14 @@ const Accounts = () => {
         gridTemplateColumns={{ base: '13rem auto', md: '13rem auto', xl: '13rem auto' }}
       >
         <SideBar />
-
-        {/* content */}
         <VStack spacing={0} align="stretch">
           <NavBar />
-          <AccountsBody />
+          <ReferPatientBody />
         </VStack>
       </Box>
     </Box>
   )
 }
 
-export default Accounts
+export default ReferPatient
+
