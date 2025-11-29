@@ -44,6 +44,10 @@ const SetPassword = () => {
 
   const handleConfirmPasswordChange = (value: string) => {
     setConfirmPassword(value);
+    // Store in formData for validation
+    updateFormData({
+      confirmPassword: value,
+    });
   };
 
   // Password validation

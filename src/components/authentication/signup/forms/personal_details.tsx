@@ -15,7 +15,6 @@ const PersonalDetails = () => {
     const [hospitalName, setHospitalName] = useState('');
     const [email, setEmail] = useState(formData.user?.email || '');
     const [phoneNumber, setPhoneNumber] = useState(formData.phone_number || '');
-    const [referralCode, setReferralCode] = useState('');
 
     const handleFirstNameChange = (value: string) => {
         setFirstName(value);
@@ -186,17 +185,6 @@ const PersonalDetails = () => {
             </Flex>
             
         </Flex>
-
-         <DepositInput
-            title='Referal Code - Optional'
-            value={referralCode}
-            placeholder='Enter referral code (optional)'
-            isReadOnly={false}
-            percentage='20%'
-            marginBottom='20px'
-            marginTop='0'
-            onChange={(e) => setReferralCode(e.target.value)}
-        />
     </Flex>
   )
 }

@@ -1,21 +1,22 @@
-import { Box, Flex, Text, Link } from '@chakra-ui/react'
+import { Box, Flex, Text, Link, Image } from '@chakra-ui/react'
 import SignupForms from './forms'
-import SignupSteps from './steps'
 import { RegistrationProvider } from '../../../contexts/RegistrationContext'
 import { Link as RouterLink } from 'react-router-dom'
+import logo2 from '../../../assets/logo2.png'
 
 const SignupPage = () => {
   return (
     <RegistrationProvider>
-      <Flex fontFamily='IBM Plex Sans, sans-serif'>
+      <Flex fontFamily='IBM Plex Sans, sans-serif' direction='column' alignItems='center'>
+          {/* Logo */}
+          <Box mb='60px' mt='40px'>
+            <Image src={logo2} alt='careLink Logo' height='150px' width='auto' />
+          </Box>
           
           {/* forms */}
-          <Box width='60%'>
+          <Box width='100%' maxWidth='800px' display='flex' justifyContent='center' alignItems='center'>
               <SignupForms />
           </Box>
-
-          {/* steps */}
-          <SignupSteps />
       </Flex>
       
       {/* Login link */}

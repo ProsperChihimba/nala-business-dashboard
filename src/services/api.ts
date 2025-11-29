@@ -102,6 +102,14 @@ export interface AppointmentPatient {
   gender: string;
   phone_number: string;
   address: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  blood_group?: string;
+  allergies?: string;
+  medical_history?: string;
+  purpose?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface AppointmentDoctor {

@@ -17,6 +17,7 @@ import {
   MenuList,
   MenuItem,
   useDisclosure,
+  Select,
   Avatar,
   Textarea,
   Input,
@@ -26,6 +27,7 @@ import {
   Center,
   Alert,
   AlertIcon,
+  DrawerCloseButton,
 } from "@chakra-ui/react";
 import {
   TableContainer,
@@ -41,7 +43,7 @@ import { Divider } from "antd";
 
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { apiService, PatientVital, BloodPressureReading } from "../../../../services/api";
+import { apiService, PatientVital, BloodPressureReading, DoctorNote } from "../../../../services/api";
 import {
   FiCheck,
   FiChevronDown,
@@ -100,6 +102,14 @@ interface PatientDetails {
   address: string;
   dateOfBirth: string;
   gender: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  blood_group?: string;
+  allergies?: string;
+  medical_history?: string;
+  purpose?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface TestItem {
@@ -115,11 +125,16 @@ const Details = () => {
   const [patient, setPatient] = useState<PatientDetails | null>(null);
   const [vitals, setVitals] = useState<PatientVital[]>([]);
   const [selectedVital, setSelectedVital] = useState<PatientVital | null>(null);
+  const [selectedBloodPressure, setSelectedBloodPressure] = useState<BloodPressureReading | null>(null);
   const [bloodPressureReadings, setBloodPressureReadings] = useState<BloodPressureReading[]>([]);
+  const [clerkSheets, setClerkSheets] = useState<DoctorNote[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isVitalsLoading, setIsVitalsLoading] = useState(true);
   const [isBloodPressureLoading, setIsBloodPressureLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [vitalSignsPage, setVitalSignsPage] = useState(1);
+  const [vitalSignsFilter, setVitalSignsFilter] = useState<'all' | 'vitals' | 'blood_pressure'>('all');
+  const itemsPerPage = 10;
 
   console.log('PatientDetails - Component loaded with id:', id, 'isAuthenticated:', isAuthenticated, 'token:', token ? 'Present' : 'Missing');
   
@@ -153,6 +168,13 @@ const Details = () => {
     isOpen: isViewVitalDrawerOpen,
     onOpen: onViewVitalDrawerOpen,
     onClose: onViewVitalDrawerClose,
+  } = useDisclosure();
+
+  // State for the "View Blood Pressure" drawer
+  const {
+    isOpen: isViewBloodPressureDrawerOpen,
+    onOpen: onViewBloodPressureDrawerOpen,
+    onClose: onViewBloodPressureDrawerClose,
   } = useDisclosure();
 
   // State for the "Add Lab Test" drawer
@@ -280,7 +302,7 @@ const Details = () => {
           name: `${patientData.user.first_name} ${patientData.user.last_name}`,
           patientNumber: `**** ${patientData.id.toString().padStart(4, '0')}`,
           amountPaid: "TZS 100,000.00", // This would come from appointment data
-          consultationDescription: "Patient consultation details will be displayed here.",
+          consultationDescription: patientData.purpose || "Patient consultation details will be displayed here.",
           assignedHospital: "Muhimbili Hospital", // This would come from appointment data
           assignedDoctor: "Dr. Current Doctor", // This would come from appointment data
           reportPeriod: "Current Period", // This would come from appointment data
@@ -289,6 +311,14 @@ const Details = () => {
           address: patientData.address,
           dateOfBirth: patientData.date_of_birth,
           gender: patientData.gender,
+          emergency_contact_name: patientData.emergency_contact_name,
+          emergency_contact_phone: patientData.emergency_contact_phone,
+          blood_group: patientData.blood_group,
+          allergies: patientData.allergies,
+          medical_history: patientData.medical_history,
+          purpose: patientData.purpose,
+          created_at: patientData.created_at,
+          updated_at: patientData.updated_at,
         };
         
         setPatient(transformedPatient);
@@ -339,9 +369,10 @@ const Details = () => {
     if (!id || !token) return;
     
     try {
-      // For now, we'll just show a success message
-      // In the future, we can fetch and display clerk sheets
-      console.log('Clerk sheets data refreshed');
+      const patientId = parseInt(id);
+      const response = await apiService.getPatientClerkSheets(patientId, token);
+      setClerkSheets(response.results || []);
+      console.log('Clerk sheets data refreshed:', response.results);
     } catch (error) {
       console.error('Error fetching clerk sheets:', error);
     }
@@ -387,6 +418,61 @@ const Details = () => {
     fetchBloodPressureData();
   }, [id, token]);
 
+  // Fetch clerk sheets on component mount
+  useEffect(() => {
+    fetchClerkSheetsData();
+  }, [id, token]);
+
+  // Unified vital signs data structure
+  interface UnifiedVitalSign {
+    id: string;
+    type: 'vital' | 'blood_pressure';
+    date: string;
+    time?: string;
+    recordedBy: string;
+    details: string;
+    data: PatientVital | BloodPressureReading;
+  }
+
+  // Combine vitals and blood pressure into unified list
+  const allVitalSigns: UnifiedVitalSign[] = [
+    ...vitals.map((vital) => ({
+      id: `vital-${vital.id}`,
+      type: 'vital' as const,
+      date: vital.created_at,
+      recordedBy: patient?.name || 'Doctor',
+      details: `HR: ${vital.pulse_rate}, Temp: ${vital.temperature}°F, SpO2: ${vital.oxygen_saturation}%`,
+      data: vital,
+    })),
+    ...bloodPressureReadings.map((reading) => ({
+      id: `bp-${reading.id}`,
+      type: 'blood_pressure' as const,
+      date: reading.reading_date || reading.created_at,
+      time: reading.reading_time,
+      recordedBy: patient?.name || 'Doctor',
+      details: `BP: ${reading.systolic}/${reading.diastolic} mmHg, Pulse: ${reading.pulse_rate} BPM`,
+      data: reading,
+    })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Sort by date, newest first
+
+  // Filter based on selected option
+  const filteredVitalSigns = vitalSignsFilter === 'all' 
+    ? allVitalSigns 
+    : vitalSignsFilter === 'vitals'
+    ? allVitalSigns.filter(item => item.type === 'vital')
+    : allVitalSigns.filter(item => item.type === 'blood_pressure');
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setVitalSignsPage(1);
+  }, [vitalSignsFilter]);
+
+  // Pagination for vital signs
+  const totalVitalSignsPages = Math.ceil(filteredVitalSigns.length / itemsPerPage);
+  const startIndex = (vitalSignsPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedVitalSigns = filteredVitalSigns.slice(startIndex, endIndex);
+
   // Filter tests based on search query
   const filteredTests = tests.filter((test) =>
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -401,6 +487,16 @@ const Details = () => {
   const handleCloseViewVital = () => {
     setSelectedVital(null);
     onViewVitalDrawerClose();
+  };
+
+  const handleViewBloodPressure = (reading: BloodPressureReading) => {
+    setSelectedBloodPressure(reading);
+    onViewBloodPressureDrawerOpen();
+  };
+
+  const handleCloseViewBloodPressure = () => {
+    setSelectedBloodPressure(null);
+    onViewBloodPressureDrawerClose();
   };
 
   // Show loading state
@@ -533,35 +629,38 @@ const Details = () => {
           {tabIndex === 2 && (
             <>
               <AppButton
-                label="New Vital"
+                label="Print"
                 background="#073DFC"
                 color="white"
-                icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
-                width="140px"
-                borderColor="#DCDCDC"
-                onClick={onNewVitalDrawerOpen}
+                width="100px"
+                borderColor="#073DFC"
+                onClick={() => {
+                  window.print();
+                }}
               />
               <AppButton
-                label="Add Lab Test"
+                label="Share PDF"
                 background="#28a745"
                 color="white"
-                icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
-                width="150px"
+                width="120px"
                 borderColor="#28a745"
-                onClick={onAddLabTestDrawerOpen}
+                onClick={() => {
+                  // TODO: Implement PDF sharing functionality
+                  console.log('Share PDF clicked');
+                }}
+              />
+            <AppButton
+                label="See All"
+              background="#073DFC"
+              color="white"
+                width="100px"
+                borderColor="#073DFC"
+                onClick={() => {
+                  // TODO: Implement See All functionality
+                  console.log('See All clicked');
+                }}
               />
             </>
-          )}
-          {tabIndex === 3 && (
-            <AppButton
-              label="Add Diagnosis"
-              background="#073DFC"
-              borderColor="#DCDCDC"
-              color="white"
-              icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
-              width="140px"
-              onClick={onProvisionalDetailsModalOpen} // Trigger ProvisionalDetails modal
-            />
           )}
 
           {tabIndex === 1 && (
@@ -602,19 +701,10 @@ const Details = () => {
             Clerk Sheet
           </Tab>
           <Tab fontWeight="500" fontSize="13px">
-            Vitals
-          </Tab>
-          <Tab fontWeight="500" fontSize="13px">
-            Blood Pressure
-          </Tab>
-          <Tab fontWeight="500" fontSize="13px">
-            Provisional Diagnosis
+            Recorded vital signs
           </Tab>
           <Tab fontWeight="500" fontSize="13px">
             Investigations
-          </Tab>
-          <Tab fontWeight="500" fontSize="13px">
-            Investigation Result
           </Tab>
           <Tab fontWeight="500" fontSize="13px">
             Definitive diagnosis
@@ -697,7 +787,7 @@ const Details = () => {
                         marginRight: "5px",
                       }}
                     >
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      {patient?.consultationDescription || "No consultation description available."}
                     </Text>
                   </Flex>
                 </Flex>
@@ -722,19 +812,20 @@ const Details = () => {
                         marginBottom: "22px",
                       }}
                     >
-                      Account information
+                      Patient information
                     </Text>
-                    {/* account info */}
-                    <Flex gap="100px" mb="12px">
+                    {/* patient info */}
+                    <Flex mb="12px">
                       <Text
                         style={{
                           fontFamily: "IBM Plex Sans, sans-serif",
                           fontSize: "12px",
                           fontWeight: 500,
                           color: "#454545",
+                          width: "120px",
                         }}
                       >
-                        Routing number
+                        Email
                       </Text>
                       <Text
                         style={{
@@ -744,33 +835,100 @@ const Details = () => {
                           color: "#000",
                         }}
                       >
-                        100320001
+                        {patient?.email || 'N/A'}
                       </Text>
                     </Flex>
-                    <Flex gap="100px" mb="15px">
+                    <Flex mb="12px">
                       <Text
                         style={{
                           fontFamily: "IBM Plex Sans, sans-serif",
                           fontSize: "12px",
                           fontWeight: 500,
                           color: "#454545",
+                          width: "120px",
                         }}
                       >
-                        Account number
+                        Phone
                       </Text>
-                      <Flex alignItems="center" gap="5px">
-                        <Text
-                          style={{
-                            fontFamily: "IBM Plex Sans, sans-serif",
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            color: "#000",
-                          }}
-                        >
-                          **** * 3102
-                        </Text>
-                        <AiOutlineEye size="11px" color="#000000" />
-                      </Flex>
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#000",
+                        }}
+                      >
+                        {patient?.phone || 'N/A'}
+                      </Text>
+                    </Flex>
+                    <Flex mb="12px">
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#454545",
+                          width: "120px",
+                        }}
+                      >
+                        Date of Birth
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#000",
+                        }}
+                      >
+                        {patient?.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+                      </Text>
+                    </Flex>
+                    <Flex mb="12px">
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#454545",
+                          width: "120px",
+                        }}
+                      >
+                        Gender
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#000",
+                        }}
+                      >
+                        {patient?.gender || 'N/A'}
+                      </Text>
+                    </Flex>
+                    <Flex mb="15px">
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#454545",
+                          width: "120px",
+                        }}
+                      >
+                        Address
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#000",
+                        }}
+                      >
+                        {patient?.address || 'N/A'}
+                      </Text>
                     </Flex>
                   </Flex>
                   <AppButton
@@ -816,19 +974,20 @@ const Details = () => {
                         marginBottom: "22px",
                       }}
                     >
-                      Allocation
+                      Medical information
                     </Text>
-                    {/* account info */}
-                    <Flex gap="100px" mb="12px">
+                    {/* medical info */}
+                    <Flex mb="12px">
                       <Text
                         style={{
                           fontFamily: "IBM Plex Sans, sans-serif",
                           fontSize: "12px",
                           fontWeight: 500,
                           color: "#454545",
+                          width: "120px",
                         }}
                       >
-                        FDIC-insured funds
+                        Blood Group
                       </Text>
                       <Text
                         style={{
@@ -838,19 +997,20 @@ const Details = () => {
                           color: "#000",
                         }}
                       >
-                        $100,000.00
+                        {patient?.blood_group || 'N/A'}
                       </Text>
                     </Flex>
-                    <Flex gap="100px" mb="15px">
+                    <Flex mb="12px">
                       <Text
                         style={{
                           fontFamily: "IBM Plex Sans, sans-serif",
                           fontSize: "12px",
                           fontWeight: 500,
                           color: "#454545",
+                          width: "120px",
                         }}
                       >
-                        Money-market funds
+                        Allergies
                       </Text>
                       <Text
                         style={{
@@ -860,7 +1020,30 @@ const Details = () => {
                           color: "#000",
                         }}
                       >
-                        $0.00
+                        {patient?.allergies || 'None'}
+                      </Text>
+                    </Flex>
+                    <Flex mb="15px">
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#454545",
+                          width: "120px",
+                        }}
+                      >
+                        Medical History
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#000",
+                        }}
+                      >
+                        {patient?.medical_history || 'None'}
                       </Text>
                     </Flex>
                   </Flex>
@@ -1183,7 +1366,31 @@ const Details = () => {
                       },
                     }}
                   >
-                    <Tr
+                    {clerkSheets.length === 0 ? (
+                      <Tr>
+                        <Td colSpan={4} textAlign="center" fontSize="14px" color="gray.500">
+                          No clerk sheets found
+                        </Td>
+                      </Tr>
+                    ) : (
+                      clerkSheets.map((sheet) => {
+                        // Format date from API format (2025-01-20T10:30:00Z) to display format (Jan 20)
+                        const formatDate = (dateString: string) => {
+                          const date = new Date(dateString);
+                          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                          const month = monthNames[date.getMonth()];
+                          const day = date.getDate();
+                          return `${month} ${day}`;
+                        };
+
+                        // Extract a preview of recorded details (first 50 characters)
+                        const previewDetails = sheet.recorded_details 
+                          ? sheet.recorded_details.substring(0, 50) + (sheet.recorded_details.length > 50 ? '...' : '')
+                          : 'No details';
+
+                        return (
+                          <Tr
+                            key={sheet.id}
                       mb="5px"
                       style={{
                         borderRadius: "40px",
@@ -1193,15 +1400,15 @@ const Details = () => {
                         backgroundColor: "transparent",
                       }}
                     >
-                      <Td fontSize="14px">Jun 20</Td>
-                      <Td fontSize="14px">Prosper Absalom</Td>
-                      <Td fontSize="14px">Chief Complaints, Diagnosis</Td>
+                            <Td fontSize="14px">{formatDate(sheet.created_at)}</Td>
+                            <Td fontSize="14px">{sheet.recorded_by || 'N/A'}</Td>
+                            <Td fontSize="14px">{previewDetails}</Td>
                       <Td fontSize="14px">
                         <Link
                           color="blue"
                           onClick={onClerkDrawerOpen}
+                                style={{ cursor: 'pointer' }}
                         >
-                        
                           details
                         </Link>
                       </Td>
@@ -1213,12 +1420,15 @@ const Details = () => {
                         />
                       </Td>
                     </Tr>
+                        );
+                      })
+                    )}
                   </Tbody>
                 </Table>
               </TableContainer>
             </Box>
           </TabPanel>
-          {/* Vitals Tab Content */}
+          {/* Recorded vital signs Tab Content */}
           <TabPanel>
             {/* AppDrawer for adding new vital */}
             <AppDrawer
@@ -1227,12 +1437,90 @@ const Details = () => {
               modalSize="md"
               children={<VitalSide onVitalAdded={fetchVitalsData} />}
             />
+            {/* AppDrawer for adding blood pressure */}
+            <AppDrawer
+              isOpenSide={isNewBloodPressureDrawerOpen}
+              onCloseSide={onNewBloodPressureDrawerClose}
+              modalSize="md"
+              children={<BloodPressureSide onBloodPressureAdded={fetchBloodPressureData} />}
+            />
             {/* AppDrawer for viewing vital details */}
             <AppDrawer
               isOpenSide={isViewVitalDrawerOpen}
               onCloseSide={handleCloseViewVital}
               modalSize="md"
               children={<ViewVitalSide vital={selectedVital} />}
+            />
+            {/* AppDrawer for viewing blood pressure details */}
+            <AppDrawer
+              isOpenSide={isViewBloodPressureDrawerOpen}
+              onCloseSide={handleCloseViewBloodPressure}
+              modalSize="md"
+              children={
+                selectedBloodPressure ? (
+                  <Flex direction="column" height="100%" bg="white" p={6}>
+                    <Flex justifyContent="space-between" alignItems="center" mb={4}>
+                      <Text fontSize="xl" fontWeight="medium" fontFamily="IBM Plex Sans, sans-serif">
+                        Blood Pressure Details
+                      </Text>
+                      <DrawerCloseButton />
+                    </Flex>
+                    <Box height="1px" width="100%" bg="gray.200" mb={4} />
+                    <VStack align="stretch" spacing={4}>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
+                          Date
+                        </Text>
+                        <Text fontSize="md">
+                          {selectedBloodPressure.reading_date 
+                            ? new Date(selectedBloodPressure.reading_date).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                              })
+                            : 'N/A'}
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
+                          Time
+                        </Text>
+                        <Text fontSize="md">{selectedBloodPressure.reading_time || 'N/A'}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
+                          Blood Pressure
+                        </Text>
+                        <Text fontSize="md" fontWeight="bold" color="#073DFC">
+                          {selectedBloodPressure.systolic}/{selectedBloodPressure.diastolic} mmHg
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
+                          Pulse Rate
+                        </Text>
+                        <Text fontSize="md">
+                          {selectedBloodPressure.pulse_rate ? `${selectedBloodPressure.pulse_rate} BPM` : 'N/A'}
+                        </Text>
+                      </Box>
+                      {selectedBloodPressure.notes && (
+                        <Box>
+                          <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
+                            Notes
+                          </Text>
+                          <Text fontSize="md">{selectedBloodPressure.notes}</Text>
+                        </Box>
+                      )}
+                    </VStack>
+                  </Flex>
+                ) : (
+                  <Flex direction="column" height="100%" bg="white" p={6}>
+                    <Center flexGrow={1}>
+                      <Text color="gray.500">No blood pressure reading selected</Text>
+                    </Center>
+                  </Flex>
+                )
+              }
             />
             {/* AppDrawer for adding lab test */}
             <AppDrawer
@@ -1262,13 +1550,30 @@ const Details = () => {
               modalSize="md"
               children={<ClerkDrawer />}
             />
-            <FilterSection />
+            {/* Dropdown for Recorded vital signs */}
+            <Box mb={4} mt={4}>
+              <Select
+                placeholder="Select Recorded vital signs"
+                value={vitalSignsFilter}
+                onChange={(e) => setVitalSignsFilter(e.target.value as 'all' | 'vitals' | 'blood_pressure')}
+                fontFamily="IBM Plex Sans, sans-serif"
+                fontSize="14px"
+                height="40px"
+                borderRadius="10px"
+                borderColor="#D9D9D9"
+              >
+                <option value="all">All Recorded vital signs</option>
+                <option value="vitals">Vitals Only</option>
+                <option value="blood_pressure">Blood Pressure Only</option>
+              </Select>
+            </Box>
+
             <Box
               width="100%"
               fontFamily="IBM Plex Sans, sans-serif"
               border="1px solid #D9D9D9"
               borderRadius="10px"
-              marginTop="30px"
+              marginTop="20px"
             >
               {/* table title */}
               <Flex
@@ -1284,24 +1589,35 @@ const Details = () => {
                     color: "#454545",
                   }}
                 >
-                  Recent
+                  Recorded vital signs
                 </Text>
-                <Flex>
-                  <Text
-                    style={{
-                      fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      color: "#073DFC",
-                    }}
+                <Flex gap={2}>
+                  <Button
+                    size="sm"
+                    backgroundColor="#073DFC"
+                    color="white"
+                    borderRadius="20px"
+                    fontSize="14px"
+                    fontWeight="400"
+                    height="25px"
+                    width="160px"
+                    onClick={onNewVitalDrawerOpen}
                   >
-                    View All
-                  </Text>
-                  <FiChevronRight
-                    size="15px"
-                    style={{ marginLeft: 8 }}
-                    color="#073DFC"
-                  />
+                    Add other vital signs
+                  </Button>
+                  <Button
+                    size="sm"
+                    backgroundColor="#073DFC"
+                    color="white"
+                    borderRadius="20px"
+                    fontSize="14px"
+                    fontWeight="400"
+                    height="25px"
+                    width="120px"
+                    onClick={onNewBloodPressureDrawerOpen}
+                  >
+                    Add BP
+                  </Button>
                 </Flex>
               </Flex>
               <Divider style={{ marginTop: "0px", marginBottom: "10px" }} />
@@ -1336,6 +1652,16 @@ const Details = () => {
                         }}
                       >
                         Date
+                      </Th>
+                      <Th
+                        style={{
+                          fontSize: "14px",
+                          color: "#6D6D6D",
+                          fontWeight: "500",
+                          fontFamily: "IBM Plex Sans, sans-serif",
+                        }}
+                      >
+                        Time
                       </Th>
                       <Th
                         style={{
@@ -1377,22 +1703,22 @@ const Details = () => {
                       },
                     }}
                   >
-                    {isVitalsLoading ? (
+                    {(isVitalsLoading || isBloodPressureLoading) ? (
                       <Tr>
-                        <Td colSpan={4} textAlign="center" py={4}>
+                        <Td colSpan={5} textAlign="center" py={4}>
                           <Spinner size="sm" color="blue.500" />
-                          <Text fontSize="14px" mt={2}>Loading vitals...</Text>
+                          <Text fontSize="14px" mt={2}>Loading vital signs...</Text>
                         </Td>
                       </Tr>
-                    ) : vitals.length === 0 ? (
+                    ) : paginatedVitalSigns.length === 0 ? (
                       <Tr>
-                        <Td colSpan={4} textAlign="center" py={4}>
-                          <Text fontSize="14px" color="gray.500">No vitals recorded yet</Text>
+                        <Td colSpan={5} textAlign="center" py={4}>
+                          <Text fontSize="14px" color="gray.500">No vital signs recorded yet</Text>
                         </Td>
                       </Tr>
                     ) : (
-                      vitals.map((vital) => {
-                        // Format date from API format (2025-09-23T06:19:30.306282Z) to UI format (Sep 23)
+                      paginatedVitalSigns.map((item) => {
+                        // Format date from API format to UI format (Sep 23)
                         const formatDate = (dateString: string) => {
                           const date = new Date(dateString);
                           const month = date.toLocaleDateString('en-US', { month: 'short' });
@@ -1400,12 +1726,15 @@ const Details = () => {
                           return `${month} ${day}`;
                         };
 
-                        // Create vital summary
-                        const vitalSummary = `HR: ${vital.pulse_rate}, Temp: ${vital.temperature}°F, SpO2: ${vital.oxygen_saturation}%`;
+                        // Format time if available
+                        const formatTime = (timeString?: string) => {
+                          if (!timeString) return 'N/A';
+                          return timeString;
+                        };
 
                         return (
                           <Tr
-                            key={vital.id}
+                            key={item.id}
                             mb="5px"
                             style={{
                               borderRadius: "40px",
@@ -1415,13 +1744,28 @@ const Details = () => {
                               backgroundColor: "transparent",
                             }}
                           >
-                            <Td fontSize="14px">{formatDate(vital.created_at)}</Td>
-                            <Td fontSize="14px">{patient?.name || 'Doctor'}</Td>
-                            <Td fontSize="14px">{vitalSummary}</Td>
+                            <Td fontSize="14px">{formatDate(item.date)}</Td>
+                            <Td fontSize="14px">{formatTime(item.time)}</Td>
+                            <Td fontSize="14px">{item.recordedBy}</Td>
+                            <Td fontSize="14px">{item.details}</Td>
                             <Td fontSize="14px">
-                              <Link color="blue" onClick={() => handleViewVital(vital)}>
+                              {item.type === 'vital' ? (
+                                <Link 
+                                  color="blue" 
+                                  onClick={() => handleViewVital(item.data as PatientVital)}
+                                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                >
                                 details
                               </Link>
+                              ) : (
+                                <Link 
+                                  color="blue" 
+                                  onClick={() => handleViewBloodPressure(item.data as BloodPressureReading)}
+                                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                >
+                                  View
+                                </Link>
+                              )}
                             </Td>
                             <Td fontSize="14px">
                               <FiChevronRight
@@ -1437,368 +1781,63 @@ const Details = () => {
                   </Tbody>
                 </Table>
               </TableContainer>
-            </Box>
-          </TabPanel>
-          {/* Blood Pressure Tab Content */}
-          <TabPanel>
-            <AppDrawer
-              isOpenSide={isNewBloodPressureDrawerOpen}
-              onCloseSide={onNewBloodPressureDrawerClose}
-              modalSize="md"
-              children={<BloodPressureSide onBloodPressureAdded={fetchBloodPressureData} />}
-            />
-            <FilterSection />
-            <Box
-              width="100%"
-              fontFamily="IBM Plex Sans, sans-serif"
-              border="1px solid #D9D9D9"
-              borderRadius="10px"
-              marginTop="30px"
-            >
-              {/* table title */}
+              
+              {/* Pagination Controls */}
+              {totalVitalSignsPages > 1 && (
               <Flex
                 padding="10px 20px"
                 justifyContent="space-between"
                 alignItems="center"
-              >
-                <Text
-                  style={{
-                    fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "15px",
-                    fontWeight: 500,
-                    color: "#454545",
-                  }}
+                  borderTop="1px solid #D9D9D9"
                 >
-                  Blood Pressure Readings
-                </Text>
-                <Flex>
                   <Text
                     style={{
                       fontFamily: "IBM Plex Sans, sans-serif",
                       fontSize: "14px",
-                      fontWeight: 400,
-                      color: "#073DFC",
+                      color: "#6D6D6D",
                     }}
                   >
-                    View All
+                    Showing {startIndex + 1} to {Math.min(endIndex, filteredVitalSigns.length)} of {filteredVitalSigns.length} records
                   </Text>
+                  <HStack spacing={2}>
                   <Button
                     size="sm"
-                    backgroundColor="#073DFC"
-                    color="white"
-                    borderRadius="20px"
+                      onClick={() => setVitalSignsPage(prev => Math.max(1, prev - 1))}
+                      disabled={vitalSignsPage === 1}
+                      backgroundColor={vitalSignsPage === 1 ? "#E2E8F0" : "#073DFC"}
+                      color={vitalSignsPage === 1 ? "#A0AEC0" : "white"}
+                      borderRadius="5px"
                     fontSize="14px"
-                    fontWeight="400"
-                    height="25px"
+                      height="30px"
                     width="80px"
-                    marginLeft="10px"
-                    onClick={onNewBloodPressureDrawerOpen}
                   >
-                    Add New
+                      Previous
                   </Button>
-                </Flex>
-              </Flex>
-              <TableContainer>
-                <Table variant="simple">
-                  <Thead>
-                    <Tr>
-                      <Th
+                    <Text
                         style={{
                           fontFamily: "IBM Plex Sans, sans-serif",
                           fontSize: "14px",
-                          fontWeight: 500,
                           color: "#454545",
                         }}
                       >
-                        Date
-                      </Th>
-                      <Th
-                        style={{
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                          fontSize: "14px",
-                          fontWeight: 500,
-                          color: "#454545",
-                        }}
-                      >
-                        Time
-                      </Th>
-                      <Th
-                        style={{
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                          fontSize: "14px",
-                          fontWeight: 500,
-                          color: "#454545",
-                        }}
-                      >
-                        Blood Pressure
-                      </Th>
-                      <Th
-                        style={{
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                          fontSize: "14px",
-                          fontWeight: 500,
-                          color: "#454545",
-                        }}
-                      >
-                        Pulse Rate
-                      </Th>
-                      <Th
-                        style={{
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                          fontSize: "14px",
-                          fontWeight: 500,
-                          color: "#454545",
-                        }}
-                      >
-                        Notes
-                      </Th>
-                      <Th
-                        style={{
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                          fontSize: "14px",
-                          fontWeight: 500,
-                          color: "#454545",
-                        }}
-                      >
-                        Actions
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {isBloodPressureLoading ? (
-                      <Tr>
-                        <Td colSpan={6} textAlign="center" py={8}>
-                          <Spinner size="sm" />
-                          <Text ml={2}>Loading blood pressure readings...</Text>
-                        </Td>
-                      </Tr>
-                    ) : bloodPressureReadings.length === 0 ? (
-                      <Tr>
-                        <Td colSpan={6} textAlign="center" py={8}>
-                          <Text color="gray.500">No blood pressure readings found</Text>
-                        </Td>
-                      </Tr>
-                    ) : (
-                      bloodPressureReadings.map((reading) => {
-                        const date = reading.reading_date ? new Date(reading.reading_date) : null;
-                        const time = reading.reading_time || 'N/A';
-                        const formattedDate = date && !isNaN(date.getTime())
-                          ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                          : 'N/A';
-
-                        return (
-                          <Tr
-                            key={reading.id}
-                            mb="5px"
-                            style={{
-                              borderBottom: "1px solid #F0F0F0",
-                            }}
-                          >
-                            <Td
-                              style={{
-                                fontFamily: "IBM Plex Sans, sans-serif",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                color: "#454545",
-                              }}
-                            >
-                              {formattedDate}
-                            </Td>
-                            <Td
-                              style={{
-                                fontFamily: "IBM Plex Sans, sans-serif",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                color: "#454545",
-                              }}
-                            >
-                              {time}
-                            </Td>
-                            <Td
-                              style={{
-                                fontFamily: "IBM Plex Sans, sans-serif",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                color: "#454545",
-                              }}
-                            >
-                              {reading.systolic_pressure}/{reading.diastolic_pressure} mmHg
-                            </Td>
-                            <Td
-                              style={{
-                                fontFamily: "IBM Plex Sans, sans-serif",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                color: "#454545",
-                              }}
-                            >
-                              {reading.pulse_rate ? `${reading.pulse_rate} BPM` : 'N/A'}
-                            </Td>
-                            <Td
-                              style={{
-                                fontFamily: "IBM Plex Sans, sans-serif",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                color: "#454545",
-                              }}
-                            >
-                              {reading.notes || 'N/A'}
-                            </Td>
-                            <Td>
-                              <Flex gap={2}>
+                      Page {vitalSignsPage} of {totalVitalSignsPages}
+                    </Text>
                                 <Button
                                   size="sm"
-                                  variant="outline"
-                                  fontSize="8px"
-                                  height="20px"
-                                  width="50px"
-                                  onClick={() => {}}
-                                >
-                                  View
+                      onClick={() => setVitalSignsPage(prev => Math.min(totalVitalSignsPages, prev + 1))}
+                      disabled={vitalSignsPage === totalVitalSignsPages}
+                      backgroundColor={vitalSignsPage === totalVitalSignsPages ? "#E2E8F0" : "#073DFC"}
+                      color={vitalSignsPage === totalVitalSignsPages ? "#A0AEC0" : "white"}
+                      borderRadius="5px"
+                      fontSize="14px"
+                      height="30px"
+                      width="80px"
+                    >
+                      Next
                                 </Button>
+                  </HStack>
                               </Flex>
-                            </Td>
-                          </Tr>
-                        );
-                      })
                     )}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Box>
-          </TabPanel>
-          {/* Provisional Diagnosis Tab Content (Placeholder) */}
-          <TabPanel>
-            <AppModal
-              isOpen={isProvisionalDetailsModalOpen} // Use specific state
-              onClose={onProvisionalDetailsModalClose} // Use specific state
-              modalSize="md"
-              children={
-                <ProvisionalDetails onClose={onProvisionalDetailsModalClose} />
-              }
-            />
-            <FilterSection />
-            <Box
-              width="100%"
-              fontFamily="IBM Plex Sans, sans-serif"
-              border="1px solid #D9D9D9"
-              borderRadius="10px"
-              marginTop="30px"
-            >
-              {/* table title */}
-              <Flex
-                padding="10px 20px"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Text
-                  style={{
-                    fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "15px",
-                    fontWeight: 500,
-                    color: "#454545",
-                  }}
-                >
-                  Recent
-                </Text>
-                <Flex>
-                  <Text
-                    style={{
-                      fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      color: "#073DFC",
-                    }}
-                  >
-                    View All
-                  </Text>
-                  <FiChevronRight
-                    size="15px"
-                    style={{ marginLeft: 8 }}
-                    color="#073DFC"
-                  />
-                </Flex>
-              </Flex>
-              <Divider style={{ marginTop: "0px", marginBottom: "10px" }} />
-              {/* rows */}
-              <TableContainer w="100%" h="100%">
-                <Table
-                  size="sm"
-                  bg="transparent"
-                  rounded="md"
-                  variant="unstyled"
-                  mb="20px"
-                  border="1px"
-                >
-                  <Thead
-                    bg="transparent"
-                    rounded="3xl"
-                    style={{ color: "#000000" }}
-                  >
-                    <Tr
-                      style={{
-                        borderRadius: "7px",
-                        borderWidth: "1px",
-                        borderColor: "transparent",
-                      }}
-                    >
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Time
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Recorded by
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Previous Diagnosis
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody
-                    overflow="auto"
-                    sx={{
-                      "&::-webkit-scrollbar": {
-                        display: "none",
-                      },
-                    }}
-                  >
-                    <Tr
-                      mb="5px"
-                      style={{
-                        borderRadius: "40px",
-                        borderColor: "transparent",
-                        fontSize: "14px",
-                        borderWidth: "1px",
-                        backgroundColor: "transparent",
-                      }}
-                    >
-                      <Td fontSize="14px">20/05/2025 08:00 PM</Td>
-                      <Td fontSize="14px">Prosper Absalom</Td>
-                      <Td fontSize="14px">PNEUMONIA</Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
             </Box>
           </TabPanel>
           {/* Investigations Tab Content (Placeholder) */}
@@ -1987,81 +2026,6 @@ const Details = () => {
                 </Flex>
               </Box>
             </Flex>
-          </TabPanel>
-          {/* Investigation Result Tab Content (Placeholder) */}
-          <TabPanel>
-            <FilterSection />
-            <Box
-              overflowX="auto"
-              mb={4}
-              pt={5}
-              background="white"
-              mt={3}
-              px={2}
-              rounded="3"
-            >
-              <Text
-                style={{ marginBottom: "40px", paddingLeft: "14px" }}
-                color="#6D6D6D"
-              >
-                Recent
-              </Text>
-              <Table variant="simple" style={{ marginTop: "30px" }} size="sm">
-                <Thead>
-                  <Tr>
-                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
-                      Patient
-                    </Th>
-                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
-                      Name
-                    </Th>
-                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
-                      Type
-                    </Th>
-                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
-                      Status
-                    </Th>
-                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
-                      Date
-                    </Th>
-                    <Th fontSize="15px" color="#6D6D6D" fontWeight="500">
-                      ACTIONS
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  <Tr>
-                    <Td>
-                      <Avatar src="/placeholder-user.jpg" size="sm" />
-                    </Td>
-                    <Td fontSize="12px" color="#000">
-                      eliakim shasha
-                    </Td>
-                    <Td fontSize="12px" color="#000">
-                      cash
-                    </Td>
-                    <Td>
-                      <Badge
-                        fontSize="14px"
-                        px={2}
-                        py={1}
-                        width="70px"
-                        textAlign="center"
-                        borderRadius="4px"
-                      >
-                        pending
-                      </Badge>
-                    </Td>
-                    <Td fontSize="12px" color="#000">
-                      17/8/2025
-                    </Td>
-                    <Td>
-                      <Text>Details</Text>
-                    </Td>
-                  </Tr>
-                </Tbody>
-              </Table>
-            </Box>
           </TabPanel>
           {/* Definitive diagnosis Tab Content (Placeholder) */}
           <TabPanel>
