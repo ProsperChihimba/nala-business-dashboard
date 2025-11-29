@@ -177,7 +177,6 @@ const Details = () => {
   // State for the "Add Lab Test" drawer
   const {
     isOpen: isAddLabTestDrawerOpen,
-    onOpen: onAddLabTestDrawerOpen,
     onClose: onAddLabTestDrawerClose,
   } = useDisclosure();
 
@@ -227,7 +226,6 @@ const Details = () => {
 
   const {
     isOpen: isProvisionalDetailsModalOpen,
-    onOpen: onProvisionalDetailsModalOpen,
     onClose: onProvisionalDetailsModalClose,
   } = useDisclosure();
   const {
