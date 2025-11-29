@@ -48,8 +48,8 @@ const Login = () => {
       fontFamily="IBM Plex Sans, sans-serif"
     >
       {/* Logo */}
-      <Box mb='60px' mt='20px'>
-        <Image src={logo2} alt='careLink Logo' height='150px' width='auto' />
+      <Box mb='0px' mt='20px'>
+        <Image src={logo2} alt='careLink Logo' height='150px' width='auto' borderRadius='10px' />
       </Box>
       
       <Box width='100%' maxWidth='800px'>
@@ -131,7 +131,7 @@ const Login = () => {
         <Flex justify="center" mt="20px">
           <ChakraText fontFamily="IBM Plex Sans, sans-serif" fontSize="14px" color="#9A9A9A">
             Don't have an account?{' '}
-            <Link as={RouterLink} to="/" color="#073DFC" textDecoration="underline">
+            <Link as={RouterLink} to="/signup" color="#073DFC" textDecoration="underline">
               Sign up here
             </Link>
           </ChakraText>

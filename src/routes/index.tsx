@@ -23,9 +23,9 @@ const AppRouter = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" Component={SignupPage} />
+      <Route path="/" Component={Login} />
       <Route path="/email-sent" Component={EmailSent} />
-      <Route path="/login" Component={Login} />
+      <Route path="/signup" Component={SignupPage} />
       
       {/* Protected routes - require authentication */}
       <Route path="/accounts-page" element={
