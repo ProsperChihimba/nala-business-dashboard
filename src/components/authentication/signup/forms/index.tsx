@@ -49,6 +49,76 @@ const SignupForms = () => {
 
     const navigate = useNavigate();
 
+    // Validate current step before proceeding
+    const validateCurrentStep = (stepIndex: number): boolean => {
+        setError(null);
+        
+        if (stepIndex === 1) {
+            // Validate Personal Details
+            const missingFields = [];
+            if (!formData.user?.first_name || formData.user.first_name.trim() === '') {
+                missingFields.push('first name');
+            }
+            if (!formData.user?.last_name || formData.user.last_name.trim() === '') {
+                missingFields.push('last name');
+            }
+            if (!formData.user?.email || formData.user.email.trim() === '') {
+                missingFields.push('email');
+            } else {
+                // Basic email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.user.email)) {
+                    setError('Please enter a valid email address');
+                    return false;
+                }
+            }
+            if (!formData.phone_number || formData.phone_number.trim() === '') {
+                missingFields.push('phone number');
+            }
+            
+            if (missingFields.length > 0) {
+                setError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
+                return false;
+            }
+        } else if (stepIndex === 2) {
+            // Validate License Number
+            const missingFields = [];
+            if (!formData.specialization || formData.specialization.trim() === '') {
+                missingFields.push('specialization');
+            }
+            if (!formData.license_number || formData.license_number.trim() === '') {
+                missingFields.push('license number');
+            }
+            if (!formData.address || formData.address.trim() === '') {
+                missingFields.push('address');
+            }
+            if (!formData.experience_years || formData.experience_years === 0) {
+                missingFields.push('experience years');
+            }
+            
+            if (missingFields.length > 0) {
+                setError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
+                return false;
+            }
+        } else if (stepIndex === 3) {
+            // Validate Password
+            if (!formData.user?.username || formData.user.username.trim() === '') {
+                setError('Please enter a username');
+                return false;
+            }
+            if (!formData.password || formData.password.trim() === '') {
+                setError('Please enter a password');
+                return false;
+            }
+            if (formData.password.length < 8) {
+                setError('Password must be at least 8 characters long');
+                return false;
+            }
+        }
+        
+        return true;
+    };
+
     const handleSubmit = async () => {
         // Check each field individually for better error reporting
         const missingFields = [];
@@ -78,7 +148,7 @@ const SignupForms = () => {
 
         // Validate specialization is one of the valid choices
         const validSpecializations = [
-            'cardiology', 'dermatology', 'neurology', 'orthopedics', 
+            'general_practitioner', 'cardiology', 'dermatology', 'neurology', 'orthopedics', 
             'pediatrics', 'psychiatry', 'general', 'surgery', 
             'oncology', 'ophthalmology'
         ];
@@ -198,7 +268,10 @@ const SignupForms = () => {
                                 if (step.index === 3) {
                                     handleSubmit();
                                 } else {
-                                    setActiveStep(activeStep + 1);
+                                    // Validate current step before proceeding
+                                    if (validateCurrentStep(step.index)) {
+                                        setActiveStep(activeStep + 1);
+                                    }
                                 }
                             }}
                             disabled={isSubmitting}

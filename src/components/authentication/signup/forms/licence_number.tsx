@@ -19,6 +19,7 @@ const LicenceNumber = () => {
   const [bio, setBio] = useState(formData.bio || '');
 
   const specializationOptions = [
+    { value: 'general_practitioner', label: 'General Practitioner (GP)' },
     { value: 'cardiology', label: 'Cardiology' },
     { value: 'dermatology', label: 'Dermatology' },
     { value: 'neurology', label: 'Neurology' },
