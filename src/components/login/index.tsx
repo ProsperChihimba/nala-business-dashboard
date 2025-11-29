@@ -6,6 +6,7 @@ import {
   Alert,
   AlertIcon,
   Text as ChakraText,
+  Image,
 } from "@chakra-ui/react";
 import { Typography } from "antd";
 import DepositHeading from "../layout/heading";
@@ -13,6 +14,7 @@ import DepositInput from "../layout/input";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
+import logo2 from "../../assets/logo2.png";
 
 const Login = () => {
   const { Text } = Typography;
@@ -40,13 +42,17 @@ const Login = () => {
   return (
     <Flex
       direction="column"
-      marginTop="80px"
-      px={400}
-     justifyContent="center"
+      marginTop="40px"
+      justifyContent="center"
+      alignItems="center"
+      fontFamily="IBM Plex Sans, sans-serif"
     >
-      <Box 
+      {/* Logo */}
+      <Box mb='60px' mt='20px'>
+        <Image src={logo2} alt='careLink Logo' height='150px' width='auto' />
+      </Box>
       
-      >
+      <Box width='100%' maxWidth='800px'>
         <Flex flexDir="column">
           {/* heading */}
           <DepositHeading title="Welcome back" />

@@ -1,10 +1,10 @@
-import { Box, Flex, Text, Link } from '@chakra-ui/react'
+import { Box, Flex, Text, Link, Image } from '@chakra-ui/react'
 import SignupForms from './forms'
 import { RegistrationProvider } from '../../../contexts/RegistrationContext'
 import { Link as RouterLink } from 'react-router-dom'
+import logo2 from '../../../assets/logo2.png'
 
 const SignupPage = () => {
-
   return (
     <RegistrationProvider>
       <Flex 
@@ -24,14 +24,7 @@ const SignupPage = () => {
             gap="10px"
             _hover={{ textDecoration: "none" }}
           >
-            <Text
-              fontSize="24px"
-              fontWeight="600"
-              color="#073DFC"
-              fontFamily="IBM Plex Sans, sans-serif"
-            >
-              CareLink
-            </Text>
+            <Image src={logo2} alt='CareLink Logo' height='50px' width='auto' />
             <Text fontSize="14px" color="#6D6D6D">(Home)</Text>
           </Link>
           
@@ -123,9 +116,9 @@ const SignupPage = () => {
             padding="40px"
             boxShadow="0px 4px 20px rgba(0, 0, 0, 0.05)"
           >
-              <SignupForms />
+            <SignupForms />
           </Box>
-      </Flex>
+        </Flex>
       </Flex>
     </RegistrationProvider>
   )

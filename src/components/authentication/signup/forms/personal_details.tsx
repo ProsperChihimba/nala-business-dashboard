@@ -185,7 +185,6 @@ const PersonalDetails = () => {
             </Flex>
             
         </Flex>
-
     </Flex>
   )
 }

@@ -26,11 +26,9 @@ import { useAuth } from "../../../../contexts/AuthContext";
 import { apiService } from "../../../../services/api";
 
 interface ClerkSheetFormData {
-  file_number: string;
+  date_of_clerkship: string;
   recorded_by: string;
   recorded_details: string;
-  diagnosis: string;
-  symptoms: string;
   treatment_plan: string;
   follow_up_required: boolean;
   follow_up_date: string;
@@ -52,11 +50,9 @@ const ClerkSheetForm: React.FC<{ onClerkSheetAdded?: () => void }> = ({ onClerkS
   const [activeTab, setActiveTab] = useState(0);
   
   const [formData, setFormData] = useState<ClerkSheetFormData>({
-    file_number: '',
+    date_of_clerkship: new Date().toISOString().split('T')[0], // Today's date as default
     recorded_by: doctor ? `Dr. ${doctor.first_name} ${doctor.last_name}` : '',
     recorded_details: '',
-    diagnosis: '',
-    symptoms: '',
     treatment_plan: '',
     follow_up_required: false,
     follow_up_date: '',
@@ -117,12 +113,11 @@ ${formData.recorded_details}
       const clerkSheetData = {
         patient: patientId,
         doctor: doctor.id,
-        file_number: formData.file_number || generateFileNumber(),
+        file_number: generateFileNumber(),
         note_type: 'clerk_sheet',
         recorded_by: formData.recorded_by,
         recorded_details: combinedDetails,
-        diagnosis: formData.diagnosis || undefined,
-        symptoms: formData.symptoms || undefined,
+        date_of_clerkship: formData.date_of_clerkship,
         treatment_plan: formData.treatment_plan || undefined,
         follow_up_required: formData.follow_up_required,
         follow_up_date: formData.follow_up_date || undefined,
@@ -137,11 +132,9 @@ ${formData.recorded_details}
       setSuccess(true);
       // Reset form
       setFormData({
-        file_number: '',
+        date_of_clerkship: new Date().toISOString().split('T')[0],
         recorded_by: doctor ? `Dr. ${doctor.first_name} ${doctor.last_name}` : '',
         recorded_details: '',
-        diagnosis: '',
-        symptoms: '',
         treatment_plan: '',
         follow_up_required: false,
         follow_up_date: '',
@@ -294,21 +287,20 @@ ${formData.recorded_details}
           </Alert>
         )}
 
-        {/* File Number and Recorded By */}
+        {/* Date of Clerkship and Recorded By */}
         <HStack gap={4} mb={4}>
           <Box flex="1">
             <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
-              File Number
+              Date of Clerkship
             </Text>
             <Input
-              placeholder="Auto-generated if empty"
-              value={formData.file_number}
-              onChange={(e) => handleInputChange('file_number', e.target.value)}
+              type="date"
+              value={formData.date_of_clerkship}
+              onChange={(e) => handleInputChange('date_of_clerkship', e.target.value)}
               isReadOnly={isLoading}
               height="40px"
               borderRadius="3xl"
               borderColor="#DCDCDC"
-              _placeholder={{ fontSize: "xs", color: "gray.400" }}
             />
           </Box>
           <Box flex="1">
@@ -373,40 +365,6 @@ ${formData.recorded_details}
             _placeholder={{ fontSize: "xs", color: "gray.400" }}
           />
         </VStack>
-
-        {/* Diagnosis and Symptoms */}
-        <HStack gap={4} mb={4}>
-          <Box flex="1">
-            <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
-              Diagnosis
-            </Text>
-            <Input
-              placeholder="Preliminary diagnosis"
-              value={formData.diagnosis}
-              onChange={(e) => handleInputChange('diagnosis', e.target.value)}
-              isReadOnly={isLoading}
-              height="40px"
-              borderRadius="3xl"
-              borderColor="#DCDCDC"
-              _placeholder={{ fontSize: "xs", color: "gray.400" }}
-            />
-          </Box>
-          <Box flex="1">
-            <Text fontSize="sm" fontWeight="medium" color="gray.600" mb={2}>
-              Symptoms
-            </Text>
-            <Input
-              placeholder="Key symptoms observed"
-              value={formData.symptoms}
-              onChange={(e) => handleInputChange('symptoms', e.target.value)}
-              isReadOnly={isLoading}
-              height="40px"
-              borderRadius="3xl"
-              borderColor="#DCDCDC"
-              _placeholder={{ fontSize: "xs", color: "gray.400" }}
-            />
-          </Box>
-        </HStack>
 
         {/* Treatment Plan */}
         <VStack align="stretch" mb={4}>
@@ -476,7 +434,7 @@ ${formData.recorded_details}
       <Box mt="auto" px={6} py={4} borderTop="1px solid" borderColor="gray.200">
         <Flex justifyContent="flex-end">
           <AppButton
-            label={isLoading ? "Adding..." : "Add Clerk Sheet"}
+            label={isLoading ? "Submitting..." : "Submit Button"}
             background="#073DFC"
             color="white"
             width="150px"

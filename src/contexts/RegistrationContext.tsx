@@ -9,6 +9,7 @@ interface RegistrationFormData {
     password?: string;
   };
   password?: string;
+  confirmPassword?: string;
   specialization?: string;
   license_number?: string;
   phone_number?: string;

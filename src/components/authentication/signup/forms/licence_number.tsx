@@ -27,6 +27,7 @@ const LicenceNumber = () => {
     { value: 'pediatrics', label: 'Pediatrics' },
     { value: 'psychiatry', label: 'Psychiatry' },
     { value: 'general', label: 'General Medicine' },
+    { value: 'general_practitioner', label: 'General Practitioner (GP)' },
     { value: 'surgery', label: 'Surgery' },
     { value: 'oncology', label: 'Oncology' },
     { value: 'ophthalmology', label: 'Ophthalmology' },

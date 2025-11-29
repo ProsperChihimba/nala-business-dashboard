@@ -49,107 +49,121 @@ const SignupForms = () => {
 
     const navigate = useNavigate();
 
-    // Validate current step before proceeding
-    const validateCurrentStep = (stepIndex: number): boolean => {
-        setError(null);
+    // Validation functions for each step
+    const validateStep1 = (): boolean => {
+        const errors: string[] = [];
         
-        if (stepIndex === 1) {
-            // Validate Personal Details
-            const missingFields = [];
-            if (!formData.user?.first_name || formData.user.first_name.trim() === '') {
-                missingFields.push('first name');
-            }
-            if (!formData.user?.last_name || formData.user.last_name.trim() === '') {
-                missingFields.push('last name');
-            }
-            if (!formData.user?.email || formData.user.email.trim() === '') {
-                missingFields.push('email');
-            } else {
-                // Basic email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(formData.user.email)) {
-                    setError('Please enter a valid email address');
-                    return false;
-                }
-            }
-            if (!formData.phone_number || formData.phone_number.trim() === '') {
-                missingFields.push('phone number');
-            }
-            
-            if (missingFields.length > 0) {
-                setError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
-                return false;
-            }
-        } else if (stepIndex === 2) {
-            // Validate License Number
-            const missingFields = [];
-            if (!formData.specialization || formData.specialization.trim() === '') {
-                missingFields.push('specialization');
-            }
-            if (!formData.license_number || formData.license_number.trim() === '') {
-                missingFields.push('license number');
-            }
-            if (!formData.address || formData.address.trim() === '') {
-                missingFields.push('address');
-            }
-            if (!formData.experience_years || formData.experience_years === 0) {
-                missingFields.push('experience years');
-            }
-            
-            if (missingFields.length > 0) {
-                setError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
-                return false;
-            }
-        } else if (stepIndex === 3) {
-            // Validate Password
-            if (!formData.user?.username || formData.user.username.trim() === '') {
-                setError('Please enter a username');
-                return false;
-            }
-            if (!formData.password || formData.password.trim() === '') {
-                setError('Please enter a password');
-                return false;
-            }
-            if (formData.password.length < 8) {
-                setError('Password must be at least 8 characters long');
-                return false;
+        if (!formData.user?.first_name || formData.user.first_name.trim() === '') {
+            errors.push('First name');
+        }
+        
+        if (!formData.user?.last_name || formData.user.last_name.trim() === '') {
+            errors.push('Last name');
+        }
+        
+        if (!formData.user?.email || formData.user.email.trim() === '') {
+            errors.push('Work email');
+        } else {
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.user.email)) {
+                errors.push('Valid work email');
             }
         }
         
+        if (!formData.phone_number || formData.phone_number.trim() === '') {
+            errors.push('Phone number');
+        } else {
+            // Basic phone validation (should have at least 10 digits)
+            const phoneDigits = formData.phone_number.replace(/\D/g, '');
+            if (phoneDigits.length < 10) {
+                errors.push('Valid phone number (at least 10 digits)');
+            }
+        }
+        
+        if (errors.length > 0) {
+            setError(`Please fill in the following required fields: ${errors.join(', ')}`);
+            return false;
+        }
+        
+        setError(null);
+        return true;
+    };
+
+    const validateStep2 = (): boolean => {
+        const errors: string[] = [];
+        
+        if (!formData.specialization || formData.specialization.trim() === '') {
+            errors.push('Specialization');
+        }
+        
+        if (!formData.license_number || formData.license_number.trim() === '') {
+            errors.push('License number');
+        }
+        
+        if (!formData.address || formData.address.trim() === '') {
+            errors.push('Practice address');
+        }
+        
+        if (!formData.experience_years || formData.experience_years === 0) {
+            errors.push('Years of experience');
+        } else if (formData.experience_years < 0) {
+            errors.push('Valid years of experience (must be positive)');
+        }
+        
+        if (errors.length > 0) {
+            setError(`Please fill in the following required fields: ${errors.join(', ')}`);
+            return false;
+        }
+        
+        setError(null);
+        return true;
+    };
+
+    const validateStep3 = (): boolean => {
+        const errors: string[] = [];
+        
+        if (!formData.user?.username || formData.user.username.trim() === '') {
+            errors.push('Username');
+        }
+        
+        if (!formData.password || formData.password.trim() === '') {
+            errors.push('Password');
+        } else if (formData.password.length < 8) {
+            errors.push('Password (must be at least 8 characters)');
+        }
+        
+        if (!formData.confirmPassword || formData.confirmPassword.trim() === '') {
+            errors.push('Confirm password');
+        } else if (formData.password !== formData.confirmPassword) {
+            errors.push('Passwords do not match');
+        }
+        
+        if (errors.length > 0) {
+            setError(`Please fill in the following required fields: ${errors.join(', ')}`);
+            return false;
+        }
+        
+        setError(null);
         return true;
     };
 
     const handleSubmit = async () => {
-        // Check each field individually for better error reporting
-        const missingFields = [];
-        if (!formData.user?.username) missingFields.push('username');
-        if (!formData.password || formData.password.trim() === '') missingFields.push('password');
-        if (!formData.user?.first_name) missingFields.push('first name');
-        if (!formData.user?.last_name) missingFields.push('last name');
-        if (!formData.user?.email) missingFields.push('email');
-        if (!formData.license_number) missingFields.push('license number');
-        if (!formData.specialization) missingFields.push('specialization');
-        if (!formData.phone_number) missingFields.push('phone number');
-        if (!formData.address) missingFields.push('address');
-        if (!formData.experience_years) missingFields.push('experience years');
-        
-        if (missingFields.length > 0) {
-            setError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
+        // Validate step 3 before submitting
+        if (!validateStep3()) {
             return;
         }
 
-        if (formData.password!.length < 8) {
-            setError('Password must be at least 8 characters long');
+        // Validate password confirmation
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
             return;
         }
-
-        // Note: We can't validate password confirmation here since it's local state
-        // The password confirmation validation is handled in the UI component
 
         // Validate specialization is one of the valid choices
         const validSpecializations = [
-            'general_practitioner', 'cardiology', 'dermatology', 'neurology', 'orthopedics', 
-            'pediatrics', 'psychiatry', 'general', 'surgery', 
+            'cardiology', 'dermatology', 'neurology', 'orthopedics', 
+            'pediatrics', 'psychiatry', 'general', 'general_practitioner', 'surgery', 
             'oncology', 'ophthalmology'
         ];
         
@@ -266,10 +280,20 @@ const SignupForms = () => {
                             borderColor='#073DFC'
                             onClick={() => {
                                 if (step.index === 3) {
-                                    handleSubmit();
+                                    // Validate step 3 before submitting
+                                    if (validateStep3()) {
+                                        handleSubmit();
+                                    }
                                 } else {
                                     // Validate current step before proceeding
-                                    if (validateCurrentStep(step.index)) {
+                                    let isValid = false;
+                                    if (step.index === 1) {
+                                        isValid = validateStep1();
+                                    } else if (step.index === 2) {
+                                        isValid = validateStep2();
+                                    }
+                                    
+                                    if (isValid) {
                                         setActiveStep(activeStep + 1);
                                     }
                                 }
