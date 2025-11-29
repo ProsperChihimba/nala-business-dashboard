@@ -18,7 +18,6 @@ import {
   MenuItem,
   useDisclosure,
   Select,
-  Avatar,
   Textarea,
   Input,
   VStack,
@@ -37,7 +36,6 @@ import {
   Th,
   Tbody,
   Td,
-  Badge,
 } from "@chakra-ui/react";
 import { Divider } from "antd";
 
@@ -51,7 +49,6 @@ import {
   FiPlus,
   FiVideo,
 } from "react-icons/fi";
-import { AiOutlineEye } from "react-icons/ai";
 import { GoInfo } from "react-icons/go";
 import { TbNotes } from "react-icons/tb";
 import { MdCurrencyExchange, MdOutlineCall, MdSms } from "react-icons/md";
@@ -450,7 +447,7 @@ const Details = () => {
       date: reading.reading_date || reading.created_at,
       time: reading.reading_time,
       recordedBy: patient?.name || 'Doctor',
-      details: `BP: ${reading.systolic}/${reading.diastolic} mmHg, Pulse: ${reading.pulse_rate} BPM`,
+      details: `BP: ${reading.systolic_pressure}/${reading.diastolic_pressure} mmHg, Pulse: ${reading.pulse_rate} BPM`,
       data: reading,
     })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Sort by date, newest first
@@ -737,7 +734,7 @@ const Details = () => {
                         marginRight: "5px",
                       }}
                     >
-                      Available balance
+                      Paid Amount
                     </Text>
                     <GoInfo size="11px" color="#000000" />
                   </Flex>
@@ -751,7 +748,7 @@ const Details = () => {
                       marginRight: "5px",
                     }}
                   >
-                    $100,000.00
+                    {patient?.amountPaid || 'N/A'}
                   </Text>
                 </Flex>
                 <Divider />
@@ -1067,179 +1064,7 @@ const Details = () => {
                 }
               />
             </Flex>
-            <Box
-              width="100%"
-              fontFamily="IBM Plex Sans, sans-serif"
-              border="1px solid #D9D9D9"
-              borderRadius="10px"
-              marginTop="30px"
-            >
-              {/* table title */}
-              <Flex
-                padding="10px 20px"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Text
-                  style={{
-                    fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "15px",
-                    fontWeight: 500,
-                    color: "#454545",
-                  }}
-                >
-                  Patient Documents
-                </Text>
-                <Flex cursor="pointer">
-                  <Text
-                    style={{
-                      fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      color: "#073DFC",
-                    }}
-                  >
-                    View All
-                  </Text>
-                  <FiChevronRight
-                    size="15px"
-                    style={{ marginLeft: 8 }}
-                    color="#073DFC"
-                  />
-                </Flex>
-              </Flex>
-              <Divider style={{ marginTop: "0px", marginBottom: "10px" }} />
-              {/* rows */}
-              <TableContainer w="100%" h="100%">
-                <Table
-                  size="sm"
-                  bg="transparent"
-                  rounded="md"
-                  variant="unstyled"
-                  mb="20px"
-                  border="1px"
-                >
-                  <Thead
-                    bg="transparent"
-                    rounded="3xl"
-                    style={{ color: "#000000" }}
-                  >
-                    <Tr
-                      style={{
-                        borderRadius: "7px",
-                        borderWidth: "1px",
-                        borderColor: "transparent",
-                      }}
-                    >
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Date
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        To
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Amount
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Initiated by
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      ></Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      ></Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody
-                    overflow="auto"
-                    sx={{
-                      "&::-webkit-scrollbar": {
-                        display: "none",
-                      },
-                    }}
-                  >
-                    <Tr
-                      mb="5px"
-                      style={{
-                        borderRadius: "40px",
-                        borderColor: "transparent",
-                        fontSize: "14px",
-                        borderWidth: "1px",
-                        backgroundColor: "transparent",
-                      }}
-                    >
-                      <Td fontSize="14px">Jun 20</Td>
-                      <Td fontSize="14px">FACEBOOK</Td>
-                      <Td fontSize="14px">$230</Td>
-                      <Td fontSize="14px">Prosper Absalom</Td>
-                      <Td fontSize="14px">
-                        <Badge
-                          colorScheme="green"
-                          color="#00BA07"
-                          fontWeight="400"
-                          fontSize="7px"
-                          borderRadius="2px"
-                        >
-                          Success
-                        </Badge>
-                      </Td>
-                      <Td
-                        fontSize="14px"
-                        onClick={onPatientDetailsModalOpen}
-                        cursor="pointer"
-                      >
-                        {" "}
-                        {/* Trigger PatientDetails modal */}
-                        <FiChevronRight
-                          size="15px"
-                          style={{ marginLeft: 8 }}
-                          color="#000"
-                        />
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Box>
+
           </TabPanel>
           {/* Clerk Sheet Tab Content (Placeholder) */}
           <TabPanel>
@@ -1492,7 +1317,7 @@ const Details = () => {
                           Blood Pressure
                         </Text>
                         <Text fontSize="md" fontWeight="bold" color="#073DFC">
-                          {selectedBloodPressure.systolic}/{selectedBloodPressure.diastolic} mmHg
+                          {selectedBloodPressure.systolic_pressure}/{selectedBloodPressure.diastolic_pressure} mmHg
                         </Text>
                       </Box>
                       <Box>
