@@ -19,6 +19,24 @@ export interface DoctorRegistrationData {
   is_available?: boolean;
 }
 
+export interface PatientRegistrationData {
+  username: string;
+  password: string;
+  password_confirm: string;
+  first_name: string;
+  last_name: string;
+  date_of_birth: string;
+  gender: string;
+  phone_number: string;
+  address?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  blood_group?: string;
+  allergies?: string;
+  medical_history?: string;
+  purpose?: string;
+}
+
 export interface DoctorResponse {
   id: number;
   first_name: string;
@@ -254,6 +272,30 @@ export interface DoctorNote {
   updated_at: string;
 }
 
+export interface DoctorNoteExtended extends Omit<DoctorNote, 'patient' | 'doctor'> {
+  patient: AppointmentPatient;
+  doctor: {
+    id: number;
+    user: {
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+      email: string;
+    };
+    specialization: string;
+    license_number: string;
+    phone_number: string;
+    address: string;
+    experience_years: number;
+    bio?: string;
+    profile_picture?: string;
+    consultation_fee: string;
+    is_available: boolean;
+  };
+  date_of_clerkship?: string;
+}
+
 export interface Prescription {
   id: number;
   patient: number;
@@ -415,6 +457,14 @@ class ApiService {
   // Doctor registration
   async registerDoctor(data: DoctorRegistrationData): Promise<DoctorResponse> {
     return this.request<DoctorResponse>('/doctors/doctors/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Patient registration
+  async registerPatient(data: PatientRegistrationData): Promise<AppointmentPatient> {
+    return this.request<AppointmentPatient>('/patients/register/', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -611,6 +661,22 @@ class ApiService {
         'Authorization': `Token ${token}`,
       },
     });
+  }
+
+  // Get patient notes with full details
+  async getPatientNotesDetails(patientId: number, token: string): Promise<DoctorNoteExtended[]> {
+    try {
+      const response = await this.request<DoctorNoteExtended[]>(`/appointments/doctor-notes/patient_notes/?patient_id=${patientId}`, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+      console.log('getPatientNotesDetails response:', response);
+      return response;
+    } catch (error) {
+      console.error('Error in getPatientNotesDetails:', error);
+      throw error;
+    }
   }
 
   // Update existing doctor schedule

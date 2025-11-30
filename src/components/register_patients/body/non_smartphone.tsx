@@ -3,6 +3,7 @@ import { useState } from "react"
 // import { useAuth } from "../../../contexts/AuthContext"
 import { useToast } from "@chakra-ui/react"
 import { FiArrowRight } from "react-icons/fi"
+import { apiService } from "../../../services/api"
 
 const NonSmartphoneRegistration = () => {
   // const { token } = useAuth()
@@ -20,6 +21,9 @@ const NonSmartphoneRegistration = () => {
     address: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
+    bloodGroup: "",
+    allergies: "",
+    medicalHistory: "",
   })
   const [accessCode, setAccessCode] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -72,12 +76,32 @@ const NonSmartphoneRegistration = () => {
 
     setIsLoading(true)
     try {
-      // TODO: Implement non-smartphone registration API call with access code
+      // Map form data to API format
+      const registrationData = {
+        username: formData.username,
+        password: formData.password,
+        password_confirm: formData.confirmPassword,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        date_of_birth: formData.dateOfBirth,
+        gender: formData.gender,
+        phone_number: formData.phone,
+        address: formData.address || undefined,
+        emergency_contact_name: formData.emergencyContactName || undefined,
+        emergency_contact_phone: formData.emergencyContactPhone || undefined,
+        blood_group: formData.bloodGroup || undefined,
+        allergies: formData.allergies || undefined,
+        medical_history: formData.medicalHistory || undefined,
+        purpose: formData.purpose || undefined,
+      }
+
+      await apiService.registerPatient(registrationData)
+
       toast({
         title: "Registration Complete",
-        description: "Patient can now use the access code to access Main Manual tree",
+        description: `Patient account created successfully. Access Code: ${accessCode}`,
         status: "success",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       })
       
@@ -95,14 +119,18 @@ const NonSmartphoneRegistration = () => {
         address: "",
         emergencyContactName: "",
         emergencyContactPhone: "",
+        bloodGroup: "",
+        allergies: "",
+        medicalHistory: "",
       })
       setAccessCode("")
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage = error?.message || "Failed to complete registration. Please try again."
       toast({
         title: "Registration Failed",
-        description: "Failed to complete registration. Please try again.",
+        description: errorMessage,
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       })
     } finally {
@@ -228,9 +256,9 @@ const NonSmartphoneRegistration = () => {
                 fontSize="12px"
                 isRequired
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
               </Select>
             </Box>
             <Box flex={1}>
@@ -337,6 +365,63 @@ const NonSmartphoneRegistration = () => {
               />
             </Box>
           </HStack>
+
+          {/* Blood Group */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Blood Group <Text as="span" color="#9CA3AF" fontWeight="400">(optional)</Text>
+            </FormLabel>
+            <Select
+              value={formData.bloodGroup}
+              onChange={(e) => handleInputChange("bloodGroup", e.target.value)}
+              placeholder="Select blood group"
+              height="40px"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              fontSize="12px"
+            >
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </Select>
+          </Box>
+
+          {/* Allergies */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Allergies <Text as="span" color="#9CA3AF" fontWeight="400">(optional)</Text>
+            </FormLabel>
+            <Textarea
+              value={formData.allergies}
+              onChange={(e) => handleInputChange("allergies", e.target.value)}
+              placeholder="List any allergies (e.g., Peanuts, Shellfish)"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              rows={2}
+            />
+          </Box>
+
+          {/* Medical History */}
+          <Box>
+            <FormLabel fontSize="14px" fontWeight="500" color="#454545" marginBottom="8px">
+              Medical History <Text as="span" color="#9CA3AF" fontWeight="400">(optional)</Text>
+            </FormLabel>
+            <Textarea
+              value={formData.medicalHistory}
+              onChange={(e) => handleInputChange("medicalHistory", e.target.value)}
+              placeholder="Previous medical conditions (e.g., Hypertension, Type 2 Diabetes)"
+              borderRadius="8px"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "12px", color: "#9CA3AF" }}
+              rows={3}
+            />
+          </Box>
 
           {/* Access Code (Non-smartphone specific) */}
           <Box>

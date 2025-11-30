@@ -349,56 +349,62 @@ ${formData.recorded_details}
           </TabPanels>
         </Tabs>
 
-        {/* Additional Notes */}
-        <VStack align="stretch" mb={4} mt={4}>
-          <Text fontSize="sm" fontWeight="medium" color="gray.600">
-            Additional Notes
-          </Text>
-          <Textarea
-            placeholder="Any additional notes or observations"
-            value={formData.recorded_details}
-            onChange={(e) => handleInputChange('recorded_details', e.target.value)}
-            isReadOnly={isLoading}
-            height="80px"
-            borderRadius="3xl"
-            borderColor="#DCDCDC"
-            _placeholder={{ fontSize: "xs", color: "gray.400" }}
-          />
-        </VStack>
-
-        {/* Treatment Plan */}
-        <VStack align="stretch" mb={4}>
-          <Text fontSize="sm" fontWeight="medium" color="gray.600">
-            Treatment Plan
-          </Text>
-          <Textarea
-            placeholder="Initial treatment plan and recommendations"
-            value={formData.treatment_plan}
-            onChange={(e) => handleInputChange('treatment_plan', e.target.value)}
-            isReadOnly={isLoading}
-            height="60px"
-            borderRadius="3xl"
-            borderColor="#DCDCDC"
-            _placeholder={{ fontSize: "xs", color: "gray.400" }}
-          />
-        </VStack>
-
-        {/* Follow-up Required */}
-        <VStack align="stretch" mb={4}>
-          <Checkbox
-            isChecked={formData.follow_up_required}
-            onChange={(e) => handleInputChange('follow_up_required', e.target.checked)}
-            isDisabled={isLoading}
-            colorScheme="blue"
-          >
-            <Text fontSize="sm" color="gray.600">
-              Follow-up required
+        {/* Additional Notes - Only visible in Complaints tab */}
+        {activeTab === 0 && (
+          <VStack align="stretch" mb={4} mt={4}>
+            <Text fontSize="sm" fontWeight="medium" color="gray.600">
+              Additional Notes
             </Text>
-          </Checkbox>
-        </VStack>
+            <Textarea
+              placeholder="Any additional notes or observations"
+              value={formData.recorded_details}
+              onChange={(e) => handleInputChange('recorded_details', e.target.value)}
+              isReadOnly={isLoading}
+              height="80px"
+              borderRadius="3xl"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "xs", color: "gray.400" }}
+            />
+          </VStack>
+        )}
 
-        {/* Follow-up Date and Notes (conditional) */}
-        {formData.follow_up_required && (
+        {/* Treatment Plan - Only visible in Complaints tab */}
+        {activeTab === 0 && (
+          <VStack align="stretch" mb={4}>
+            <Text fontSize="sm" fontWeight="medium" color="gray.600">
+              Treatment Plan
+            </Text>
+            <Textarea
+              placeholder="Initial treatment plan and recommendations"
+              value={formData.treatment_plan}
+              onChange={(e) => handleInputChange('treatment_plan', e.target.value)}
+              isReadOnly={isLoading}
+              height="60px"
+              borderRadius="3xl"
+              borderColor="#DCDCDC"
+              _placeholder={{ fontSize: "xs", color: "gray.400" }}
+            />
+          </VStack>
+        )}
+
+        {/* Follow-up Required - Only visible in Complaints tab */}
+        {activeTab === 0 && (
+          <VStack align="stretch" mb={4}>
+            <Checkbox
+              isChecked={formData.follow_up_required}
+              onChange={(e) => handleInputChange('follow_up_required', e.target.checked)}
+              isDisabled={isLoading}
+              colorScheme="blue"
+            >
+              <Text fontSize="sm" color="gray.600">
+                Follow-up required
+              </Text>
+            </Checkbox>
+          </VStack>
+        )}
+
+        {/* Follow-up Date and Notes (conditional) - Only visible in Complaints tab */}
+        {activeTab === 0 && formData.follow_up_required && (
           <VStack align="stretch" mb={4}>
             <HStack gap={4}>
               <Box flex="1">

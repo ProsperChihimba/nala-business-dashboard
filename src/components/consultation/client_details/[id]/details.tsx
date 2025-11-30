@@ -180,12 +180,20 @@ const Details = () => {
     onClose: onAddLabTestDrawerClose,
   } = useDisclosure();
 
-  // State for the "Clerk Sheet" drawer
+  // State for the "Clerk Sheet" drawer (for adding)
   const {
     isOpen: isClerkSheetDrawerOpen,
     onOpen: onClerkSheetDrawerOpen,
     onClose: onClerkSheetDrawerClose,
   } = useDisclosure();
+
+  // State for viewing clerk sheet details
+  const {
+    isOpen: isViewClerkSheetDrawerOpen,
+    onOpen: onViewClerkSheetDrawerOpen,
+    onClose: onViewClerkSheetDrawerClose,
+  } = useDisclosure();
+  const [selectedClerkSheetId, setSelectedClerkSheetId] = useState<number | null>(null);
 
   // State for the "Add Prescription" drawer
   const {
@@ -845,17 +853,17 @@ const Details = () => {
                       >
                         Phone
                       </Text>
-                      <Text
-                        style={{
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                          fontSize: "12px",
-                          fontWeight: 600,
-                          color: "#000",
-                        }}
-                      >
+                        <Text
+                          style={{
+                            fontFamily: "IBM Plex Sans, sans-serif",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            color: "#000",
+                          }}
+                        >
                         {patient?.phone || 'N/A'}
-                      </Text>
-                    </Flex>
+                        </Text>
+                      </Flex>
                     <Flex mb="12px">
                       <Text
                         style={{
@@ -1229,8 +1237,11 @@ const Details = () => {
                       <Td fontSize="14px">
                         <Link
                           color="blue"
-                          onClick={onClerkDrawerOpen}
-                                style={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            setSelectedClerkSheetId(sheet.id);
+                            onViewClerkSheetDrawerOpen();
+                          }}
+                          style={{ cursor: 'pointer' }}
                         >
                           details
                         </Link>
@@ -1352,12 +1363,19 @@ const Details = () => {
               modalSize="lg"
               children={<AddLabTestSide onLabTestAdded={fetchLabTestsData} />}
             />
-            {/* AppDrawer for clerk sheet */}
+            {/* AppDrawer for clerk sheet (adding) */}
             <AppDrawer
               isOpenSide={isClerkSheetDrawerOpen}
               onCloseSide={onClerkSheetDrawerClose}
               modalSize="xl"
               children={<ClerkSheetForm onClerkSheetAdded={fetchClerkSheetsData} />}
+            />
+            {/* AppDrawer for viewing clerk sheet details */}
+            <AppDrawer
+              isOpenSide={isViewClerkSheetDrawerOpen}
+              onCloseSide={onViewClerkSheetDrawerClose}
+              modalSize="xl"
+              children={<ClerkDrawer clerkSheetId={selectedClerkSheetId} patientId={id ? parseInt(id) : null} />}
             />
             {/* AppDrawer for prescription */}
             <AppDrawer
