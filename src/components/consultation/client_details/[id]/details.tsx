@@ -41,7 +41,7 @@ import { Divider } from "antd";
 
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { apiService, PatientVital, BloodPressureReading, DoctorNote } from "../../../../services/api";
+import { apiService, PatientVital, BloodPressureReading, DoctorNote, Prescription, DoctorNoteExtended } from "../../../../services/api";
 import {
   FiCheck,
   FiChevronDown,
@@ -83,6 +83,9 @@ import InvestigationModal from "./investigation_modal";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import SendNotification from "./send_notification_modal";
 import ClerkDrawer from "./clerk_drawer";
+import ViewPrescriptionDrawer from "./view_prescription_drawer";
+import AddDefinitiveDiagnosisSide from "./add_definitive_diagnosis_side";
+import ViewDefinitiveDiagnosisDrawer from "./view_definitive_diagnosis_drawer";
 
 // Patient details interface
 interface PatientDetails {
@@ -125,9 +128,13 @@ const Details = () => {
   const [selectedBloodPressure, setSelectedBloodPressure] = useState<BloodPressureReading | null>(null);
   const [bloodPressureReadings, setBloodPressureReadings] = useState<BloodPressureReading[]>([]);
   const [clerkSheets, setClerkSheets] = useState<DoctorNote[]>([]);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [definitiveDiagnoses, setDefinitiveDiagnoses] = useState<DoctorNoteExtended[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isVitalsLoading, setIsVitalsLoading] = useState(true);
   const [isBloodPressureLoading, setIsBloodPressureLoading] = useState(true);
+  const [isPrescriptionsLoading, setIsPrescriptionsLoading] = useState(false);
+  const [isDefinitiveDiagnosesLoading, setIsDefinitiveDiagnosesLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [vitalSignsPage, setVitalSignsPage] = useState(1);
   const [vitalSignsFilter, setVitalSignsFilter] = useState<'all' | 'vitals' | 'blood_pressure'>('all');
@@ -194,6 +201,7 @@ const Details = () => {
     onClose: onViewClerkSheetDrawerClose,
   } = useDisclosure();
   const [selectedClerkSheetId, setSelectedClerkSheetId] = useState<number | null>(null);
+  const [selectedPrescriptionId, setSelectedPrescriptionId] = useState<number | null>(null);
 
   // State for the "Add Prescription" drawer
   const {
@@ -201,6 +209,28 @@ const Details = () => {
     onOpen: onAddPrescriptionDrawerOpen,
     onClose: onAddPrescriptionDrawerClose,
   } = useDisclosure();
+
+  // State for viewing prescription details
+  const {
+    isOpen: isViewPrescriptionDrawerOpen,
+    onOpen: onViewPrescriptionDrawerOpen,
+    onClose: onViewPrescriptionDrawerClose,
+  } = useDisclosure();
+
+  // State for the "Add Definitive Diagnosis" drawer
+  const {
+    isOpen: isAddDefinitiveDiagnosisDrawerOpen,
+    onOpen: onAddDefinitiveDiagnosisDrawerOpen,
+    onClose: onAddDefinitiveDiagnosisDrawerClose,
+  } = useDisclosure();
+
+  // State for viewing definitive diagnosis details
+  const {
+    isOpen: isViewDefinitiveDiagnosisDrawerOpen,
+    onOpen: onViewDefinitiveDiagnosisDrawerOpen,
+    onClose: onViewDefinitiveDiagnosisDrawerClose,
+  } = useDisclosure();
+  const [selectedDefinitiveDiagnosisId, setSelectedDefinitiveDiagnosisId] = useState<number | null>(null);
 
   // Separate states for each modal type
   const {
@@ -381,22 +411,49 @@ const Details = () => {
     }
   };
 
-  // Function to refresh prescriptions data
+  // Function to fetch prescriptions data
   const fetchPrescriptionsData = async () => {
     if (!id || !token) return;
     
     try {
-      // For now, we'll just show a success message
-      // In the future, we can fetch and display prescriptions
-      console.log('Prescriptions data refreshed');
+      setIsPrescriptionsLoading(true);
+      const patientId = parseInt(id);
+      const prescriptionsData = await apiService.getPatientPrescriptions(patientId, token);
+      setPrescriptions(prescriptionsData);
+      console.log('Prescriptions data fetched:', prescriptionsData);
     } catch (error) {
       console.error('Error fetching prescriptions:', error);
+      setError('Failed to fetch prescriptions');
+    } finally {
+      setIsPrescriptionsLoading(false);
+    }
+  };
+
+  // Function to fetch definitive diagnoses data
+  const fetchDefinitiveDiagnosesData = async () => {
+    if (!id || !token) return;
+    
+    try {
+      setIsDefinitiveDiagnosesLoading(true);
+      const patientId = parseInt(id);
+      const diagnosesData = await apiService.getDefinitiveDiagnoses(token, patientId);
+      setDefinitiveDiagnoses(diagnosesData);
+      console.log('Definitive diagnoses data fetched:', diagnosesData);
+    } catch (error) {
+      console.error('Error fetching definitive diagnoses:', error);
+      setError('Failed to fetch definitive diagnoses');
+    } finally {
+      setIsDefinitiveDiagnosesLoading(false);
     }
   };
 
   // Fetch patient vitals on mount
   useEffect(() => {
     fetchVitalsData();
+    fetchBloodPressureData();
+    fetchClerkSheetsData();
+    fetchPrescriptionsData();
+    fetchDefinitiveDiagnosesData();
   }, [id, token]);
 
   // Fetch blood pressure readings function
@@ -677,7 +734,18 @@ const Details = () => {
               onClick={onClerkSheetDrawerOpen}
             />
           )}
-          {tabIndex === 6 && (
+          {tabIndex === 4 && (
+            <AppButton
+              label="Add Definitive Diagnosis"
+              background="#073DFC"
+              borderColor="#073DFC"
+              color="white"
+              icon={<FiPlus size="15px" style={{ marginRight: 8 }} />}
+              width="200px"
+              onClick={onAddDefinitiveDiagnosisDrawerOpen}
+            />
+          )}
+          {tabIndex === 5 && (
             <AppButton
               label="Add Prescription"
               background="#28a745"
@@ -1384,6 +1452,27 @@ const Details = () => {
               modalSize="xl"
               children={<AddPrescriptionSide onPrescriptionAdded={fetchPrescriptionsData} />}
             />
+            {/* AppDrawer for viewing prescription details */}
+            <AppDrawer
+              isOpenSide={isViewPrescriptionDrawerOpen}
+              onCloseSide={onViewPrescriptionDrawerClose}
+              modalSize="xl"
+              children={<ViewPrescriptionDrawer prescriptionId={selectedPrescriptionId} />}
+            />
+            {/* AppDrawer for adding definitive diagnosis */}
+            <AppDrawer
+              isOpenSide={isAddDefinitiveDiagnosisDrawerOpen}
+              onCloseSide={onAddDefinitiveDiagnosisDrawerClose}
+              modalSize="xl"
+              children={<AddDefinitiveDiagnosisSide onDiagnosisAdded={fetchDefinitiveDiagnosesData} />}
+            />
+            {/* AppDrawer for viewing definitive diagnosis details */}
+            <AppDrawer
+              isOpenSide={isViewDefinitiveDiagnosisDrawerOpen}
+              onCloseSide={onViewDefinitiveDiagnosisDrawerClose}
+              modalSize="xl"
+              children={<ViewDefinitiveDiagnosisDrawer diagnosisId={selectedDefinitiveDiagnosisId} patientId={id ? parseInt(id) : null} />}
+            />
 
              <AppDrawer
               isOpenSide={isClerkDrawerOpen}
@@ -1868,249 +1957,180 @@ const Details = () => {
               </Box>
             </Flex>
           </TabPanel>
-          {/* Definitive diagnosis Tab Content (Placeholder) */}
+          {/* Definitive diagnosis Tab Content */}
           <TabPanel>
-            <AppModal
-              isOpen={isDefinitiveDetailsModalOpen} // Use specific state
-              onClose={onDefinitiveDetailsModalClose} // Use specific state
-              modalSize="md"
-              children={
-                <DefinitiveDetails onClose={onDefinitiveDetailsModalClose} />
-              }
-            />
-            <FilterSection />
-            <Box
-              width="100%"
-              fontFamily="IBM Plex Sans, sans-serif"
-              border="1px solid #D9D9D9"
-              borderRadius="10px"
-              marginTop="30px"
-            >
-              {/* table title */}
-              <Flex
-                padding="10px 20px"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Text
-                  style={{
-                    fontFamily: "IBM Plex Sans, sans-serif",
-                    fontSize: "15px",
-                    fontWeight: 500,
-                    color: "#454545",
-                  }}
-                >
-                  Recent
+            {isDefinitiveDiagnosesLoading ? (
+              <Center py={10}>
+                <Spinner size="lg" />
+              </Center>
+            ) : error ? (
+              <Alert status="error" mb={4}>
+                <AlertIcon />
+                {error}
+              </Alert>
+            ) : definitiveDiagnoses.length === 0 ? (
+              <Box p={8} textAlign="center">
+                <Text fontSize="lg" color="gray.500" mb={4}>
+                  No definitive diagnoses found
                 </Text>
-                <Flex>
-                  <Text
-                    style={{
-                      fontFamily: "IBM Plex Sans, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      color: "#073DFC",
-                    }}
-                  >
-                    View All
-                  </Text>
-                  <FiChevronRight
-                    size="15px"
-                    style={{ marginLeft: 8 }}
-                    color="#073DFC"
-                  />
-                </Flex>
-              </Flex>
-              <Divider style={{ marginTop: "0px", marginBottom: "10px" }} />
-              {/* rows */}
-              <TableContainer w="100%" h="100%">
-                <Table
-                  size="sm"
-                  bg="transparent"
-                  rounded="md"
-                  variant="unstyled"
-                  mb="20px"
-                  border="1px"
-                >
-                  <Thead
-                    bg="transparent"
-                    rounded="3xl"
-                    style={{ color: "#000000" }}
-                  >
-                    <Tr
-                      style={{
-                        borderRadius: "7px",
-                        borderWidth: "1px",
-                        borderColor: "transparent",
-                      }}
-                    >
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Date
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Recorded by
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Recorded details
-                      </Th>
-                      <Th
-                        style={{
-                          fontSize: "14px",
-                          color: "#6D6D6D",
-                          fontWeight: "500",
-                          fontFamily: "IBM Plex Sans, sans-serif",
-                        }}
-                      >
-                        Action
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody
-                    overflow="auto"
-                    sx={{
-                      "&::-webkit-scrollbar": {
-                        display: "none",
-                      },
-                    }}
-                  >
-                    <Tr
-                      mb="5px"
-                      style={{
-                        borderRadius: "40px",
-                        borderColor: "transparent",
-                        fontSize: "14px",
-                        borderWidth: "1px",
-                        backgroundColor: "transparent",
-                      }}
-                    >
-                      <Td fontSize="14px">Jun 20</Td>
-                      <Td fontSize="14px">Prosper Absalom</Td>
-                      <Td fontSize="14px">Chief Complaints, Diagnosis</Td>
-                      <Td fontSize="14px">
-                        <Link
-                          color="blue"
-                          onClick={onDefinitiveDetailsModalOpen}
-                        >
-                          {" "}
-                          {/* Trigger DefinitiveDetails modal */}
-                          details
-                        </Link>
-                      </Td>
-                      <Td fontSize="14px">
-                        <FiChevronRight
-                          size="15px"
-                          style={{ marginLeft: 8 }}
-                          color="#000"
-                        />
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Box>
+                <Text fontSize="sm" color="gray.400">
+                  Click "Add Definitive Diagnosis" to create a new diagnosis
+                </Text>
+              </Box>
+            ) : (
+              <Box>
+                <TableContainer border="1px solid" borderColor="gray.200" borderRadius="lg">
+                  <Table variant="simple" size="sm">
+                    <Thead bg="gray.50">
+                      <Tr>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Date</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">File Number</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Recorded By</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Diagnosis</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Details</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {definitiveDiagnoses.map((diagnosis) => (
+                        <Tr key={diagnosis.id} _hover={{ bg: "gray.50" }}>
+                          <Td fontSize="13px">
+                            {new Date(diagnosis.created_at).toLocaleDateString()}
+                          </Td>
+                          <Td fontSize="13px">{diagnosis.file_number}</Td>
+                          <Td fontSize="13px">{diagnosis.recorded_by || 'N/A'}</Td>
+                          <Td fontSize="13px">
+                            {diagnosis.diagnosis ? (
+                              <Text noOfLines={2} maxW="300px">
+                                {diagnosis.diagnosis}
+                              </Text>
+                            ) : (
+                              'N/A'
+                            )}
+                          </Td>
+                          <Td fontSize="13px">
+                            <Link
+                              color="blue.500"
+                              cursor="pointer"
+                              onClick={() => {
+                                setSelectedDefinitiveDiagnosisId(diagnosis.id);
+                                onViewDefinitiveDiagnosisDrawerOpen();
+                              }}
+                              _hover={{ textDecoration: 'underline' }}
+                            >
+                              View Details
+                            </Link>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            )}
           </TabPanel>
-          {/* Treatment Tab Content (Placeholder) */}
+          {/* Prescription Tab Content */}
           <TabPanel>
-            <AppModal
-              isOpen={isTreatmentModalOpen} // Use specific state
-              onClose={onTreatmentModalClose} // Use specific state
-              modalSize="md"
-              children={<TreatmentModal onClose={onTreatmentModalClose} />}
-            />
-            <Box p={4} bg="white" rounded="md" shadow="sm">
+            {isPrescriptionsLoading ? (
+              <Center py={10}>
+                <Spinner size="lg" />
+              </Center>
+            ) : error ? (
+              <Alert status="error" mb={4}>
+                <AlertIcon />
+                {error}
+              </Alert>
+            ) : prescriptions.length === 0 ? (
+              <Box p={8} textAlign="center">
+                <Text fontSize="lg" color="gray.500" mb={4}>
+                  No prescriptions found
+                </Text>
+                <Text fontSize="sm" color="gray.400">
+                  Click "Add Prescription" to create a new prescription
+                </Text>
+              </Box>
+            ) : (
+              <Box>
+                <TableContainer border="1px solid" borderColor="gray.200" borderRadius="lg">
+                  <Table variant="simple" size="sm">
+                    <Thead bg="gray.50">
+                      <Tr>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">File Number</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Date</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Time</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Status</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Doctor</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Follow-up</Th>
+                        <Th fontSize="12px" fontWeight="600" color="gray.700">Details</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {prescriptions.map((prescription) => (
+                        <Tr key={prescription.id} _hover={{ bg: "gray.50" }}>
+                          <Td fontSize="13px">{prescription.file_number}</Td>
+                          <Td fontSize="13px">
+                            {new Date(prescription.prescription_date).toLocaleDateString()}
+                          </Td>
+                          <Td fontSize="13px">
+                            {prescription.prescription_time?.slice(0, 5) || 'N/A'}
+                          </Td>
+                          <Td fontSize="13px">
               <Text
-                style={{
-                  fontFamily: "IBM Plex Sans, sans-serif",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  color: "black",
-                }}
-              >
-                Create E-Prescription
+                              as="span"
+                              px={2}
+                              py={1}
+                              borderRadius="md"
+                              fontSize="11px"
+                              fontWeight="500"
+                              bg={
+                                prescription.status === 'active'
+                                  ? 'green.100'
+                                  : prescription.status === 'completed'
+                                  ? 'blue.100'
+                                  : 'gray.100'
+                              }
+                              color={
+                                prescription.status === 'active'
+                                  ? 'green.800'
+                                  : prescription.status === 'completed'
+                                  ? 'blue.800'
+                                  : 'gray.800'
+                              }
+                            >
+                              {prescription.status_display || prescription.status}
               </Text>
-              <Flex
-                border="1px solid #E2E8F0"
-                mt={10}
-                borderRadius="md"
-                p={2}
-                mb={4}
-                alignItems="center"
-                gap={3}
-              >
-                <Button variant="ghost" size="sm">
-                  <Text style={{ fontWeight: "bold" }}>B</Text>
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Text style={{ fontStyle: "italic" }}>I</Text>
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Text style={{ textDecoration: "underline" }}>U</Text>
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <LinkIcon size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <PenIcon size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <ListIcon size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <ListOrderedIcon size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <AlignLeftIcon size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <AlignCenterIcon size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <AlignRightIcon size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <AlignJustifyIcon size={16} />
-                </Button>
-              </Flex>
-              <Textarea
-                placeholder="Enter Complaint Description"
-                minH="300px"
-                borderColor="#E2E8F0"
-                _placeholder={{ color: "#A0AEC0" }}
-                fontFamily="IBM Plex Sans, sans-serif"
-                fontSize="14px"
-                p={4}
-              />
-              <Flex justifyContent="flex-end" mt={4}>
-                <AppButton
-                  label="Next"
-                  background="#073DFC"
-                  color="white"
-                  width="140px"
-                  borderColor="#DCDCDC"
-                  onClick={onTreatmentModalOpen}
-                />
-              </Flex>
+                          </Td>
+                          <Td fontSize="13px">{prescription.doctor_name || 'N/A'}</Td>
+                          <Td fontSize="13px">
+                            {prescription.follow_up_required ? (
+                              <Text color="orange.600" fontWeight="500">
+                                {prescription.follow_up_date
+                                  ? new Date(prescription.follow_up_date).toLocaleDateString()
+                                  : 'Required'}
+                              </Text>
+                            ) : (
+                              <Text color="gray.400">No</Text>
+                            )}
+                          </Td>
+                          <Td fontSize="13px">
+                            <Link
+                              color="blue.500"
+                              cursor="pointer"
+                              onClick={() => {
+                                setSelectedPrescriptionId(prescription.id);
+                                onViewPrescriptionDrawerOpen();
+                              }}
+                              _hover={{ textDecoration: 'underline' }}
+                            >
+                              View Details
+                            </Link>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
             </Box>
+            )}
           </TabPanel>
         </TabPanels>
       </Tabs>

@@ -41,12 +41,13 @@ interface PrescriptionFormData {
 }
 
 interface MedicationFormData {
-  medication_name: string;
+  name: string;
   dosage: string;
   frequency: string;
   duration: string;
   instructions: string;
   quantity: number;
+  unit: string;
 }
 
 const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ onPrescriptionAdded }) => {
@@ -69,12 +70,13 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
 
   const [medications, setMedications] = useState<MedicationFormData[]>([]);
   const [currentMedication, setCurrentMedication] = useState<MedicationFormData>({
-    medication_name: '',
+    name: '',
     dosage: '',
     frequency: '',
     duration: '',
     instructions: '',
-    quantity: 1
+    quantity: 1,
+    unit: 'tablets'
   });
 
   const handleInputChange = (field: keyof PrescriptionFormData, value: string | boolean) => {
@@ -92,15 +94,16 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
   };
 
   const addMedication = () => {
-    if (currentMedication.medication_name.trim()) {
+    if (currentMedication.name.trim()) {
       setMedications(prev => [...prev, { ...currentMedication }]);
       setCurrentMedication({
-        medication_name: '',
+        name: '',
         dosage: '',
         frequency: '',
         duration: '',
         instructions: '',
-        quantity: 1
+        quantity: 1,
+        unit: 'tablets'
       });
     }
   };
@@ -127,7 +130,7 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
 
       const patientId = parseInt(id);
       
-      // Create prescription data
+      // Create prescription data with medications array
       const prescriptionData = {
         patient: patientId,
         doctor: doctor.id,
@@ -139,30 +142,20 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
         follow_up_required: formData.follow_up_required,
         follow_up_date: formData.follow_up_date || undefined,
         notes: formData.notes || undefined,
-        is_active: true
+        medications: medications.map(med => ({
+          name: med.name,
+          dosage: med.dosage,
+          frequency: med.frequency,
+          duration: med.duration,
+          instructions: med.instructions,
+          quantity: med.quantity,
+          unit: med.unit
+        }))
       };
 
       console.log('Submitting prescription:', prescriptionData);
       const prescription = await apiService.addPrescription(prescriptionData, token);
       console.log('Prescription added successfully:', prescription);
-
-      // Add medications if any
-      if (medications.length > 0) {
-        for (const medication of medications) {
-          const medicationData = {
-            prescription: prescription.id,
-            medication_name: medication.medication_name,
-            dosage: medication.dosage,
-            frequency: medication.frequency,
-            duration: medication.duration,
-            instructions: medication.instructions,
-            quantity: medication.quantity
-          };
-          
-          console.log('Adding medication:', medicationData);
-          await apiService.addMedication(medicationData, token);
-        }
-      }
       
       setSuccess(true);
       // Reset form
@@ -178,12 +171,13 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
       });
       setMedications([]);
       setCurrentMedication({
-        medication_name: '',
+        name: '',
         dosage: '',
         frequency: '',
         duration: '',
         instructions: '',
-        quantity: 1
+        quantity: 1,
+        unit: 'tablets'
       });
       
       // Call callback to refresh prescriptions list
@@ -325,8 +319,8 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
                   <Text fontSize="xs" color="gray.500" mb={1}>Medication Name</Text>
                   <Input
                     placeholder="e.g., Amoxicillin"
-                    value={currentMedication.medication_name}
-                    onChange={(e) => handleMedicationChange('medication_name', e.target.value)}
+                    value={currentMedication.name}
+                    onChange={(e) => handleMedicationChange('name', e.target.value)}
                     isReadOnly={isLoading}
                     height="35px"
                     borderRadius="3xl"
@@ -386,11 +380,24 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
                     borderColor="#DCDCDC"
                   />
                 </Box>
+                <Box flex="1">
+                  <Text fontSize="xs" color="gray.500" mb={1}>Unit</Text>
+                  <Input
+                    placeholder="e.g., tablets"
+                    value={currentMedication.unit}
+                    onChange={(e) => handleMedicationChange('unit', e.target.value)}
+                    isReadOnly={isLoading}
+                    height="35px"
+                    borderRadius="3xl"
+                    borderColor="#DCDCDC"
+                    _placeholder={{ fontSize: "xs", color: "gray.400" }}
+                  />
+                </Box>
                 <IconButton
                   aria-label="Add medication"
                   icon={<FiPlus />}
                   onClick={addMedication}
-                  isDisabled={isLoading || !currentMedication.medication_name.trim()}
+                  isDisabled={isLoading || !currentMedication.name.trim()}
                   colorScheme="blue"
                   size="sm"
                   height="35px"
@@ -425,6 +432,7 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
                     <Th fontSize="xs">Frequency</Th>
                     <Th fontSize="xs">Duration</Th>
                     <Th fontSize="xs">Qty</Th>
+                    <Th fontSize="xs">Unit</Th>
                     <Th fontSize="xs">Instructions</Th>
                     <Th fontSize="xs">Action</Th>
                   </Tr>
@@ -432,11 +440,12 @@ const AddPrescriptionSide: React.FC<{ onPrescriptionAdded?: () => void }> = ({ o
                 <Tbody>
                   {medications.map((med, index) => (
                     <Tr key={index}>
-                      <Td fontSize="xs">{med.medication_name}</Td>
+                      <Td fontSize="xs">{med.name}</Td>
                       <Td fontSize="xs">{med.dosage}</Td>
                       <Td fontSize="xs">{med.frequency}</Td>
                       <Td fontSize="xs">{med.duration}</Td>
                       <Td fontSize="xs">{med.quantity}</Td>
+                      <Td fontSize="xs">{med.unit}</Td>
                       <Td fontSize="xs">{med.instructions}</Td>
                       <Td fontSize="xs">
                         <IconButton

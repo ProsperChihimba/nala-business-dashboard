@@ -296,8 +296,39 @@ export interface DoctorNoteExtended extends Omit<DoctorNote, 'patient' | 'doctor
   date_of_clerkship?: string;
 }
 
+export interface Medication {
+  id?: number;
+  name: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  instructions: string;
+  quantity: number;
+  unit: string;
+}
+
 export interface Prescription {
   id: number;
+  file_number: string;
+  prescription_date: string;
+  prescription_time: string;
+  prescription_details: string;
+  status: string;
+  status_display?: string;
+  doctor_name?: string;
+  patient_name?: string;
+  follow_up_required: boolean;
+  follow_up_date?: string;
+  created_at: string;
+  updated_at?: string;
+  // Optional fields for detailed view
+  patient?: number;
+  doctor?: number;
+  notes?: string;
+  medications?: Medication[];
+}
+
+export interface CreatePrescriptionRequest {
   patient: number;
   doctor: number;
   file_number: string;
@@ -308,22 +339,7 @@ export interface Prescription {
   follow_up_required: boolean;
   follow_up_date?: string;
   notes?: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Medication {
-  id: number;
-  prescription: number;
-  medication_name: string;
-  dosage: string;
-  frequency: string;
-  duration: string;
-  instructions: string;
-  quantity: number;
-  created_at: string;
-  updated_at: string;
+  medications: Medication[];
 }
 
 class ApiService {
@@ -679,6 +695,54 @@ class ApiService {
     }
   }
 
+  // Add definitive diagnosis
+  async addDefinitiveDiagnosis(
+    diagnosisData: {
+      patient: number;
+      doctor: number;
+      file_number: string;
+      recorded_by: string;
+      recorded_details: string;
+      diagnosis: string;
+      symptoms?: string;
+      treatment_plan?: string;
+      follow_up_required: boolean;
+      follow_up_date?: string;
+    },
+    token: string
+  ): Promise<DoctorNoteExtended> {
+    return this.request<DoctorNoteExtended>('/appointments/doctor-notes/definitive-diagnosis/add/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(diagnosisData),
+    });
+  }
+
+  // Get definitive diagnoses with optional filters
+  async getDefinitiveDiagnoses(
+    token: string,
+    patientId?: number,
+    doctorId?: number
+  ): Promise<DoctorNoteExtended[]> {
+    const params = new URLSearchParams();
+    if (patientId) params.append('patient_id', patientId.toString());
+    if (doctorId) params.append('doctor_id', doctorId.toString());
+    
+    const queryString = params.toString();
+    const endpoint = queryString 
+      ? `/appointments/doctor-notes/definitive-diagnosis/?${queryString}`
+      : '/appointments/doctor-notes/definitive-diagnosis/';
+    
+    return this.request<DoctorNoteExtended[]>(endpoint, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
   // Update existing doctor schedule
   async updateDoctorSchedule(
     scheduleId: number,
@@ -695,8 +759,8 @@ class ApiService {
     });
   }
 
-  // Add prescription for patient
-  async addPrescription(prescriptionData: Omit<Prescription, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Prescription> {
+  // Add prescription for patient (with medications array)
+  async addPrescription(prescriptionData: CreatePrescriptionRequest, token: string): Promise<Prescription> {
     return this.request<Prescription>('/prescriptions/prescriptions/', {
       method: 'POST',
       headers: {
@@ -707,9 +771,36 @@ class ApiService {
     });
   }
 
+  // Get all prescriptions
+  async getAllPrescriptions(token: string): Promise<Prescription[]> {
+    return this.request<Prescription[]>('/prescriptions/prescriptions/', {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
+  // Get specific prescription by ID
+  async getPrescriptionById(prescriptionId: number, token: string): Promise<Prescription> {
+    return this.request<Prescription>(`/prescriptions/prescriptions/${prescriptionId}/`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
   // Get prescriptions for patient
-  async getPatientPrescriptions(patientId: number, token: string): Promise<PaginatedResponse<Prescription>> {
-    return this.request<PaginatedResponse<Prescription>>(`/prescriptions/prescriptions/?patient=${patientId}`, {
+  async getPatientPrescriptions(patientId: number, token: string): Promise<Prescription[]> {
+    return this.request<Prescription[]>(`/prescriptions/prescriptions/patient_prescriptions/?patient_id=${patientId}`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+      },
+    });
+  }
+
+  // Get prescriptions by doctor
+  async getDoctorPrescriptions(doctorId: number, token: string): Promise<Prescription[]> {
+    return this.request<Prescription[]>(`/prescriptions/prescriptions/doctor_prescriptions/?doctor_id=${doctorId}`, {
       headers: {
         'Authorization': `Token ${token}`,
       },
